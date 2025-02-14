@@ -1,0 +1,10 @@
+{
+  "name": "storm",
+  "scripts": {
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
