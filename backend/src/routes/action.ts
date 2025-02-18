@@ -3,8 +3,8 @@ const actionRouter = express.Router();
 
 import {getCallInfo, getEmailInfo, getInstagramPostID} from "../controllers/actionController"
 
-actionRouter.get("/email", getEmailInfo);
-actionRouter.get("/instagram", getInstagramPostID);
-actionRouter.get("/phone", getCallInfo);
+actionRouter.get("/action/email", getEmailInfo);
+actionRouter.get("/action/instagram", getInstagramPostID);
+actionRouter.get("/action/phone", getCallInfo);
 
-export default actionRouter;
+export default actionRouter; 

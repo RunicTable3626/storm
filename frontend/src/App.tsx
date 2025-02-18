@@ -26,19 +26,19 @@ function App() {
 
   useEffect(() => {
     //get instagram links
-    fetch("/action/instagram")
+    fetch("/api/action/instagram")
       .then((res) => res.json())
       .then((data) => setInstagramLink(data))
       .catch((err) => console.error("Error fetching Instagram Link:", err));
 
     //get email info
-    fetch("/action/email")  
+    fetch("/api/action/email")  
       .then((res) => res.json())
       .then((data) => setEmailInfo(data))
       .catch((err) => console.error("Error fetching Email Information:", err));
 
 
-    fetch("/action/phone")  
+    fetch("/api/action/phone")  
       .then((res) => res.json())
       .then((data) => setCallInfo(data))
       .catch((err) => console.error("Error fetching Phone Information:", err));
