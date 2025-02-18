@@ -9,6 +9,10 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI as string;
+const POST_ID = process.env.POST_ID as string;
+const EMAIL = process.env.EMAIL as string;
+const SUBJECT = process.env.SUBJECT as string;
+const BODY = process.env.BODY as string;
 
 app.use(express.json());
 app.use(cors());
@@ -27,8 +31,17 @@ const connectDB = async (): Promise<void> => {
 connectDB();
 
 // Routes
-app.get("/api/hello", (req, res) => {
-  res.json({ message: "Hello from the backend!" });
+app.get("/api/instagram", (req, res) => {
+  res.json({ link_id: POST_ID });
+});
+
+app.get("/api/email", (req, res) => {
+  res.json({ emailInfo: {
+    email: EMAIL,
+    subject: SUBJECT,
+    body: BODY
+  }   
+  });
 });
 
 // Serve Frontend in Production

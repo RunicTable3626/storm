@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Attach to Backend",
+        "type": "node",
+        "request": "attach",
+        "port": 9229,
+        "skipFiles": ["<node_internals>/**"],
+        "localRoot": "${workspaceFolder}/backend",
+        "remoteRoot": "/app",
+        "preLaunchTask": "Run Frontend and Backend"  // Run the task before debugging the backend
+      },
+      {
+        "name": "Attach to Frontend",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:5175",  // Adjust if React is running on a different port
+        "webRoot": "${workspaceFolder}/frontend/src",
+        "preLaunchTask": "Run Frontend and Backend"  // Run the task before launching the frontend debugger
+      }
+    ]
+  }
