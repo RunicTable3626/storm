@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import InstagramButton from "./components/InstagramButton";
 import EmailButton from "./components/EmailButton";
+import PhonecallButton from "./components/PhonecallButton";
 
 function App() {
   const [instagramLink, setInstagramLink] = useState("");
@@ -14,19 +15,36 @@ function App() {
     subject: "",
     body: "",
   });
+  const [callInfo, setCallInfo] = useState<{ 
+    phoneNumber: string; 
+    callScript: string
+  }>
+  ({
+    phoneNumber: "",
+    callScript: ""
+  });
 
   useEffect(() => {
     //get instagram links
-    fetch("/api/instagram")
+    fetch("/action/instagram")
       .then((res) => res.json())
-      .then((data) => setInstagramLink(data.link_id))
+      .then((data) => setInstagramLink(data))
       .catch((err) => console.error("Error fetching Instagram Link:", err));
 
     //get email info
-    fetch("/api/email")  
+    fetch("/action/email")  
       .then((res) => res.json())
-      .then((data) => setEmailInfo(data.emailInfo))
+      .then((data) => setEmailInfo(data))
       .catch((err) => console.error("Error fetching Email Information:", err));
+
+
+    fetch("/action/phone")  
+      .then((res) => res.json())
+      .then((data) => setCallInfo(data))
+      .catch((err) => console.error("Error fetching Phone Information:", err));
+
+
+
   }, []);
 
   //console.log(emailInfo)
@@ -45,6 +63,14 @@ function App() {
         email= {emailInfo?.email || ""}
         subject= {emailInfo?.subject || ""}
         body= {emailInfo?.body || ""}
+      />
+    </div>
+    </h2>
+    <h2>
+    <div className="flex justify-center items-center h-screen">
+      <PhonecallButton
+        phoneNumber= {callInfo?.phoneNumber || ""}
+        callScript= {callInfo?.callScript || ""}
       />
     </div>
     </h2>
