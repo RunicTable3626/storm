@@ -29,7 +29,11 @@ const connectDB = async (): Promise<void> => {
 connectDB();
 
 // Routes
-app.use("/action", actionRouter);
+app.use("/api/actions", actionRouter);
+
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Server is running on port 5000" });
+});
 
 
 // Serve Frontend in Production
