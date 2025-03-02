@@ -1,18 +1,17 @@
 import mongoose from "mongoose";
 
+const { Schema } = mongoose;
 const actionSchema = new mongoose.Schema({
-  id:           { type: String, required: true, unique: true },
-  createdAt:    { type: Date, required: true, unique: true },
   graphic:      { type: String},
-  title:        { type: String},
+  title:        { type: String, required: true},
   description:  { type: String},
-  email_id :    { type: String},
-  call_id :     { type: String},
-  insta_id :    { type: String},
-  email_count:  { type: Number},
-  call_count:   { type: Number},
-  insta_count:  { type: Number},
-});
+  emailId:      { type: Schema.Types.ObjectId, ref: 'Email' },
+  callId:       { type: Schema.Types.ObjectId, ref: 'Call' },
+  instaId:      { type: Schema.Types.ObjectId, ref: 'Insta' },
+  emailCount:   { type: Number},
+  callCount:    { type: Number},
+  instaCount:   { type: Number},
+}, { timestamps: true });
 
-const Action = mongoose.model("actionSchema", actionSchema);
+const Action = mongoose.model("Action", actionSchema);
 export default Action;
