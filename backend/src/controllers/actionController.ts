@@ -20,15 +20,12 @@ export const postAction = async (req: Request, res: Response) => {
     // Create a new action document
     const emailDetails = new Email(emailInfo);
     await emailDetails.save();
-    console.log("Saved Email ID:", emailDetails._id);
     
     const callDetails = new Call(callInfo);
     await callDetails.save();
-    console.log("Saved Call ID:", callDetails._id);
     
     const instaDetails = new Insta(instaInfo);
     await instaDetails.save();
-    console.log("Saved Insta ID:", instaDetails._id);
 
     const actionDetails = new Action({
       ...mainInfo,    // Spread the mainInfo object (title, description, graphic)
@@ -51,6 +48,18 @@ export const postAction = async (req: Request, res: Response) => {
   }
 };
 
+
+export const getAllActions = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const actions = await Action.find()
+      .populate("emailId") // Populate related email info
+      .populate("callId")  // Populate related call info
+      .populate("instaId"); // Populate related Instagram info
+    res.status(200).json(actions);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching actions" });
+  }
+};
 
 export const getEmailInfo = async (req: Request, res: Response): Promise<void> => {
     try {

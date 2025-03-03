@@ -1,81 +1,52 @@
 import { useEffect, useState } from "react";
-import InstagramButton from "../components/InstagramButton";
-import EmailButton from "../components/EmailButton";
-import PhonecallButton from "../components/PhonecallButton";
+
+// pages/ActionsComponent.tsx
+import ActionCard from "../components/ActionCard"; // Import the ActionCard component
 
 const ActionDashboard = () => {
-    const [instagramLink, setInstagramLink] = useState("");
-    const [emailInfo, setEmailInfo] = useState<{ 
-      email: string; 
-      subject: string; 
-      body: string 
-    }>
-    ({
-      email: "",
-      subject: "",
-      body: "",
-    });
-    const [callInfo, setCallInfo] = useState<{ 
-      phoneNumber: string; 
-      callScript: string
-    }>
-    ({
-      phoneNumber: "",
-      callScript: ""
-    });
-  
-    useEffect(() => {
-      //get instagram links
-      fetch("/api/actions/instagram")
-        .then((res) => res.json()) 
-        .then((data) => setInstagramLink(data))
-        .catch((err) => console.error("Error fetching Instagram Link:", err));
-  
-      //get email info
-      fetch("/api/actions/email")  
-        .then((res) => res.json())
-        .then((data) => setEmailInfo(data))
-        .catch((err) => console.error("Error fetching Email Information:", err));
-  
-  
-      fetch("/api/actions/phone")  
-        .then((res) => res.json())
-        .then((data) => setCallInfo(data))
-        .catch((err) => console.error("Error fetching Phone Information:", err));
-  
-  
-  
-    }, []);
-  
-    //console.log(emailInfo)
-    return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <h1>Action Dashboard</h1>
-        <h2>Storm the lines.</h2>
-        <h2>
-          <div className="flex justify-center items-center h-screen">
-                <InstagramButton postId={instagramLink} />
-          </div>
-      </h2>
-      <h2>
-      <div className="flex justify-center items-center h-screen">
-        <EmailButton 
-          email= {emailInfo?.email || ""}
-          subject= {emailInfo?.subject || ""}
-          body= {emailInfo?.body || ""}
-        />
-      </div>
-      </h2>
-      <h2>
-      <div className="flex justify-center items-center h-screen">
-        <PhonecallButton
-          phoneNumber= {callInfo?.phoneNumber || ""}
-          callScript= {callInfo?.callScript || ""}
-        />
-      </div>
-      </h2>
-      </div>
-    );
+  const [actions, setActions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // Fetch function
+  const fetchActions = async () => {
+    try {
+      const response = await fetch("/api/actions"); // Adjust URL if necessary
+      const data = await response.json();
+      console.log(data)
+
+      if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
+
+      setActions(data); // Store the fetched actions
+
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("an unknown error occurred.")
+      }
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchActions();
+  }, []);
+
+  return (
+    <div>
+      <h2>Actions Dashboard</h2>
+      {loading && <p>Loading actions...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Render ActionCard for each action */}
+      {actions.map((action, index) => (
+        <ActionCard key={action._id || index} action={action} />
+      ))}
+    </div>
+  );
+};
 
 export default ActionDashboard;
