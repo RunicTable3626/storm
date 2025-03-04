@@ -4,7 +4,6 @@ const actionCreationPage = () => {
     const [mainInfo, setMainInfo] = useState({
          title: "", 
          description: "", 
-         graphic: "" ,
     });
 
     const [emailInfo, setEmailInfo] = useState({ 
@@ -82,7 +81,6 @@ const actionCreationPage = () => {
           {/* Main Form */}
           <input type="text" name="title" placeholder="Title" onChange={handleMainChange} required />
           <textarea name="description" placeholder="Description" onChange={handleMainChange} required ></textarea>
-          <input type="text" name="graphic" placeholder="graphic" onChange={handleMainChange} required />
   
           {/* Email subform */}
           <button type="button" onClick={() => setShowEmailSubForm(!showEmailSubForm)}>

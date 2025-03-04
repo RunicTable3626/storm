@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 const actionSchema = new mongoose.Schema({
-  graphic:      { type: String},
   title:        { type: String, required: true},
   description:  { type: String},
   emailId:      { type: Schema.Types.ObjectId, ref: 'Email' },

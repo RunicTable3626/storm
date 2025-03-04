@@ -18,7 +18,7 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
       {action.emailId && (
         <div>
           <EmailButton 
-            email= {action.emailId?.email || ""}
+            email= {action.emailId?.emailAddress || ""}
             subject= {action.emailId?.subject || ""}
             body= {action.emailId?.body || ""}
           />
@@ -41,9 +41,11 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
           <InstagramButton postId={action.instaId.instagramLink} />
         </div>
       )}
-
+      
       {action && (
-        <p>Created At: {moment(action.createdAt).format("MMMM Do YYYY, h:mm A") || "Unknown"}</p>
+        <p>Last Updated: {action.updatedAt
+          ? moment(action.updatedAt).format("MMMM Do YYYY, h:mm A")
+          : "Unknown"}</p>
       )}
     </div>
   );

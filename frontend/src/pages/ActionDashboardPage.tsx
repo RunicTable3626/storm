@@ -13,7 +13,6 @@ const ActionDashboard = () => {
     try {
       const response = await fetch("/api/actions"); // Adjust URL if necessary
       const data = await response.json();
-      console.log(data)
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
 
@@ -41,9 +40,9 @@ const ActionDashboard = () => {
       {loading && <p>Loading actions...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Render ActionCard for each action */}
-      {actions.map((action, index) => (
-        <ActionCard key={action._id || index} action={action} />
+      {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
+      {actions.slice().reverse().map((action) => (
+        <ActionCard key={action._id} action={action} />
       ))}
     </div>
   );
