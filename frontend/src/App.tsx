@@ -3,27 +3,24 @@ import HomePage from "./pages/HomePage";
 import ActionCreationPage from "./pages/ActionCreationPage";
 import ActionDashboardPage from "./pages/ActionDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import Sidebar from "./components/Sidebar";
+
 
 const App = () => {
   return (
     <Router>
-      <div>
+      <div className="flex">
         {/* Sidebar or Navbar with navigation links */}
-        <nav>
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/profile">Action Dashboard</Link></li>
-            <li><Link to="/settings">Create Actions</Link></li>
-          </ul>
-        </nav>
-
+        <Sidebar />
         {/* Define Routes */}
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/profile" element={<ActionDashboardPage />} />
-          <Route path="/settings" element={<ActionCreationPage />} />
-          <Route path="*" element={<NotFoundPage />} /> {/* Catch-all route */}
-        </Routes>
+        <div className="flex-1 p-6">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/action-dashboard" element={<ActionDashboardPage />} />
+            <Route path="/create-action" element={<ActionCreationPage />} />
+            <Route path="*" element={<NotFoundPage />} /> {/* Catch-all route */}
+          </Routes>
+        </div>
       </div>
     </Router>
   );
