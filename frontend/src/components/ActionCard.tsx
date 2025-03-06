@@ -52,36 +52,3 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
 };
 
 export default ActionCard;
-/*
-    return (
-        <div style={{ textAlign: "center", marginTop: "50px" }}>
-          <h1>Action Dashboard</h1>
-          <h2>Storm the lines.</h2>
-          <h2>
-            <div className="flex justify-center items-center h-screen">
-                  <InstagramButton postId={instagramLink} />
-            </div>
-        </h2>
-        <h2>
-        <div className="flex justify-center items-center h-screen">
-          <EmailButton 
-            email= {emailInfo?.email || ""}
-            subject= {emailInfo?.subject || ""}
-            body= {emailInfo?.body || ""}
-          />
-        </div>
-        </h2>
-        <h2>
-        <div className="flex justify-center items-center h-screen">
-          <PhonecallButton
-            phoneNumber= {callInfo?.phoneNumber || ""}
-            callScript= {callInfo?.callScript || ""}
-          />
-        </div>
-        </h2>
-        </div>
-      );
-};
-
-export default ActionCard;
-*/

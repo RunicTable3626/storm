@@ -4,7 +4,9 @@ import ActionCreationPage from "./pages/ActionCreationPage";
 import ActionDashboardPage from "./pages/ActionDashboardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Sidebar from "./components/Sidebar";
+import Modal from "react-modal";
 
+Modal.setAppElement("#root");
 
 const App = () => {
   return (
