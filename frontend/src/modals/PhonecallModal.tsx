@@ -1,12 +1,15 @@
 import React from "react";
 import Modal from "react-modal";
 import "./modalStyles.css";
+import ActionCompleteButton from "../components/ActionCompletedButton";
+
 
 interface PhonecallModalProps {
     isOpen: boolean;
     closeModal: () => void;
     phoneNumber: string;
     callScript: string;
+    actionId:   string;
   }
   
 
@@ -19,7 +22,7 @@ function formatPhoneNumber(phoneNumber: string): string {
   return phoneNumber; // Return as is if it's not valid
 }
 
-const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phoneNumber, callScript}) => {
+const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phoneNumber, callScript, actionId}) => {
     return (
         <Modal
             isOpen={isOpen}
@@ -39,8 +42,14 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             <h3>Script:</h3>
             <p>{callScript}</p>
 
+            <div>
+                <ActionCompleteButton actionId={actionId} actionType="callCount" onClick={closeModal}/>
+            </div>
+
         </Modal>    
     );
 }
 
 export default PhonecallModal;
+
+

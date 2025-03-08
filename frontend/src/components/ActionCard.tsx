@@ -21,6 +21,7 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
             email= {action.emailId?.emailAddress || ""}
             subject= {action.emailId?.subject || ""}
             body= {action.emailId?.body || ""}
+            actionId= {action._id}
           />
         </div>
       )}
@@ -31,6 +32,7 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
           <PhonecallButton
             phoneNumber= {action.callId?.phoneNumber || ""}
             callScript= {action.callId?.callScript || ""}
+            actionId= {action._id}
           />
         </div>
       )}
@@ -38,13 +40,16 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
       {/* Display Instagram Info */}
       {action.instaId && (
         <div>
-          <InstagramButton postId={action.instaId.instagramLink} />
+          <InstagramButton postId={action.instaId.instagramLink} 
+          actionId= {action._id}
+          />
+          
         </div>
       )}
       
       {action && (
-        <p>Last Updated: {action.updatedAt
-          ? moment(action.updatedAt).format("MMMM Do YYYY, h:mm A")
+        <p>Created At: {action.createdAt
+          ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A")
           : "Unknown"}</p>
       )}
     </div>

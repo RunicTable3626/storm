@@ -5,9 +5,10 @@ interface EmailButtonProps {
   email: string;
   subject?: string;
   body?: string;
+  actionId: string;
 }
 
-const EmailButton: React.FC<EmailButtonProps> = ({ email, subject = "", body = "" }) => {
+const EmailButton: React.FC<EmailButtonProps> = ({ email, subject = "", body = "", actionId }) => {
   const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,7 +31,7 @@ const EmailButton: React.FC<EmailButtonProps> = ({ email, subject = "", body = "
         Send an Email
       </button>
 
-      <EmailModal isOpen={isModalOpen} email={email} subject={subject} body={body} onClose={closeModal} onSend={sendEmail} />
+      <EmailModal isOpen={isModalOpen} email={email} subject={subject} body={body} actionId={actionId} onClose={closeModal} onSend={sendEmail} />
     </div>
   );
 };

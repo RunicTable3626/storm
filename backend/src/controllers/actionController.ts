@@ -28,7 +28,7 @@ export const postAction = async (req: Request, res: Response) => {
     await instaDetails.save();
 
     const actionDetails = new Action({
-      ...mainInfo,    // Spread the mainInfo object (title, description, graphic)
+      ...mainInfo,    // Spread the mainInfo object (title, description )
       emailId: emailDetails._id, // Reference to Email collection
       callId: callDetails._id,   // Reference to Call collection
       instaId: instaDetails._id, // Reference to Insta collection
@@ -60,6 +60,34 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "Error fetching actions" });
   }
 };
+
+export const updateCount = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const {actionType, actionId} = req.body; 
+
+    const updatedAction = await Action.findByIdAndUpdate(
+      actionId,
+      { $inc: { [actionType]: 1 } },  // Increment the field by 1
+      { new: true }
+    );
+
+    if (!updatedAction) {
+      res.status(404).json({ error: "Action not found" });
+    }
+
+    res.json(updatedAction);
+  } catch (error: unknown) {
+    // Type assertion to make sure `error` is an `Error` object
+    if (error instanceof Error) {
+      console.log(error)
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred while updating action count." });
+    }
+  }
+} 
+
+
 
 export const getEmailInfo = async (req: Request, res: Response): Promise<void> => {
     try {

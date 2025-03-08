@@ -1,17 +1,19 @@
 import React from "react";
 import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
+import ActionCompleteButton from "../components/ActionCompletedButton";
 
 interface EmailModalProps {
-  isOpen: boolean;
-  email: string;
-  subject: string;
-  body: string;
-  onClose: () => void;
-  onSend: () => void;
+  isOpen:       boolean;
+  email:        string;
+  subject:      string;
+  body:         string;
+  actionId:     string;
+  onClose:() =>  void;
+  onSend: () =>  void;
 }
 
-const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, onClose, onSend }) => {
+const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, actionId, onClose, onSend }) => {
   return (
         <Modal
             isOpen={isOpen}
@@ -39,14 +41,16 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, o
                 </div>
             </div>
 
-            <div>
-                <button className="sendButton" onClick={onSend}>
-                Send Email
+            <div className="button-container">
+                <ActionCompleteButton actionId={actionId} actionType="emailCount" onClick={onClose}/>
+                <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
+                        Send Email
                 </button>
             </div>
-
         </Modal>
     )
 };
 
 export default EmailModal;
+
+

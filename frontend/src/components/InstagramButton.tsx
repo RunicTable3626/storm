@@ -3,9 +3,10 @@ import InstagramModal from "../modals/InstagramModal";
 
 interface InstagramButtonProps {
   postId: string;
+  actionId: string;
 }
 
-const InstagramButton: React.FC<InstagramButtonProps> = ({ postId }) => {
+const InstagramButton: React.FC<InstagramButtonProps> = ({ postId, actionId }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const postUrl = `https://www.instagram.com/p/${postId}/`;
 
@@ -22,7 +23,7 @@ const InstagramButton: React.FC<InstagramButtonProps> = ({ postId }) => {
       </button>
 
       {/* Instagram Modal */}
-      <InstagramModal isOpen={modalIsOpen} closeModal={() => setModalIsOpen(false)} postUrl={postUrl} />
+      <InstagramModal isOpen={modalIsOpen} closeModal={() => setModalIsOpen(false)} postUrl={postUrl} actionId={actionId} />
     </div>
   );
 };

@@ -32,3 +32,9 @@
     color: #888;
     transition: color 0.3s ease;
   }
+
+  .button-container {
+    display: flex;
+    gap: 10px; /* Space between the buttons */
+    margin-top: 20px; /* Add space above the buttons */
+  }  
