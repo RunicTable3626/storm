@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { Home, LayoutGrid, PlusCircle, Menu } from "lucide-react";
 import { useState, useEffect } from "react";
+import GlobalAudio from "./GlobalAudio";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,11 +15,12 @@ const Sidebar = () => {
     <div className={`h-screen bg-gray-900 text-white 
     ${isOpen ? "w-64" : "w-20"} transition-all duration-300 flex flex-col`}>
       {/* Toggle Button */}
-      <div className="flex justify-between items-center p-4">
+      <div className="button-container">
         <button onClick={() => setIsOpen(!isOpen)} 
         className="text-white hover:bg-gray-700">
           <Menu size={24} />
         </button>
+      <GlobalAudio/>
       </div>
 
       {/* Navigation Links */}
