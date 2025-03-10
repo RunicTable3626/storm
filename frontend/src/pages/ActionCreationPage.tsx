@@ -24,6 +24,54 @@ const actionCreationPage = () => {
         instagramLink: "", 
     });
 
+    const generateContent = async (query: string) => {
+      try {
+          const response = await fetch("/api/actions/generate-content", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ query }),
+          });
+  
+          const data = await response.json();
+  
+          if (!response.ok) {
+              throw new Error(data.message || "Failed to generate content");
+          }
+  
+          return data; // Assuming the response contains email & call script data
+      } catch (error) {
+          console.error("Error generating content:", error);
+          return null;
+      }
+  };
+
+    const handleGenerate = async () => {
+      if (!mainInfo.description) {
+          alert("Please enter a description before generating content.");
+          return;
+      }
+  
+      const generatedData = await generateContent(mainInfo.description);
+      
+      if (generatedData) {
+          // Assuming API returns these fields
+          setEmailInfo((prev) => ({
+              ...prev,
+              subject: generatedData.emailSubject || prev.subject,
+              body: generatedData.emailBody || prev.body,
+          }));
+  
+          setCallInfo((prev) => ({
+              ...prev,
+              callScript: generatedData.callScript || prev.callScript,
+          }));
+      }
+  };
+
+
+
     const [showEmailSubForm, setShowEmailSubForm] = useState(false);
     const [showCallSubForm, setShowCallSubForm] = useState(false);
     const [showInstaSubForm, setShowInstaSubForm] = useState(false);
@@ -81,6 +129,9 @@ const actionCreationPage = () => {
           {/* Main Form */}
           <input type="text" name="title" placeholder="Title" onChange={handleMainChange} required />
           <textarea name="description" placeholder="Description" onChange={handleMainChange} required ></textarea>
+
+          {/*Button to call Groq to autogenerate email subject + body and call info */}
+          <button type="button" onClick={handleGenerate}>Generate Content</button>
   
           {/* Email subform */}
           <button type="button" onClick={() => setShowEmailSubForm(!showEmailSubForm)}>
@@ -88,10 +139,10 @@ const actionCreationPage = () => {
           </button>
           {showEmailSubForm && (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <input type="text" name="name" placeholder="Name of Recipient" onChange={handleEmailChange} />
-            <input type="email" name="emailAddress" placeholder="Email Address" onChange={handleEmailChange} />
-            <input type="text" name="subject" placeholder="Subject" onChange={handleEmailChange} />
-            <textarea name="body" placeholder="Body" onChange={handleEmailChange}></textarea>
+            <input type="text" name="name" placeholder="Name of Recipient" value={emailInfo.name} onChange={handleEmailChange} />
+            <input type="email" name="emailAddress" placeholder="Email Address" value={emailInfo.emailAddress} onChange={handleEmailChange} />
+            <input type="text" name="subject" placeholder="Subject" value={emailInfo.subject} onChange={handleEmailChange} />
+            <textarea name="body" placeholder="Body" value={emailInfo.body} onChange={handleEmailChange}></textarea>
           </div>
         )}
 
@@ -100,9 +151,9 @@ const actionCreationPage = () => {
           </button>
           {showCallSubForm && (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <input type="text" name="name" placeholder="Name" onChange={handleCallChange} />
-            <input type="text" name="phoneNumber" placeholder="Phone Number" onChange={handleCallChange} />
-            <textarea name="callScript" placeholder="Call Script" onChange={handleCallChange}></textarea>
+            <input type="text" name="name" placeholder="Name" value={callInfo.name} onChange={handleCallChange} />
+            <input type="text" name="phoneNumber" placeholder="Phone Number" value={callInfo.phoneNumber} onChange={handleCallChange} />
+            <textarea name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange}></textarea>
           </div>
         )}
 
@@ -111,8 +162,8 @@ const actionCreationPage = () => {
           </button>
           {showInstaSubForm && (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            <input type="text" name="name" placeholder="Name" onChange={handleInstaChange} />
-            <input type="text" name="instagramLink" placeholder="Instagram Link" onChange={handleInstaChange} />
+            <input type="text" name="name" placeholder="Name" value={instaInfo.name} onChange={handleInstaChange} />
+            <input type="text" name="instagramLink" placeholder="Instagram Link" value={instaInfo.instagramLink} onChange={handleInstaChange} />
           </div>
         )}
           {/* Submit Button */}

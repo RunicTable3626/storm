@@ -5,12 +5,61 @@ import Action from '../models/actionModel'
 import Email from '../models/emailModel'
 import Call from '../models/callModel'
 import Insta from '../models/instaModel'
+import Groq from "groq-sdk";
 
 const POST_ID = process.env.POST_ID as string;
 const EMAIL = process.env.EMAIL as string;
 const SUBJECT = process.env.SUBJECT as string;
 const BODY = process.env.BODY as string;
 const PHONE_NUMBER = process.env.PHONE_NUMBER as string;
+
+
+export const generateContent = async (req: Request, res: Response) => {
+  try {
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const query = req.body;
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: `Write an email and a voicemail message given the following prompt:
+                    ${query}`,
+        },
+      ],
+      model: "llama-3.2-1b-preview",
+    });
+
+
+    const generatedText = chatCompletion.choices[0]?.message?.content || "";
+    console.log(generatedText);
+
+    const subjectPattern = /Subject:\s*(.*?)(?=\n|$)/;
+    const bodyPattern = /Dear.*?\n\n(.*?)\n\nSincerely.*?$/s;
+    const callScriptPattern = /Voicemail Message:\s*"([^"]+)"/;
+  
+    // Extract the subject using the regex pattern
+    const subjectMatch = generatedText.match(subjectPattern);
+    const subject = subjectMatch ? subjectMatch[1].trim() : '';
+  
+    // Extract the body of the email using the regex pattern
+    const bodyMatch = generatedText.match(bodyPattern);
+    const body = bodyMatch ? bodyMatch[1].trim() : '';
+  
+    // Extract the call script using the regex pattern
+    const callScriptMatch = generatedText.match(callScriptPattern);
+    const callScript = callScriptMatch ? callScriptMatch[1].trim() : ''
+
+    res.status(200).json({subject, body, callScript});
+    
+  } catch (error: unknown) {
+    // Type assertion to make sure `error` is an `Error` object
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred." });
+    }
+  }
+}
 
 
 export const postAction = async (req: Request, res: Response) => {
@@ -56,6 +105,7 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
       .populate("callId")  // Populate related call info
       .populate("instaId"); // Populate related Instagram info
     res.status(200).json(actions);
+
   } catch (error) {
     res.status(500).json({ error: "Error fetching actions" });
   }
