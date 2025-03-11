@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const emailSchema = new mongoose.Schema({
-  name:                 { type: String, required: true},
+  name:                 { type: String},
   emailAddress:         { type: String, required: true},
   subject:              { type: String},
   body:                 { type: String}, 

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import {generateContent} from "../utils/llm.tsx"
 
-const actionCreationPage = () => {
+const ActionCreationPage = () => {
     const [mainInfo, setMainInfo] = useState({
          title: "", 
          description: "", 
@@ -24,28 +25,7 @@ const actionCreationPage = () => {
         instagramLink: "", 
     });
 
-    const generateContent = async (query: string) => {
-      try {
-          const response = await fetch("/api/actions/generate-content", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ query }),
-          });
-  
-          const data = await response.json();
-  
-          if (!response.ok) {
-              throw new Error(data.message || "Failed to generate content");
-          }
-  
-          return data; // Assuming the response contains email & call script data
-      } catch (error) {
-          console.error("Error generating content:", error);
-          return null;
-      }
-  };
+
 
     const handleGenerate = async () => {
       if (!mainInfo.description) {
@@ -54,13 +34,15 @@ const actionCreationPage = () => {
       }
   
       const generatedData = await generateContent(mainInfo.description);
+      console.log(generatedData);
+
       
       if (generatedData) {
           // Assuming API returns these fields
           setEmailInfo((prev) => ({
               ...prev,
-              subject: generatedData.emailSubject || prev.subject,
-              body: generatedData.emailBody || prev.body,
+              subject: generatedData.subject || prev.subject,
+              body: generatedData.body || prev.body,
           }));
   
           setCallInfo((prev) => ({
@@ -174,4 +156,4 @@ const actionCreationPage = () => {
     );
   };
 
-export default actionCreationPage;
+export default ActionCreationPage;

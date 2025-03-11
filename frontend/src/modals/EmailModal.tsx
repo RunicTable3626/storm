@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
+import { useState } from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 
@@ -14,6 +15,8 @@ interface EmailModalProps {
 }
 
 const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, actionId, onClose, onSend }) => {
+    const [genBody, setGenBody] = useState(body);
+
   return (
         <Modal
             isOpen={isOpen}
@@ -29,15 +32,18 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
             </button>
 
             <div className="emailContent">
-                <div className="border p-3 rounded bg-gray-100 mb-2">
-                    <strong>Recipient:</strong> {email}
+                <div className="border">
+                    <strong>To:</strong> {email}
                 </div>
-                <div className="border p-3 rounded bg-gray-100 mb-2">
+                <div className="border">
                     <strong>Subject:</strong> {subject}
                 </div>
-                <div className="border p-3 rounded bg-gray-100 mb-2">
-                    <strong>Body:</strong>
-                    <div style={{ whiteSpace: "pre-wrap" }}>{body}</div>
+                <div className="border">
+                <textarea
+                style={{ whiteSpace: "pre-wrap", width: "100%", height: "200px" }}
+                value={genBody}
+                onChange={(e) => setGenBody(e.target.value)} // Assuming you are using state
+            />
                 </div>
             </div>
 

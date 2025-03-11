@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const instaSchema = new mongoose.Schema({
-  name:                 { type: String, required: true},
+  name:                 { type: String},
   instagramLink:          { type: String, required: true}
 });
 

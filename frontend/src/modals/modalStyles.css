@@ -10,16 +10,18 @@
     align-items: center;
     z-index: 1000;
   }
-  
-  /* Modal content box */
+
   .modal-content {
     position: relative;
+    max-width: 600px; /* Max width of the modal */
+    width: 100%; /* Full width up to the max-width */
+    max-height: 90vh; /* Limit modal height to 90% of the viewport height */
+    overflow-y: auto; /* Enable vertical scroll if content exceeds the max height */
+    margin: auto; /* Center the modal horizontally */
     background-color: white;
+    border-radius: 8px;
     padding: 20px;
-    border-radius: 5px;
-    text-align: center;
-    width: 300px;
-  }
+}
 
   .close-button {
     position: absolute;
@@ -38,3 +40,21 @@
     gap: 10px; /* Space between the buttons */
     margin-top: 20px; /* Add space above the buttons */
   }  
+
+  .emailContent {
+    margin-top: 40px;
+    text-align: left; /* Align text to the left */
+}
+
+.border {
+  border: 1px solid #ccc; /* Gray border color */
+  border-radius: 4px; /* Rounded corners (optional) */
+  padding: 10px; /* Ensure padding inside the border */
+}
+
+textarea {
+  font-family: 'Arial, sans-serif';
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
