@@ -75,25 +75,38 @@ export const generateContent = async (req: Request, res: Response) => {
 }
 
 
+
 export const postAction = async (req: Request, res: Response) => {
   try {
-    const { mainInfo, callInfo, emailInfo, instaInfo} = req.body;
+    const formData = req.body;
+
+    let emailId = null, callId = null, instaId = null;
 
     // Create a new action document
-    const emailDetails = new Email(emailInfo);
-    await emailDetails.save();
+    if (formData.emailInfo) {
+      const emailDetails = new Email(formData.emailInfo);
+      await emailDetails.save();
+      emailId = emailDetails._id;  // Store _id if the emailInfo is valid
+    }
     
-    const callDetails = new Call(callInfo);
-    await callDetails.save();
+    if (formData.callInfo) {
+      const callDetails = new Call(formData.callInfo);
+      await callDetails.save();
+      callId = callDetails._id;  // Store _id if the callInfo is valid
+    }
     
-    const instaDetails = new Insta(instaInfo);
-    await instaDetails.save();
-
+    if (formData.instaInfo) {
+      const instaDetails = new Insta(formData.instaInfo);
+      await instaDetails.save();
+      instaId = instaDetails._id;  // Store _id if the instaInfo is valid
+    }
+    
+    // Create the action document, using the saved IDs or null if not valid
     const actionDetails = new Action({
-      ...mainInfo,    // Spread the mainInfo object (title, description )
-      emailId: emailDetails._id, // Reference to Email collection
-      callId: callDetails._id,   // Reference to Call collection
-      instaId: instaDetails._id, // Reference to Insta collection
+      ...formData.mainInfo,  // Spread the mainInfo object (title, description)
+      emailId,      // Reference to Email collection, will be null if emailDetails is not created
+      callId,       // Reference to Call collection, will be null if callDetails is not created
+      instaId,      // Reference to Insta collection, will be null if instaDetails is not created
     });
 
     await actionDetails.save()

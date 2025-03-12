@@ -28,8 +28,8 @@ const Sidebar = () => {
           !isOpen ? "hidden" : ""
         }`}>
         <NavLink to="/" className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded">
-          {isOpen && <Home size={24} />} 
-          {isOpen && "Home "}
+          {<Home size={24} />} 
+          {"Home "}
         </NavLink>
         <NavLink to="/action-dashboard" className="flex items-center gap-3 p-2 hover:bg-gray-700 rounded">
           {isOpen && <LayoutGrid size={24} /> }

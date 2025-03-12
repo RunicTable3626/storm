@@ -26,7 +26,6 @@ const ActionCreationPage = () => {
     });
 
 
-
     const handleGenerate = async () => {
       if (!mainInfo.description) {
           alert("Please enter a description before generating content.");
@@ -78,13 +77,37 @@ const ActionCreationPage = () => {
     const handleInstaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInstaInfo({ ...instaInfo, [e.target.name]: e.target.value });
       };
+
+
+
+    const validateObject = <T extends Record<string, any>>(obj: T): T | null => {
+        const hasEmptyField = Object.values(obj).some(value => value === null || value === "");
+        
+        if (hasEmptyField) {
+          return null;
+        }
+        
+        return obj;
+      };
+      
+
   
     // Submit form data
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      const formData = { mainInfo, emailInfo, callInfo, instaInfo};
-  
+
+      if (!validateObject(emailInfo) && !validateObject(callInfo) && !validateObject(instaInfo)) {
+        setMessage("Please completely fill out at least one type of action");
+        return;  // Prevent form submission if all are null
+      }
+
       try {
+        const formData: Record<string, any> = { mainInfo };
+
+        // Add each field only if it's valid
+        if (validateObject(emailInfo)) formData.emailInfo = emailInfo;
+        if (validateObject(callInfo)) formData.callInfo = callInfo;
+        if (validateObject(instaInfo)) formData.instaInfo = instaInfo;
         const response = await fetch("api/actions", {
           method: "POST",
           headers: {
@@ -102,6 +125,30 @@ const ActionCreationPage = () => {
       } catch (error) {
         setMessage("Error connecting to the server.");
       }
+
+      //Re-initialize states to null
+      setMainInfo({
+        title: "", 
+        description: "", 
+      });
+
+      setEmailInfo({ 
+        name: "", 
+        emailAddress: "",
+        subject: "",
+        body: ""
+      });
+
+      setCallInfo({ 
+          phoneNumber: "", 
+          name: "" ,
+          callScript: "",
+      })
+
+      setInstaInfo({
+          name: "", 
+          instagramLink: "", 
+      })
     };
   
     return (
