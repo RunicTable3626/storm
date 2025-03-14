@@ -43,11 +43,15 @@ const ActionCreationPage = () => {
               subject: generatedData.subject || prev.subject,
               body: generatedData.body || prev.body,
           }));
+
+          setShowEmailSubForm(true);
   
           setCallInfo((prev) => ({
               ...prev,
               callScript: generatedData.callScript || prev.callScript,
           }));
+
+          setShowCallSubForm(true);
       }
   };
 
@@ -89,25 +93,74 @@ const ActionCreationPage = () => {
         
         return obj;
       };
+
+    
+    const clearForm = async () => {      //Re-initialize states to null
+        setMainInfo({
+          title: "", 
+          description: "", 
+        });
+
+        setEmailInfo({ 
+          name: "", 
+          emailAddress: "",
+          subject: "",
+          body: ""
+        });
+
+        setCallInfo({ 
+            phoneNumber: "", 
+            name: "" ,
+            callScript: "",
+        })
+
+        setInstaInfo({
+            name: "", 
+            instagramLink: "", 
+        })
+
+        setShowEmailSubForm(false);
+        setShowCallSubForm(false);
+        setShowInstaSubForm(false);
+
+    }
       
 
   
     // Submit form data
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
+      let isValidEmail: boolean = false;
+      let isValidCall: boolean = false;
+      let isValidInsta:boolean = false;
 
-      if (!validateObject(emailInfo) && !validateObject(callInfo) && !validateObject(instaInfo)) {
+      if (validateObject(emailInfo)) isValidEmail = true;
+      if (validateObject(callInfo)) isValidCall = true;
+      if (validateObject(instaInfo)) isValidInsta = true;
+
+
+      if (!isValidEmail && !isValidCall && !isValidInsta) {
         setMessage("Please completely fill out at least one type of action");
         return;  // Prevent form submission if all are null
       }
 
+      const isConfirmed = window.confirm(`Are you sure you want to submit? Action types to be submitted:\n
+        ${isValidEmail ? "- Email\n": ""}
+        ${isValidCall ? "- Call\n": ""}
+        ${isValidInsta ? "- Instagram": ""}`);
+
+      if (!isConfirmed) {
+        return;
+      }
+
       try {
         const formData: Record<string, any> = { mainInfo };
+        
 
         // Add each field only if it's valid
-        if (validateObject(emailInfo)) formData.emailInfo = emailInfo;
-        if (validateObject(callInfo)) formData.callInfo = callInfo;
-        if (validateObject(instaInfo)) formData.instaInfo = instaInfo;
+        if (isValidEmail) formData.emailInfo = emailInfo;
+        if (isValidCall) formData.callInfo = callInfo;
+        if (isValidInsta) formData.instaInfo = instaInfo;
         const response = await fetch("api/actions", {
           method: "POST",
           headers: {
@@ -118,7 +171,8 @@ const ActionCreationPage = () => {
   
         const data = await response.json();
         if (response.ok) {
-          setMessage("Action created successfully!");
+          setMessage("Action created successfully");
+          clearForm();
         } else {
           setMessage(data.message || "Error creating Action.");
         }
@@ -126,29 +180,7 @@ const ActionCreationPage = () => {
         setMessage("Error connecting to the server.");
       }
 
-      //Re-initialize states to null
-      setMainInfo({
-        title: "", 
-        description: "", 
-      });
 
-      setEmailInfo({ 
-        name: "", 
-        emailAddress: "",
-        subject: "",
-        body: ""
-      });
-
-      setCallInfo({ 
-          phoneNumber: "", 
-          name: "" ,
-          callScript: "",
-      })
-
-      setInstaInfo({
-          name: "", 
-          instagramLink: "", 
-      })
     };
   
     return (

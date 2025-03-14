@@ -10,7 +10,7 @@ interface ActionProps {
 
 const ActionCard: React.FC<ActionProps> = ({ action }) => {
   return (
-    <div style={{ border: "1px solid #ccc", padding: "10px", marginBottom: "10px" }}>
+    <div style={{ border: "2px solid #ccc", padding: "20px", marginBottom: "10px" }}>
       <h3>{action.title || ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
 
