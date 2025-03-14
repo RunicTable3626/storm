@@ -40,14 +40,14 @@ const GlobalAudio: React.FC = () => {
       {/* Play Button (Only shown if audio isn't playing) */}
       {!isPlaying && (
         <button onClick={playAudio}>
-          Start Quacking
+          ▶
         </button>
       )}
 
       {/* Stop Button (Only shown if audio is playing) */}
       {isPlaying && (
         <button onClick={stopAudio}>
-          Stop Quacking
+          ⏸︎
         </button>
       )}
       
