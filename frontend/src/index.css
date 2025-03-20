@@ -79,7 +79,7 @@ nav {
 }
 
 .flex-1 {
-  padding-top: 60px; /* Push content below the nav (adjust this based on your nav height) */
+  padding-top: 100px; /* Push content below the nav (adjust this based on your nav height) */
 }
 
 .nav-link {

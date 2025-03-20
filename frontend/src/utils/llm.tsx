@@ -1,12 +1,12 @@
 
-export const generateContent = async (query: string) => {
+export const generateContent = async (query: string, tone: string) => {
     try {
         const response = await fetch("/api/actions/generate-content", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ query }),
+            body: JSON.stringify({ query, tone }),
         });
 
         const data = await response.json();

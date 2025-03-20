@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useState } from 'react';
 import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
@@ -7,10 +7,25 @@ interface InstagramModalProps {
   isOpen: boolean;
   closeModal: () => void;
   postUrl: string;
+  comment: string;
   actionId: string;
 }
 
-const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, postUrl, actionId}) => {
+const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, postUrl, comment, actionId}) => {
+  const [copied, setCopied] = useState(false);
+  const textRef = useRef(null);
+
+  const handleCopy = async () => {
+    const text = textRef.current.innerText;  // Access the text using ref
+    try {
+      await navigator.clipboard.writeText(text);  // Copy the text to clipboard
+      setCopied(true);  // Set copied state to true
+      setTimeout(() => setCopied(false), 2000);  // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -25,8 +40,13 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       </button>
 
       <h2 className="text-xl font-bold mb-4">Go to Instagram</h2>
-      <p className="text-gray-700 mb-4">Do you want to open this post on Instagram?</p>
-
+      <p ref={textRef} className="text-gray-700 mb-4">{comment}</p>
+      {comment && <button onClick={ (e) => {
+        (e.target as HTMLButtonElement).blur()
+        handleCopy()}
+      }
+      >Copy Text</button>}
+      {copied && comment && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
       <div className="button-container">
           <ActionCompleteButton actionId={actionId} actionType="instaCount" onClick={closeModal}/>
           <button

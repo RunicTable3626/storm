@@ -40,7 +40,9 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
       {/* Display Instagram Info */}
       {action.instaId && (
         <div>
-          <InstagramButton postId={action.instaId.instagramLink} 
+          <InstagramButton 
+          postId={action.instaId.instagramLink || ""} 
+          comment={action.instaId.comment || ""}
           actionId= {action._id}
           />
           

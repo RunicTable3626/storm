@@ -18,22 +18,31 @@ export const generateContent = async (req: Request, res: Response) => {
   try {
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const query: string = req.body.query as string;
-    const queryContent = `Generate both an email and a voicemail message based on the following description:
-                          ${query}
-                          Email:
-                          Subject: Provide a clear and relevant subject line.
-                          Use a professional but angry tone.
-                          Keep the message concise but informative.
-                          End with an appropriate closing as a concerned citizen.
-                          Voicemail:
-                          Use a natural, conversational, but upset tone.
-                          Keep it brief (under 30 seconds).
-                          End with a polite sign-off.
+    const tone: string = req.body.tone as string;
+    const queryContent = `Generate an email, a voicemail message, and a comment based on the following description: 
+                          ${query}\n\n
+                          
+                          Email:\n 
+                          - Subject: Provide a clear and relevant subject line.\n
+                          - Use a ${tone} tone.\n
+                          - Keep the message concise but informative.\n
+                          - End with an appropriate closing as a concerned citizen.\n\n
+                          
+                          Voicemail:\n
+                          - Use a natural, conversational, but ${tone} tone.\n
+                          - Keep it brief (under 30 seconds).\n
+                          - End with a polite sign-off.
+                          
+                          \n\nComment:\n
+                          - Use a ${tone} tone.\n
+                          - Keep it short and impactful.\n
+                          - Ensure it aligns with the key message in the email and voicemail.
+
     `;
     
     //look this up on ChatGPT to know what this exactly means.
     let match;
-    const regex = /Subject:\s*(.*)\n([\s\S]*?)\n\nVoicemail:\s*"(.*)"/;
+    const regex = /\*\*Email:\*\*\s*\n\nSubject:\s*(.*?)\n\n([\s\S]*?)\n\n\*\*Voicemail:\*\*\s*\n\n([\s\S]*?)\n\n\*\*Comment:\*\*\s*\n\n([\s\S]*)/;
     while (!match) {
       const chatCompletion = await groq.chat.completions.create({
         messages: [
@@ -49,19 +58,17 @@ export const generateContent = async (req: Request, res: Response) => {
       console.log(generatedText);
       match = generatedText.match(regex);
     }
-    
-    //this handles 2 llm output formats.
 
-    
-  
     // Extract the subject using the regex pattern
     if (match) {
       const subject = match[1].trim();
       const body = match[2].trim();
       const callScript = match[3].trim();
-      res.status(200).json({subject, body, callScript});
+      const comment = match[4].trim().replace(/^"|"$/g, '').replace(/\\/g, '');
+      res.status(200).json({subject, body, callScript, comment});
+
     } else {
-      res.status(500).json({ error: "Failed to extract subject, body, and voicemail. Ensure the input format is correct."});
+      res.status(500).json({ error: "Failed to extract subject, body, voicemail and comment. Ensure the input format is correct."});
     }
     
   } catch (error: unknown) {

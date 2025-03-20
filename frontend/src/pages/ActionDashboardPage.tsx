@@ -7,6 +7,7 @@ const ActionDashboard = () => {
   const [actions, setActions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
 
   // Fetch function
   const fetchActions = async () => {
@@ -33,6 +34,8 @@ const ActionDashboard = () => {
   useEffect(() => {
     fetchActions();
   }, []);
+
+
 
   return (
     <div>

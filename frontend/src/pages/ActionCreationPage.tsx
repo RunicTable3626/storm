@@ -22,8 +22,11 @@ const ActionCreationPage = () => {
 
     const [instaInfo, setInstaInfo] = useState({ 
         name: "", 
+        comment: "",
         instagramLink: "", 
     });
+
+    const [tone, setTone] = useState("polite");
 
 
     const handleGenerate = async () => {
@@ -32,7 +35,7 @@ const ActionCreationPage = () => {
           return;
       }
   
-      const generatedData = await generateContent(mainInfo.description);
+      const generatedData = await generateContent(mainInfo.description, tone);
       console.log(generatedData);
 
       
@@ -52,6 +55,13 @@ const ActionCreationPage = () => {
           }));
 
           setShowCallSubForm(true);
+
+          setInstaInfo((prev) => ({
+            ...prev,
+            comment: generatedData.comment || prev.comment,
+        }));
+
+          setShowInstaSubForm(true);
       }
   };
 
@@ -78,7 +88,7 @@ const ActionCreationPage = () => {
         setCallInfo({ ...callInfo, [e.target.name]: e.target.value });
       };
 
-    const handleInstaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInstaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setInstaInfo({ ...instaInfo, [e.target.name]: e.target.value });
       };
 
@@ -116,6 +126,7 @@ const ActionCreationPage = () => {
 
         setInstaInfo({
             name: "", 
+            comment: "",
             instagramLink: "", 
         })
 
@@ -192,6 +203,7 @@ const ActionCreationPage = () => {
           <textarea name="description" placeholder="Description" onChange={handleMainChange} required ></textarea>
 
           {/*Button to call Groq to autogenerate email subject + body and call info */}
+          <textarea name="tone" placeholder="Tone (Defaults to polite)" onChange={(e) => setTone(e.target.value)} ></textarea>
           <button type="button" onClick={handleGenerate}>Generate Content</button>
   
           {/* Email subform */}
@@ -224,6 +236,7 @@ const ActionCreationPage = () => {
           {showInstaSubForm && (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input type="text" name="name" placeholder="Name" value={instaInfo.name} onChange={handleInstaChange} />
+            <textarea name="comment" placeholder="Comment" value={instaInfo.comment} onChange={handleInstaChange}></textarea>
             <input type="text" name="instagramLink" placeholder="Instagram Link" value={instaInfo.instagramLink} onChange={handleInstaChange} />
           </div>
         )}

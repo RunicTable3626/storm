@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface ActionCompleteButtonProps {
   actionType: string;
@@ -8,6 +8,8 @@ interface ActionCompleteButtonProps {
 }
 
 const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
+  const [completed, setCompleted] = useState(false);
+
   const handleClick = async () => {
     try {
       const response = await fetch("api/actions/updateCount", {
@@ -20,14 +22,19 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       });
 
       if (!response.ok) throw new Error("Failed to update counter");
-
+      
       console.log(`${actionType} count incremented with response: ${response}`);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
-  return <button onClick={() => { handleClick(); onClick(); }}>Complete Action</button>;
+  return (
+        <div style={{ display: "inline-flex", alignItems: "center" }}>
+        <button onClick={() => { handleClick(); setCompleted(true); setTimeout(() => {onClick();}, 1000); }}>Complete Action</button>
+        {completed && <span style={{ color: "green", marginLeft: "10px" }}>Action Completed!</span>}
+        </div>
+  )
 };
 
 export default ActionCompleteButton;
