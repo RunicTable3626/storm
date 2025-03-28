@@ -97,6 +97,21 @@ nav {
   font-weight: bold;
 }
 
+
+button.nav-link {
+  text-decoration: none;
+  display: block;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  color: black;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+button.nav-link:hover {
+  color: #747bff;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

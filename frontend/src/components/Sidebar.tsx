@@ -1,7 +1,7 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { Home, LayoutGrid, PlusCircle, Menu } from "lucide-react";
-import { useState, useEffect } from "react";
+import { NavLink} from "react-router-dom";
 import GlobalAudio from "./GlobalAudio";
+import { SignedIn, SignedOut, SignInButton, UserButton, SignIn } from '@clerk/clerk-react'
+
 
 const Sidebar = () => {
   return (
@@ -12,14 +12,27 @@ const Sidebar = () => {
       <NavLink to="/action-dashboard" end className="nav-link">
       Action Dashboard
       </NavLink>
-      <NavLink to="/create-action" className="nav-link">
-      Create Action
-      </NavLink>
+
+      <SignedIn>
+        <NavLink to="/create-action" className="nav-link">
+        Create Action
+        </NavLink>
+
+        <UserButton />
+      </SignedIn>
+
+      <SignedOut>
+      <SignInButton>
+        <button className="nav-link">Admin Login</button>
+      </SignInButton>
+      </SignedOut>
+
 
       <GlobalAudio/>
+
+
     </nav>
   );
 };
 
 export default Sidebar;
-
