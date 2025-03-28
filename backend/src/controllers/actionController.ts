@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from "mongoose";
 import dotenv from "dotenv"
 dotenv.config();
 import Action from '../models/actionModel'
@@ -208,4 +209,42 @@ export const getInstagramPostID = async (req: Request, res: Response): Promise<v
   };
 
 
+export const deleteAction = async (req: Request, res: Response): Promise<void> => {
+  //Deletes not just the action but all related types of actions in their respective collections.
+  const { actionId } = req.params;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // Find the Action document to get related IDs
+    const action = await Action.findById(actionId).session(session);
+    if (!action) {
+      throw new Error("Action not found");
+    }
+
+    // Delete related entries in Call, Email, and Insta collections (only one per action)
+    await Promise.all([
+      action.callId && Call.findByIdAndDelete(action.callId).session(session),
+      action.emailId && Email.findByIdAndDelete(action.emailId).session(session),
+      action.instaId && Insta.findByIdAndDelete(action.instaId).session(session),
+    ]);
+
+    // Delete the Action document
+    await Action.findByIdAndDelete(actionId).session(session);
+
+    // Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+    res.status(200).json({ message: `Action with id ${actionId} deleted successfully, along with related call, email or insta entries`});
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error("Error deleting action and related entries:", error);
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: `An unknown error occurred while deleting action ${actionId}` });
+    }
+  }
+};
 

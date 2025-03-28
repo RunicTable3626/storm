@@ -24,6 +24,8 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       if (!response.ok) throw new Error("Failed to update counter");
       
       console.log(`${actionType} count incremented with response: ${response}`);
+      setCompleted(true);
+      setTimeout(() => {onClick();}, 1000);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -31,7 +33,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
 
   return (
         <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <button onClick={() => { handleClick(); setCompleted(true); setTimeout(() => {onClick();}, 1000); }}>Complete Action</button>
+        <button onClick={handleClick}>Complete Action</button>
         {completed && <span style={{ color: "green", marginLeft: "10px" }}>Action Completed!</span>}
         </div>
   )

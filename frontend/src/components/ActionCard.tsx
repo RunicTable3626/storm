@@ -3,12 +3,15 @@ import moment from "moment";
 import EmailButton from "./EmailButton"
 import PhonecallButton from "./PhonecallButton";
 import InstagramButton from "./InstagramButton";
+import DeleteActionButton from "./DeleteActionButton";
+import { SignedIn } from "@clerk/clerk-react";
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
+  onDelete: (actionId: string) => void;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
   return (
     <div style={{ border: "2px solid #ccc", padding: "20px", marginBottom: "10px" }}>
       <h3>{action.title || ""}</h3>
@@ -54,6 +57,17 @@ const ActionCard: React.FC<ActionProps> = ({ action }) => {
           ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A")
           : "Unknown"}</p>
       )}
+
+      <SignedIn>
+      {action && (
+        <div>
+          <DeleteActionButton
+          actionId = {action._id}
+          onDelete = {onDelete}
+          />
+        </div>
+        ) }
+      </SignedIn>
     </div>
   );
 };

@@ -35,6 +35,10 @@ const ActionDashboard = () => {
     fetchActions();
   }, []);
 
+  const handleDeleteAction = async (deletedId: string) => {
+    setActions((prevActions) => prevActions.filter((action) => action._id !== deletedId));
+  }
+
 
 
   return (
@@ -45,7 +49,7 @@ const ActionDashboard = () => {
 
       {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
       {actions.slice().reverse().map((action) => (
-        <ActionCard key={action._id} action={action} />
+        <ActionCard key={action._id} action={action} onDelete={handleDeleteAction} />
       ))}
     </div>
   );
