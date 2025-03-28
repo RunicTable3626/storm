@@ -204,10 +204,18 @@ const ActionCreationPage = () => {
 
           {/*Button to call Groq to autogenerate email subject + body and call info */}
           <textarea name="tone" placeholder="Tone (Defaults to polite)" onChange={(e) => setTone(e.target.value)} ></textarea>
-          <button type="button" onClick={handleGenerate}>Generate Content</button>
+          <button type="button" onClick={ (e) => {
+                    (e.target as HTMLButtonElement).blur()
+                    handleGenerate
+                  }
+          }>Generate Content</button>
   
           {/* Email subform */}
-          <button type="button" onClick={() => setShowEmailSubForm(!showEmailSubForm)}>
+          <button type="button" onClick={ (e) => {
+                    (e.target as HTMLButtonElement).blur()
+                    setShowEmailSubForm(!showEmailSubForm)
+                  }
+          }>
           {showEmailSubForm ? "Hide Email Details" : "Add Email Action"}
           </button>
           {showEmailSubForm && (
@@ -219,7 +227,14 @@ const ActionCreationPage = () => {
           </div>
         )}
 
-          <button type="button" onClick={() => setShowCallSubForm(!showCallSubForm)}>
+
+
+
+          <button type="button" onClick={ (e) => {
+                    (e.target as HTMLButtonElement).blur()
+                    setShowCallSubForm(!showCallSubForm)
+                  }
+          }>
           {showCallSubForm ? "Hide Call Details" : "Add Call Action"}
           </button>
           {showCallSubForm && (
@@ -230,7 +245,14 @@ const ActionCreationPage = () => {
           </div>
         )}
 
-          <button type="button" onClick={() => setShowInstaSubForm(!showInstaSubForm)}>
+
+
+
+          <button type="button" onClick={ (e) => {
+                    (e.target as HTMLButtonElement).blur()
+                    setShowInstaSubForm(!showInstaSubForm)
+                  }
+          }>
           {showInstaSubForm ? "Hide Instagram Details" : "Add Instagram Action"}
           </button>
           {showInstaSubForm && (
