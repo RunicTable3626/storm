@@ -23,6 +23,8 @@ export const generateContent = async (req: Request, res: Response) => {
     const queryContent = `Generate an email, a voicemail message, and a comment based on the following description: 
                           ${query}\n\n
                           
+                          Please do not deviate from the following format:\n
+
                           Email:\n 
                           - Subject: Provide a clear and relevant subject line.\n
                           - Use a ${tone} tone.\n
@@ -40,11 +42,6 @@ export const generateContent = async (req: Request, res: Response) => {
                           - Ensure it aligns with the key message in the email and voicemail.
 
     `;
-    
-    //look this up on ChatGPT to know what this exactly means.
-    let match;
-    const regex = /\*\*Email:\*\*\s*\n\nSubject:\s*(.*?)\n\n([\s\S]*?)\n\n\*\*Voicemail:\*\*\s*\n\n([\s\S]*?)\n\n\*\*Comment:\*\*\s*\n\n([\s\S]*)/;
-    while (!match) {
       const chatCompletion = await groq.chat.completions.create({
         messages: [
           {
@@ -52,25 +49,28 @@ export const generateContent = async (req: Request, res: Response) => {
             content: queryContent,
           },
         ],
-        model: "llama-3.3-70b-versatile",
+        model: "llama-3.2-90b-vision-preview",
       });
   
       const generatedText = chatCompletion.choices[0]?.message?.content || "";
-      console.log(generatedText);
-      match = generatedText.match(regex);
-    }
 
-    // Extract the subject using the regex pattern
-    if (match) {
-      const subject = match[1].trim();
-      const body = match[2].trim();
-      const callScript = match[3].trim();
-      const comment = match[4].trim().replace(/^"|"$/g, '').replace(/\\/g, '');
+
+      // Step 1: Split the input into sections (by "Voicemail:" and "Comment:" markers)
+      const emailSection = generatedText.split('Voicemail:')[0].trim(); // Everything before "Voicemail:"
+      const voicemailSection = generatedText.split('Comment:')[0].split('Voicemail:')[1].trim(); // Everything between "Voicemail:" and "Comment:"
+      const commentSection = generatedText.split('Comment:')[1].trim(); // Everything after "Comment:"
+
+      // Step 2: Extract the subject and body from the email section
+      const emailParts = emailSection.replace(/\n+/g, '\n').split("\n");
+      const subject = emailParts[1].trim(); // Get the line after "Subject:"
+      const body = emailParts.slice(2).join("\n").trim(); // Get everything after the subject line till "Voicemail:"
+
+      // Step 3: Extract voicemail message (remove quotes around it)
+      const callScript = voicemailSection.replace(/^"|"$/g, "").trim(); // Remove quotes
+
+      // Step 4: Extract comment message (remove quotes around it)
+      const comment = commentSection.replace(/^"|"$/g, "").trim(); // Remove quotes
       res.status(200).json({subject, body, callScript, comment});
-
-    } else {
-      res.status(500).json({ error: "Failed to extract subject, body, voicemail and comment. Ensure the input format is correct."});
-    }
     
   } catch (error: unknown) {
     // Type assertion to make sure `error` is an `Error` object
@@ -81,8 +81,6 @@ export const generateContent = async (req: Request, res: Response) => {
     }
   }
 }
-
-
 
 export const postAction = async (req: Request, res: Response) => {
   try {

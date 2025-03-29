@@ -36,7 +36,6 @@ const ActionCreationPage = () => {
       }
   
       const generatedData = await generateContent(mainInfo.description, tone);
-      console.log(generatedData);
 
       
       if (generatedData) {
@@ -110,6 +109,8 @@ const ActionCreationPage = () => {
           title: "", 
           description: "", 
         });
+
+        setTone("polite");
 
         setEmailInfo({ 
           name: "", 
@@ -205,8 +206,8 @@ const ActionCreationPage = () => {
           {/*Button to call Groq to autogenerate email subject + body and call info */}
           <textarea name="tone" placeholder="Tone (Defaults to polite)" onChange={(e) => setTone(e.target.value)} ></textarea>
           <button type="button" onClick={ (e) => {
-                    (e.target as HTMLButtonElement).blur()
-                    handleGenerate
+                    (e.target as HTMLButtonElement).blur();
+                    handleGenerate();
                   }
           }>Generate Content</button>
   
