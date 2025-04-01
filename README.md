@@ -33,6 +33,6 @@ This is built using the MERN stack
 * MongoDB (a NoSQL database used for non-relational data)
 * Express.js (Server-side tool to make it easier to deploy Node.js backends to the web)
 * React.js (Frontend library to render a functional user interface)
-* Node.js (backend framework that helps power the meat and potatoes of this thing)
+* Node.js (backend framework that helps power the tofu and potatoes of this thing)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
