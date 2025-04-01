@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
 import actionRouter from "./routes/action";
+import { clerkMiddleware } from '@clerk/express'
+
 
 dotenv.config();
 
@@ -11,7 +13,7 @@ const app: Application = express();
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI as string;
 
-
+app.use(clerkMiddleware())
 app.use(express.json());
 app.use(cors());
 

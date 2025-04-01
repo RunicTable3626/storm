@@ -16,6 +16,7 @@ const ActionDashboard = () => {
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
+      console.log(data);
 
       setActions(data); // Store the fetched actions
 
