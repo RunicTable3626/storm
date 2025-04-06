@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {
   actionType: string;
@@ -12,7 +13,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
 
   const handleClick = async () => {
     try {
-      const response = await fetch("api/actions/updateCount", {
+      const response = await fetch(`${API_URL}/api/actions/updateCount`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

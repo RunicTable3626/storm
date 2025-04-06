@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 const ActionCreationPage = () => {
     const [mainInfo, setMainInfo] = useState({
@@ -173,7 +174,7 @@ const ActionCreationPage = () => {
         if (isValidEmail) formData.emailInfo = emailInfo;
         if (isValidCall) formData.callInfo = callInfo;
         if (isValidInsta) formData.instaInfo = instaInfo;
-        const response = await fetch("api/actions", {
+        const response = await fetch(`${API_URL}/api/actions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

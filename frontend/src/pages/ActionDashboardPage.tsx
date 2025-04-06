@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 // pages/ActionsComponent.tsx
 import ActionCard from "../components/ActionCard"; // Import the ActionCard component
@@ -17,7 +18,7 @@ const ActionDashboard = () => {
   // Fetch function
   const fetchActions = async () => {
     try {
-      const response = await fetch("/api/actions"); // Adjust URL if necessary
+      const response = await fetch(`${API_URL}/api/actions`); // Adjust URL if necessary
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");

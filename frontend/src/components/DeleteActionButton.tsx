@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import DeleteActionModal from "../modals/DeleteActionModal"
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface DeleteActionButtonProps {
   actionId: string;
@@ -16,7 +17,7 @@ const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDel
 
   const handleClick = async () => {
     try {
-      const response = await fetch(`api/actions/${actionId}`, { method: "DELETE" });
+      const response = await fetch(`${API_URL}/api/actions/${actionId}`, { method: "DELETE" });
 
       if (!response.ok) throw new Error("Failed to delete action");
 

@@ -1,7 +1,11 @@
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
+
+
+
 
 export const generateContent = async (query: string, tone: string) => {
     try {
-        const response = await fetch("/api/actions/generate-content", {
+        const response = await fetch(`${API_URL}/api/actions/generate-content`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -25,7 +29,7 @@ export const generateContent = async (query: string, tone: string) => {
 
 export const rephraseContent = async (query: string) => {
     try {
-        const response = await fetch("/api/actions/rephrase-content", {
+        const response = await fetch(`${API_URL}/api/actions/rephrase-content`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

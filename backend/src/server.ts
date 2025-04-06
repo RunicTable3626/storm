@@ -33,18 +33,4 @@ connectDB();
 // Routes
 app.use("/api/actions", actionRouter);
 
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Server is running on port 5000" });
-});
-
-
-// Serve Frontend in Production
-if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirname, "../../frontend/dist");
-  app.use(express.static(frontendPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(frontendPath, "index.html"));
-  });
-}
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
