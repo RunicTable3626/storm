@@ -13,19 +13,23 @@ interface InstagramModalProps {
 
 const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, postUrl, comment, actionId}) => {
   const [copied, setCopied] = useState(false);
-  const textRef = useRef(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   const handleCopy = async () => {
-    const text = textRef.current.innerText;  // Access the text using ref
+    const text = textRef.current?.innerText;
+  
+    if (!text) {
+      return console.error('Nothing to copy: textRef is null or empty');
+    }
+  
     try {
-      await navigator.clipboard.writeText(text);  // Copy the text to clipboard
-      setCopied(true);  // Set copied state to true
-      setTimeout(() => setCopied(false), 2000);  // Reset after 2 seconds
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error('Text copy failed:', err);
     }
   };
-
   return (
     <Modal
       isOpen={isOpen}
