@@ -1,6 +1,6 @@
 import { NavLink} from "react-router-dom";
 import GlobalAudio from "./GlobalAudio";
-import { SignedIn, SignedOut, SignInButton, UserButton, SignIn } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, UserButton} from '@clerk/clerk-react'
 
 
 const Sidebar = () => {
