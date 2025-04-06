@@ -3,8 +3,13 @@ import { useEffect, useState } from "react";
 // pages/ActionsComponent.tsx
 import ActionCard from "../components/ActionCard"; // Import the ActionCard component
 
+
+interface Action {
+  _id: string;
+}
+
 const ActionDashboard = () => {
-  const [actions, setActions] = useState([]);
+  const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   
