@@ -176,6 +176,7 @@ const ActionCreationPage = () => {
         if (isValidInsta) formData.instaInfo = instaInfo;
         const response = await fetch(`${API_URL}/api/actions`, {
           method: "POST",
+          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
           },

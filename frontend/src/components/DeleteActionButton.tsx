@@ -17,7 +17,10 @@ const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDel
 
   const handleClick = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/actions/${actionId}`, { method: "DELETE" });
+      const response = await fetch(`${API_URL}/api/actions/${actionId}`, { 
+        method: "DELETE",
+        credentials: 'include' 
+      });
 
       if (!response.ok) throw new Error("Failed to delete action");
 

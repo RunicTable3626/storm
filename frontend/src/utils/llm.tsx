@@ -7,6 +7,7 @@ export const generateContent = async (query: string, tone: string) => {
     try {
         const response = await fetch(`${API_URL}/api/actions/generate-content`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
             },
@@ -31,6 +32,7 @@ export const rephraseContent = async (query: string) => {
     try {
         const response = await fetch(`${API_URL}/api/actions/rephrase-content`, {
             method: "POST",
+            credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
             },
