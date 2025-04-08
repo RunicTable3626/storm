@@ -16,11 +16,11 @@ import {
 actionRouter.get("/email", getEmailInfo);
 actionRouter.get("/instagram", getInstagramPostID);
 actionRouter.get("/phone", getCallInfo);
-actionRouter.post("/", requireAuth(), postAction);
+actionRouter.post("/", postAction);
 actionRouter.get("/", getAllActions);
 actionRouter.patch("/updateCount", updateCount);
-actionRouter.post('/generate-content', requireAuth(), generateContent);
-actionRouter.delete('/:actionId', requireAuth(), deleteAction);
+actionRouter.post('/generate-content', generateContent);
+actionRouter.delete('/:actionId',  deleteAction);
 
 
 export default actionRouter; 
