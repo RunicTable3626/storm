@@ -9,9 +9,10 @@ import { SignedIn } from "@clerk/clerk-react";
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
   onDelete: (actionId: string) => void;
+  token: string | null;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, onDelete, token }) => {
   return (
     <div style={{ border: "2px solid #ccc", padding: "20px", marginBottom: "10px" }}>
       <h3>{action.title || ""}</h3>
@@ -75,6 +76,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
           <DeleteActionButton
           actionId = {action._id}
           onDelete = {onDelete}
+          token = {token}
           />
         </div>
         ) }

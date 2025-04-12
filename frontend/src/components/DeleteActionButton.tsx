@@ -5,10 +5,11 @@ const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 interface DeleteActionButtonProps {
   actionId: string;
   onDelete: (actionId: string) => void;
+  token: string | null;
   
 }
 
-const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDelete }) => {
+const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDelete, token }) => {
   const [completed, setCompleted] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +20,10 @@ const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDel
     try {
       const response = await fetch(`${API_URL}/api/actions/${actionId}`, { 
         method: "DELETE",
-        credentials: 'include' 
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      },
       });
 
       if (!response.ok) throw new Error("Failed to delete action");

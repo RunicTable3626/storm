@@ -26,15 +26,16 @@ export const generateContent = async (query: string, tone: string, token: string
 
 
 
-export const rephraseContent = async (query: string) => {
+export const rephraseContent = async (content: string, actionType: string, token: string) => {
     try {
         const response = await fetch(`${API_URL}/api/actions/rephrase-content`, {
             method: "POST",
             credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ query }),
+            body: JSON.stringify({ content, actionType }),
         });
 
         const data = await response.json();
