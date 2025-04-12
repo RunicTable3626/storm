@@ -7,6 +7,7 @@ import actionRouter from "./routes/action";
 import { clerkMiddleware, getAuth } from '@clerk/express'
 
 
+
 dotenv.config();
 
 const app: Application = express();
