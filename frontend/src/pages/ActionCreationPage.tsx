@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
 import { useAuth } from "@clerk/clerk-react";
 
