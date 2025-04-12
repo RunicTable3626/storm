@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
+import { useAuth } from "@clerk/clerk-react";
+
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 const ActionCreationPage = () => {
@@ -28,6 +30,7 @@ const ActionCreationPage = () => {
     });
 
     const [tone, setTone] = useState("polite");
+    const { getToken } = useAuth();
 
 
     const handleGenerate = async () => {
@@ -35,34 +38,49 @@ const ActionCreationPage = () => {
           alert("Please enter a description before generating content.");
           return;
       }
+
+      try {
+        const token = await getToken();
+        
+        if (token) {
+          // Proceed only if token is available
+          const generatedData = await generateContent(mainInfo.description, tone, token);
+          if (generatedData) {
+            // Assuming API returns these fields
+            setEmailInfo((prev) => ({
+                ...prev,
+                subject: generatedData.subject || prev.subject,
+                body: generatedData.body || prev.body,
+            }));
   
-      const generatedData = await generateContent(mainInfo.description, tone);
+            setShowEmailSubForm(true);
+    
+            setCallInfo((prev) => ({
+                ...prev,
+                callScript: generatedData.callScript || prev.callScript,
+            }));
+  
+            setShowCallSubForm(true);
+  
+            setInstaInfo((prev) => ({
+              ...prev,
+              comment: generatedData.comment || prev.comment,
+          }));
+  
+            setShowInstaSubForm(true);
+        }
+
+        } else {
+          console.error("No token available");
+        }
+      } catch (error) {
+        console.error("Error generating content:", error);
+      }
+  
+      
 
       
-      if (generatedData) {
-          // Assuming API returns these fields
-          setEmailInfo((prev) => ({
-              ...prev,
-              subject: generatedData.subject || prev.subject,
-              body: generatedData.body || prev.body,
-          }));
 
-          setShowEmailSubForm(true);
-  
-          setCallInfo((prev) => ({
-              ...prev,
-              callScript: generatedData.callScript || prev.callScript,
-          }));
-
-          setShowCallSubForm(true);
-
-          setInstaInfo((prev) => ({
-            ...prev,
-            comment: generatedData.comment || prev.comment,
-        }));
-
-          setShowInstaSubForm(true);
-      }
   };
 
 
@@ -168,7 +186,6 @@ const ActionCreationPage = () => {
 
       try {
         const formData: Record<string, any> = { mainInfo };
-        
 
         // Add each field only if it's valid
         if (isValidEmail) formData.emailInfo = emailInfo;
