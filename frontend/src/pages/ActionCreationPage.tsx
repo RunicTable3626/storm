@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {generateContent} from "../utils/llm.tsx"
 import { useAuth } from "@clerk/clerk-react";
 
@@ -31,17 +31,26 @@ const ActionCreationPage = () => {
 
     const [tone, setTone] = useState("polite");
     const { getToken } = useAuth();
+    const [token, setToken] = useState<string | null>(null);
+
+    useEffect(() => {
+      const fetchToken = async () => {
+        const token = await getToken();
+        setToken(token);
+      };
+  
+      fetchToken();
+    }, [getToken]);
 
 
     const handleGenerate = async () => {
+
       if (!mainInfo.description) {
           alert("Please enter a description before generating content.");
           return;
       }
 
       try {
-        const token = await getToken();
-        
         if (token) {
           // Proceed only if token is available
           const generatedData = await generateContent(mainInfo.description, tone, token);
@@ -193,10 +202,10 @@ const ActionCreationPage = () => {
         if (isValidInsta) formData.instaInfo = instaInfo;
         const response = await fetch(`${API_URL}/api/actions`, {
           method: "POST",
-          credentials: 'include',
           headers: {
             "Content-Type": "application/json",
-          },
+            Authorization: `Bearer ${token}`,
+        },
           body: JSON.stringify(formData),
         });
   
