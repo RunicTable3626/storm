@@ -18,6 +18,7 @@ app.use(cors({
   credentials: true,
 }));
 
+app.set("trust proxy", true); // for Clerk cookies via Vercel
 app.use(clerkMiddleware())
 app.use(express.json());
 
