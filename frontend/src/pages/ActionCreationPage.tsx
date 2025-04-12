@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {generateContent} from "../utils/llm.tsx"
 import { useAuth } from "@clerk/clerk-react";
 
+
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 const ActionCreationPage = () => {
@@ -31,17 +32,9 @@ const ActionCreationPage = () => {
 
     const [tone, setTone] = useState("polite");
     const { getToken } = useAuth();
-    const [token, setToken] = useState<string | null>(null);
 
-    useEffect(() => {
-      const fetchToken = async () => {
-        const token = await getToken();
-        setToken(token);
-      };
-  
-      fetchToken();
-    }, [getToken]);
-
+    // Inside an async function
+    
 
     const handleGenerate = async () => {
 
@@ -51,6 +44,7 @@ const ActionCreationPage = () => {
       }
 
       try {
+        const token = await getToken();
         if (token) {
           // Proceed only if token is available
           const generatedData = await generateContent(mainInfo.description, tone, token);
@@ -200,6 +194,7 @@ const ActionCreationPage = () => {
         if (isValidEmail) formData.emailInfo = emailInfo;
         if (isValidCall) formData.callInfo = callInfo;
         if (isValidInsta) formData.instaInfo = instaInfo;
+        const token = await getToken();
         const response = await fetch(`${API_URL}/api/actions`, {
           method: "POST",
           headers: {

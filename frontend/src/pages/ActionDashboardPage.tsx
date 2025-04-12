@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 // pages/ActionsComponent.tsx
@@ -14,8 +13,6 @@ const ActionDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { getToken } = useAuth();
-  const [token, setToken] = useState<string | null>(null);
 
   
 
@@ -24,8 +21,6 @@ const ActionDashboard = () => {
     try {
       const response = await fetch(`${API_URL}/api/actions`); // Adjust URL if necessary
       const data = await response.json();
-      const tokenVal = await getToken();
-      setToken(tokenVal);
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
 
@@ -61,7 +56,7 @@ const ActionDashboard = () => {
 
       {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
       {actions.slice().reverse().map((action) => (
-        <ActionCard key={action._id} action={action} onDelete={handleDeleteAction} token={token}/>
+        <ActionCard key={action._id} action={action} onDelete={handleDeleteAction}/>
       ))}
     </div>
   );

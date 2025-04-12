@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import DeleteActionModal from "../modals/DeleteActionModal"
+import { useAuth } from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface DeleteActionButtonProps {
   actionId: string;
   onDelete: (actionId: string) => void;
-  token: string | null;
   
 }
 
-const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDelete, token }) => {
+const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDelete}) => {
   const [completed, setCompleted] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const { getToken } = useAuth();
 
   const handleClick = async () => {
     try {
+      const token = await getToken();
       const response = await fetch(`${API_URL}/api/actions/${actionId}`, { 
         method: "DELETE",
         headers: {
