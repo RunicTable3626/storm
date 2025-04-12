@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
 import actionRouter from "./routes/action";
-import { clerkMiddleware } from '@clerk/express'
+import { clerkMiddleware, getAuth } from '@clerk/express'
 
 
 dotenv.config();
@@ -35,5 +35,22 @@ connectDB();
 
 // Routes
 app.use("/api/actions", actionRouter);
+
+app.get("/", (req, res) => {
+  const auth = getAuth(req);
+
+  if (auth.userId) {
+    res.json({
+      message: "Session found",
+      userId: auth.userId,
+      sessionId: auth.sessionId,
+      orgId: auth.orgId,
+    });
+  } else {
+    res.json({
+      message: "No session found",
+    });
+  }
+});
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

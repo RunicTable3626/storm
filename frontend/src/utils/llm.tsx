@@ -1,15 +1,24 @@
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
+import { useAuth } from '@clerk/clerk-react';
 
 
 
 
 export const generateContent = async (query: string, tone: string) => {
     try {
+        const { getToken } = useAuth()
+
+        // Use `getToken()` to get the current session token
+        const token = await getToken()
+
+
+
         const response = await fetch(`${API_URL}/api/actions/generate-content`, {
             method: "POST",
             credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, 
             },
             body: JSON.stringify({ query, tone }),
         });
