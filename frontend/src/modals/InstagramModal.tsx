@@ -1,7 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
+import ContentRephraseButton from '../components/ContentRephraseButton';
+import { rephraseContent } from '../utils/llm';
 
 interface InstagramModalProps {
   isOpen: boolean;
@@ -14,6 +16,18 @@ interface InstagramModalProps {
 const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, postUrl, comment, actionId}) => {
   const [copied, setCopied] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
+  const [instaText, setInstaText] = useState("Loading...");
+  const contentType = "instagram comment";
+
+  const initializeComment = async () => {
+    try {
+      const result = await rephraseContent(comment, contentType);
+      setInstaText(result.rephrasedResult);
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
 
   const handleCopy = async () => {
     const text = textRef.current?.innerText;
@@ -30,6 +44,13 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       console.error('Text copy failed:', err);
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      initializeComment();
+    }
+  }, [isOpen]);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -39,18 +60,22 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       overlayClassName="modal-overlay"
     >
       {/* Close (X) button */}
-      <button className="close-button" onClick={closeModal}>
+      <button className="close-button" onClick={() => {setInstaText(""); closeModal()}}>
         ✖
       </button>
 
       <h2 className="text-xl font-bold mb-4 dark-style">Go to Instagram</h2>
-      <p ref={textRef} className="text-gray-700 mb-4 dark-style">{comment}</p>
-      {comment && <button onClick={ (e) => {
-        (e.target as HTMLButtonElement).blur()
-        handleCopy()}
-      }
-      >Copy Text</button>}
-      {copied && comment && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
+      <p ref={textRef} className="text-gray-700 mb-4 dark-style">{instaText}</p>
+      <div className="button-container">
+        {comment && <button onClick={ (e) => {
+          (e.target as HTMLButtonElement).blur()
+          handleCopy()}
+        }
+        >Copy Text</button>}
+        {copied && comment && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
+
+        <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
+      </div>
       <div className="button-container ">
           <ActionCompleteButton actionId={actionId} actionType="instaCount" onClick={closeModal}/>
           <button

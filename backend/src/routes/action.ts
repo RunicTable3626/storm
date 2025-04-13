@@ -10,6 +10,7 @@ import {
     getAllActions, 
     updateCount, 
     generateContent,
+    rephraseContent,
     deleteAction
 } from "../controllers/actionController"
 
@@ -20,6 +21,7 @@ actionRouter.post("/", requireAuth(), postAction);
 actionRouter.get("/", getAllActions);
 actionRouter.patch("/updateCount", updateCount);
 actionRouter.post('/generate-content', requireAuth(), generateContent);
+actionRouter.post('/rephrase-content', rephraseContent);
 actionRouter.delete('/:actionId',  requireAuth(), deleteAction);
 
 

@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import Modal from "react-modal";
 import "./modalStyles.css";
 import ActionCompleteButton from "../components/ActionCompletedButton";
+import ContentRephraseButton from "../components/ContentRephraseButton";
 
 
 interface PhonecallModalProps {
@@ -23,6 +24,9 @@ function formatPhoneNumber(phoneNumber: string): string {
 }
 
 const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phoneNumber, callScript, actionId}) => {
+    const [callText, setCallText] = useState(callScript);
+    const contentType = "voicemail";
+    
     return (
         <Modal
             isOpen={isOpen}
@@ -40,10 +44,11 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             <p>{formatPhoneNumber(phoneNumber)}</p>
 
             <h3>Script:</h3>
-            <p >{callScript}</p>
+            <p >{callText}</p>
 
-            <div>
+            <div className="button-container ">
                 <ActionCompleteButton actionId={actionId} actionType="callCount" onClick={closeModal}/>
+                <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
 
         </Modal>    

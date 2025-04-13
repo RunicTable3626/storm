@@ -82,6 +82,55 @@ export const generateContent = async (req: Request, res: Response) => {
   }
 }
 
+function normalizeQuotes(str: string) { //helper for rephraseContent
+  const first = str[0];
+  const last = str[str.length - 1];
+
+  if (
+    (first === '"' && last === '"') ||
+    (first === "'" && last === "'")
+  ) {
+    return str.slice(1, -1);
+  }
+
+  return str;
+}
+
+
+export const rephraseContent = async (req: Request, res: Response) => {
+  try {
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const content: string = req.body.content as string;
+    const contentType: string = req.body.contentType as string;
+    const rephrasePrompt = `Rephrase the following ${contentType} exactly once, retaining the same tone and word count as the original:\n 
+                          ${content}
+    `;
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: "user",
+            content: rephrasePrompt,
+          },
+        ],
+        model: "llama-3.2-90b-vision-preview",
+      });
+  
+      const rephrasedResult = chatCompletion.choices[0]?.message?.content || "";
+      res.status(200).json({ rephrasedResult: normalizeQuotes(rephrasedResult) });
+    
+  } catch (error: unknown) {
+    // Type assertion to make sure `error` is an `Error` object
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "An unknown error occurred." });
+    }
+  }
+}
+
+
+
+
 export const postAction = async (req: Request, res: Response) => {
   try {
     const formData = req.body;

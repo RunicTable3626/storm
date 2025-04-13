@@ -2,7 +2,6 @@ const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 export const generateContent = async (query: string, tone: string, token: string) => {
     try {
-
         const response = await fetch(`${API_URL}/api/actions/generate-content`, {
             method: "POST",
             headers: {
@@ -26,16 +25,14 @@ export const generateContent = async (query: string, tone: string, token: string
 
 
 
-export const rephraseContent = async (content: string, actionType: string, token: string) => {
+export const rephraseContent = async (content: string, contentType: string) => {
     try {
         const response = await fetch(`${API_URL}/api/actions/rephrase-content`, {
             method: "POST",
-            credentials: 'include',
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ content, actionType }),
+            body: JSON.stringify({ content, contentType }),
         });
 
         const data = await response.json();

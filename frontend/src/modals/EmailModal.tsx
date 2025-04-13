@@ -1,8 +1,10 @@
 import React from "react";
 import Modal from "react-modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
+import ContentRephraseButton from "../components/ContentRephraseButton";
+import { rephraseContent } from "../utils/llm";
 
 interface EmailModalProps {
   isOpen:       boolean;
@@ -15,7 +17,35 @@ interface EmailModalProps {
 }
 
 const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, actionId, onClose, onSend }) => {
-    const [genBody, setGenBody] = useState(body);
+    const [genBody, setGenBody] = useState("Loading...");
+    const [subjectText, setSubjectText] = useState("Loading...")
+
+    const initializeSubject = async () => {
+        try {
+          const result = await rephraseContent(subject, "email subject");
+          setSubjectText(result.rephrasedResult);
+        } catch (err) {
+          console.error(err)
+        }
+      }
+
+    const initializeBody = async () => {
+        try {
+          const result = await rephraseContent(body, "email body");
+          setGenBody(result.rephrasedResult);
+        } catch (err) {
+          console.error(err)
+        }
+      }
+    
+    useEffect(() => {
+        if (isOpen) {
+          initializeSubject();
+          initializeBody();
+        }
+      }, [isOpen]);
+
+
 
   return (
         <Modal
@@ -27,7 +57,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
         > 
 
             {/* Close (X) button */}
-            <button className="close-button" onClick={onClose}>
+            <button className="close-button" onClick={() => {setGenBody(""); setSubjectText(""); onClose()}}>
                 ✖
             </button>
 
@@ -36,7 +66,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
                     <strong>To:</strong> {email}
                 </div>
                 <div className="border">
-                    <strong>Subject:</strong> {subject}
+                    <strong>Subject:</strong> {subjectText}
                 </div>
                 <div className="border">
                 <textarea 
@@ -49,6 +79,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
 
             <div className="button-container">
                 <ActionCompleteButton actionId={actionId} actionType="emailCount" onClick={onClose}/>
+                <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
                         Send Email
                 </button>
