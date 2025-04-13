@@ -1,10 +1,11 @@
 import GifComponent from "../components/HomePageGif";
 import { useAuth, useUser, useSession } from "@clerk/clerk-react";
 import { useEffect } from "react";
-
+import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const { getToken } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
@@ -25,8 +26,12 @@ const HomePage = () => {
     <h1>storm.</h1>
     <h2>Quick Universal Actions for Collective Kindness (QUACK)</h2>
     <GifComponent />
+    <br></br>
+    <button onClick={() => {navigate('/action-dashboard')}}>Take Action NOW!</button>
+
 
     <div>
+
       <h2>👤 User Info</h2>
       <pre>{JSON.stringify(user, null, 2)}</pre>
 
