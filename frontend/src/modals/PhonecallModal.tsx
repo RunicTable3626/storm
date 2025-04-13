@@ -28,7 +28,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             isOpen={isOpen}
             onRequestClose={closeModal}
             contentLabel="Phone Call Action"
-            className="modal-content"
+            className="modal-content dark-style"
             overlayClassName="modal-overlay"
         >
             {/* Close (X) button */}
@@ -40,7 +40,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             <p>{formatPhoneNumber(phoneNumber)}</p>
 
             <h3>Script:</h3>
-            <p>{callScript}</p>
+            <p >{callScript}</p>
 
             <div>
                 <ActionCompleteButton actionId={actionId} actionType="callCount" onClick={closeModal}/>

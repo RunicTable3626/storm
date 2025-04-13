@@ -58,3 +58,16 @@ textarea {
   line-height: 1.5;
   color: #333;
 }
+
+@media (prefers-color-scheme: dark) {
+  .dark-style {
+    color: #000; /* Black text color for dark mode */
+  }
+
+  textarea {
+    font-family: 'Arial, sans-serif';
+    font-size: 14px;
+    line-height: 1.5;
+    color: #ffffff;
+  }
+}

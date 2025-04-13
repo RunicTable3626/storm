@@ -65,6 +65,13 @@ button:focus-visible {
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  textarea {
+    color: #fff; /* White text color for dark mode */
+  }
+}
+
+
 nav {
   display: flex;       /* Arrange the nav items horizontally */
   gap: 10px;           /* Optional: space between the nav items */

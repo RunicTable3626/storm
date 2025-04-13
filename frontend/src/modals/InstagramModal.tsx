@@ -43,15 +43,15 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
         ✖
       </button>
 
-      <h2 className="text-xl font-bold mb-4">Go to Instagram</h2>
-      <p ref={textRef} className="text-gray-700 mb-4">{comment}</p>
+      <h2 className="text-xl font-bold mb-4 dark-style">Go to Instagram</h2>
+      <p ref={textRef} className="text-gray-700 mb-4 dark-style">{comment}</p>
       {comment && <button onClick={ (e) => {
         (e.target as HTMLButtonElement).blur()
         handleCopy()}
       }
       >Copy Text</button>}
       {copied && comment && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
-      <div className="button-container">
+      <div className="button-container ">
           <ActionCompleteButton actionId={actionId} actionType="instaCount" onClick={closeModal}/>
           <button
             onClick={(e) => {

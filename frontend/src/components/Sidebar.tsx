@@ -23,7 +23,7 @@ const Sidebar = () => {
 
       <SignedOut>
       <SignInButton>
-        <button className="nav-link">Admin Login</button>
+        <button>Admin Login</button>
       </SignInButton>
       </SignedOut>
 

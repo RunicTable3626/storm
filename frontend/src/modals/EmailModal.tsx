@@ -22,7 +22,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
             isOpen={isOpen}
             onRequestClose={onClose}
             contentLabel="Email Action"
-            className="modal-content"
+            className="modal-content dark-style"
             overlayClassName="modal-overlay"
         > 
 
@@ -31,7 +31,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
                 ✖
             </button>
 
-            <div className="emailContent">
+            <div className="emailContent ">
                 <div className="border">
                     <strong>To:</strong> {email}
                 </div>
@@ -39,7 +39,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
                     <strong>Subject:</strong> {subject}
                 </div>
                 <div className="border">
-                <textarea
+                <textarea 
                 style={{ whiteSpace: "pre-wrap", width: "100%", height: "200px" }}
                 value={genBody}
                 onChange={(e) => setGenBody(e.target.value)} // Assuming you are using state
