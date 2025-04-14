@@ -8,8 +8,26 @@ interface ActionCompleteButtonProps {
   
 }
 
+
+
+
 const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
   const [completed, setCompleted] = useState(false);
+
+  const saveAction = (actionId: string, actionType: string) => {
+    const stored = JSON.parse(localStorage.getItem('actions') || '[]');
+
+    const exists = stored.some(
+      (action: { id: string; type: string }) => action.id === actionId && action.type === actionType
+    );
+  
+    if (!exists) {
+      stored.push({ id: actionId, type: actionType });
+      localStorage.setItem('actions', JSON.stringify(stored));
+      window.dispatchEvent(new Event("action-added-to-local-storage"));
+    }
+  };
+
 
   const handleClick = async () => {
     try {
@@ -26,7 +44,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       
       console.log(`${actionType} count incremented with response: ${response}`);
       setCompleted(true);
-      setTimeout(() => {onClick();}, 1000);
+      setTimeout(() => {onClick();saveAction(actionId, actionType);}, 1000);
     } catch (error) {
       console.error("Error:", error);
     }

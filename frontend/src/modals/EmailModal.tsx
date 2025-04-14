@@ -5,6 +5,7 @@ import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
 import { rephraseContent } from "../utils/llm";
+import { SignedOut } from "@clerk/clerk-react";
 
 interface EmailModalProps {
   isOpen:       boolean;
@@ -78,7 +79,9 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
             </div>
 
             <div className="button-container">
+                <SignedOut>
                 <ActionCompleteButton actionId={actionId} actionType="emailCount" onClick={onClose}/>
+                </SignedOut>
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
                         Send Email
