@@ -90,6 +90,18 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
             Open Instagram
           </button>
       </div>
+
+      <div className = 'dark-style'>
+      <h3>Tips!</h3>
+      <ul>
+        <li>Use 'Copy Text' to copy the comment on your screen</li>
+        <li>If you don't like the text, use 'Rephrase' to generate a new comment</li>
+        <li>Once you're ready, use 'Open Instagram' to open up the instagram post.</li>
+        <li>You should be able to paste the comment and submit a comment directly!</li>
+        <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>
+        <li>Lastly, thank you so much for helping grassroots campaigns, <strong>one action at a time!</strong></li>
+      </ul>
+    </div>
     </Modal>
   );
 };

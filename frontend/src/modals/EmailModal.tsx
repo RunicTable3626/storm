@@ -87,6 +87,17 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
                         Send Email
                 </button>
             </div>
+
+            <div className = 'dark-style'>
+                <h3>Tips!</h3>
+                <ul>
+                    <li>If you don't like the email body, use 'Rephrase' to generate a new email!</li>
+                    <li>You can even manually edit the email in the text box!</li>
+                    <li>Once you're ready, use 'Send Email' to use your email account to send the email. As of now, we only support Gmail accounts.</li>
+                    <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>
+                    <li>Lastly, thank you so much for helping grassroots campaigns, <strong>one action at a time!</strong></li>
+                </ul>
+                </div>
         </Modal>
     )
 };

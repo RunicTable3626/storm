@@ -54,6 +54,16 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
                 <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
 
+            <div className = 'dark-style'>
+                <h3>Tips!</h3>
+                <ul>
+                    <li>If you don't like the call script, use 'Rephrase' to generate a new comment.</li>
+                    <li>Once you're ready, Call the phone number mentioned and use the call script as an aid.</li>
+                    <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>
+                    <li>Lastly, thank you so much for helping grassroots campaigns, <strong>one action at a time!</strong></li>
+                </ul>
+                </div>
+
         </Modal>    
     );
 }
