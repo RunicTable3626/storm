@@ -22,9 +22,10 @@ const DeleteActionModal: React.FC<DeleteActionModalProps> = ({isOpen, closeModal
             <button className="close-button" onClick={closeModal}>
                 ✖
             </button>
-
+            <div className="dark-style">
             <h2>Are you sure you want to delete this action?</h2>
             <h3>Changes cannot be reversed.</h3>
+            </div>
 
             <div className="button-container">
           <button onClick={closeModal}>
