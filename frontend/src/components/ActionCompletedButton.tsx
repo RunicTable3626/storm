@@ -22,7 +22,8 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
     );
   
     if (!exists) {
-      stored.push({ id: actionId, type: actionType });
+      const currentTime = new Date().getTime();
+      stored.push({ id: actionId, type: actionType, completionTimestamp: currentTime});
       localStorage.setItem('actions', JSON.stringify(stored));
       window.dispatchEvent(new Event("action-added-to-local-storage"));
     }

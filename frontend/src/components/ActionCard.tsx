@@ -16,6 +16,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
   type Action = {
     id: string;
     type: string;
+    currentTimestamp: number;
   };
   
   const actionExists = (actionId: string, actionType: string): boolean => {
@@ -39,6 +40,19 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
 
   useEffect(() => {
     // Initial check when component mounts
+    const storedActions: Action[] = JSON.parse(localStorage.getItem("actions") || "[]");
+    const currentTime = new Date().getTime();
+
+    // Check and clear actions older than 24 hours
+    const filteredActions = storedActions.filter(action => {
+      return currentTime - action.currentTimestamp <= 24 * 60 * 60 * 1000; // 24 hours in ms
+    });
+
+    if (filteredActions.length !== storedActions.length) {
+      // If there were any outdated actions, update localStorage
+      localStorage.setItem("actions", JSON.stringify(filteredActions));
+    }
+
     checkActionCompletion();
 
     // Listen for custom event in the same tab
