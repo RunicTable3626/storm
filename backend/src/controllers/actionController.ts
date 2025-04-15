@@ -13,6 +13,7 @@ const EMAIL = process.env.EMAIL as string;
 const SUBJECT = process.env.SUBJECT as string;
 const BODY = process.env.BODY as string;
 const PHONE_NUMBER = process.env.PHONE_NUMBER as string;
+const MODEL_NAME = "lama-3.1-8b-instant";
 
 
 export const generateContent = async (req: Request, res: Response) => {
@@ -49,7 +50,7 @@ export const generateContent = async (req: Request, res: Response) => {
             content: queryContent,
           },
         ],
-        model: "llama-3.2-90b-vision-preview",
+        model: MODEL_NAME,
       });
   
       const generatedText = chatCompletion.choices[0]?.message?.content || "";
@@ -112,7 +113,7 @@ export const rephraseContent = async (req: Request, res: Response) => {
             content: rephrasePrompt,
           },
         ],
-        model: "llama-3.2-90b-vision-preview",
+        model: MODEL_NAME,
       });
   
       const rephrasedResult = chatCompletion.choices[0]?.message?.content || "";
