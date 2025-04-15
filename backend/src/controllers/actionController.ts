@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import mongoose from "mongoose";
 import dotenv from "dotenv"
 dotenv.config();
-import Action from '../models/actionModel'
-import Email from '../models/emailModel'
-import Call from '../models/callModel'
-import Insta from '../models/instaModel'
+import Action from '../models/actionModel';  
+import Email  from '../models/emailModel';      
+import Call from '../models/callModel';         
+import Insta from '../models/instaModel'; 
 import Groq from "groq-sdk";
 
 const POST_ID = process.env.POST_ID as string;
@@ -115,7 +115,7 @@ export const rephraseContent = async (req: Request, res: Response) => {
         ],
         model: MODEL_NAME,
       });
-  
+
       const rephrasedResult = chatCompletion.choices[0]?.message?.content || "";
       res.status(200).json({ rephrasedResult: normalizeQuotes(rephrasedResult) });
     
@@ -125,6 +125,35 @@ export const rephraseContent = async (req: Request, res: Response) => {
       res.status(500).json({ error: error.message });
     } else {
       res.status(500).json({ error: "An unknown error occurred." });
+    }
+  }
+}
+
+export const rephraseContentInternal = async (content: String, contentType: String) => {
+  try {
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+    const rephrasePrompt = `Rephrase the following ${contentType} exactly once, retaining the same tone and word count as the original:\n 
+                          ${content}
+    `;
+      const chatCompletion = await groq.chat.completions.create({
+        messages: [
+          {
+            role: "user",
+            content: rephrasePrompt,
+          },
+        ],
+        model: MODEL_NAME,
+      });
+  
+      const rephrasedResult = normalizeQuotes(chatCompletion.choices[0]?.message?.content || "");
+      return rephrasedResult;
+
+  } catch (error: unknown) {
+    // Type assertion to make sure `error` is an `Error` object
+    if (error instanceof Error) {
+      throw new Error(error.message); // Let the caller (API route) handle the response
+    } else {
+      throw new Error("An unknown error occurred.");
     }
   }
 }
@@ -185,10 +214,11 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
     const actions = await Action.find()
       .populate("emailId") // Populate related email info
       .populate("callId")  // Populate related call info
-      .populate("instaId"); // Populate related Instagram info
+      .populate("instaId"); // Populate related Instagram info  
     res.status(200).json(actions);
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Error fetching actions" });
   }
 };
