@@ -11,10 +11,11 @@ interface ContentRephraseButtonProps {
 
 const ContentRephraseButton: React.FC<ContentRephraseButtonProps> = ({ text, contentType, onResult}) => {
   const [loading, setLoading] = useState(false);
+  const [rephraseFailed, setRephraseFailed] = useState(false);
 
   const handleClick = async () => {
     if (!text) return;
-
+    setRephraseFailed(false);
     setLoading(true);
     try {
         const result = await rephraseContent(text, contentType)
@@ -23,6 +24,7 @@ const ContentRephraseButton: React.FC<ContentRephraseButtonProps> = ({ text, con
         }
     } catch (err) {
       console.error("Rephrasing content Error:", err);
+      setRephraseFailed(true);
     } finally {
       setLoading(false);
     }
@@ -30,7 +32,7 @@ const ContentRephraseButton: React.FC<ContentRephraseButtonProps> = ({ text, con
 
   return (
     <button onClick={handleClick} disabled={loading}>
-      {loading ? "Loading..." : "Rephrase"}
+      {loading ? "Loading..." : (rephraseFailed ? "Rephrase failed, Try again" : "Rephrase")}
     </button>
   );
 };
