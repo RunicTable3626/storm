@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
-import { rephraseContent } from "../utils/llm";
 import { SignedOut } from "@clerk/clerk-react";
 
 interface EmailModalProps {
@@ -18,35 +17,8 @@ interface EmailModalProps {
 }
 
 const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, actionId, onClose, onSend }) => {
-    const [genBody, setGenBody] = useState("Loading...");
-    const [subjectText, setSubjectText] = useState("Loading...")
-
-    const initializeSubject = async () => {
-        try {
-          const result = await rephraseContent(subject, "email subject");
-          setSubjectText(result.rephrasedResult);
-        } catch (err) {
-          console.error(err)
-        }
-      }
-
-    const initializeBody = async () => {
-        try {
-          const result = await rephraseContent(body, "email body");
-          setGenBody(result.rephrasedResult);
-        } catch (err) {
-          console.error(err)
-        }
-      }
-    
-    useEffect(() => {
-        if (isOpen) {
-          initializeSubject();
-          initializeBody();
-        }
-      }, [isOpen]);
-
-
+    const [genBody, setGenBody] = useState(body);
+    const [subjectText, setSubjectText] = useState(subject);
 
   return (
         <Modal
@@ -67,7 +39,8 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
                     <strong>To:</strong> {email}
                 </div>
                 <div className="border">
-                    <strong>Subject:</strong> {subjectText}
+                    <div><strong>Subject:</strong> {subjectText}</div>
+                    <div><ContentRephraseButton text={subjectText} contentType="email subject" onResult={setSubjectText}/></div>
                 </div>
                 <div className="border">
                 <textarea 
@@ -91,7 +64,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
             <div className = 'dark-style'>
                 <h3>Tips!</h3>
                 <ul>
-                    <li>If you don't like the email body, use 'Rephrase' to generate a new email!</li>
+                    <li>Use 'Rephrase' to generate a new email body or subject to avoid identical messages from  being sent.</li>
                     <li>You can even manually edit the email in the text box!</li>
                     <li>Once you're ready, use 'Send Email' to use your email account to send the email. As of now, we only support Gmail accounts.</li>
                     <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>

@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from '../components/ContentRephraseButton';
-import { rephraseContent } from '../utils/llm';
 import { SignedOut } from "@clerk/clerk-react";
 
 interface InstagramModalProps {
@@ -17,18 +16,8 @@ interface InstagramModalProps {
 const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, postUrl, comment, actionId}) => {
   const [copied, setCopied] = useState(false);
   const textRef = useRef<HTMLParagraphElement>(null);
-  const [instaText, setInstaText] = useState("Loading...");
+  const [instaText, setInstaText] = useState(comment);
   const contentType = "instagram comment";
-
-  const initializeComment = async () => {
-    try {
-      const result = await rephraseContent(comment, contentType);
-      setInstaText(result.rephrasedResult);
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
 
   const handleCopy = async () => {
     const text = textRef.current?.innerText;
@@ -45,12 +34,6 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       console.error('Text copy failed:', err);
     }
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      initializeComment();
-    }
-  }, [isOpen]);
 
   return (
     <Modal
@@ -95,7 +78,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       <h3>Tips!</h3>
       <ul>
         <li>Use 'Copy Text' to copy the comment on your screen</li>
-        <li>If you don't like the text, use 'Rephrase' to generate a new comment</li>
+        <li>Use 'Rephrase' to generate a new comment to avoid identical messages from  being sent.</li>
         <li>Once you're ready, use 'Open Instagram' to open up the instagram post.</li>
         <li>You should be able to paste the comment and submit a comment directly!</li>
         <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>
