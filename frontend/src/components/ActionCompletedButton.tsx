@@ -42,8 +42,9 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       });
 
       if (!response.ok) throw new Error("Failed to update counter");
-      
-      console.log(`${actionType} count incremented with response: ${response}`);
+
+      const data = await response.json();
+      console.log(`${actionType} response: ${data.message}`);
       setCompleted(true);
       setTimeout(() => {onClick();saveAction(actionId, actionType);}, 1000);
     } catch (error) {

@@ -13,7 +13,7 @@ const EMAIL = process.env.EMAIL as string;
 const SUBJECT = process.env.SUBJECT as string;
 const BODY = process.env.BODY as string;
 const PHONE_NUMBER = process.env.PHONE_NUMBER as string;
-const MODEL_NAME = "lama-3.1-8b-instant";
+const MODEL_NAME = "llama-3.1-8b-instant";
 
 
 export const generateContent = async (req: Request, res: Response) => {
@@ -207,7 +207,7 @@ export const updateCount = async (req: Request, res: Response): Promise<void> =>
       res.status(404).json({ error: "Action not found" });
     }
 
-    res.json(updatedAction);
+    res.status(200).json({ message: `${actionType} count incremented by 1!` });
   } catch (error: unknown) {
     // Type assertion to make sure `error` is an `Error` object
     if (error instanceof Error) {

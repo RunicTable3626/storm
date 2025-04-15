@@ -16,7 +16,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
   type Action = {
     id: string;
     type: string;
-    currentTimestamp: number;
+    completionTimestamp: number;
   };
   
   const actionExists = (actionId: string, actionType: string): boolean => {
@@ -45,11 +45,13 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
 
     // Check and clear actions older than 24 hours
     const filteredActions = storedActions.filter(action => {
-      return currentTime - action.currentTimestamp <= 24 * 60 * 60 * 1000; // 24 hours in ms
+      return currentTime - action.completionTimestamp <= 24 * 60 * 60 * 1000; // 24 hours in ms
     });
 
     if (filteredActions.length !== storedActions.length) {
       // If there were any outdated actions, update localStorage
+      console.log(filteredActions);
+      console.log(storedActions);
       localStorage.setItem("actions", JSON.stringify(filteredActions));
     }
 
@@ -117,7 +119,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
 
       { (isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId)
         && (
-          <p>All Actions Completed!</p>
+          <p>All Actions Completed. Redo Action in 24 hours!</p>
         )
       }
       
