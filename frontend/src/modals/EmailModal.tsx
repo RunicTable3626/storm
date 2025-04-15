@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import { useState, useEffect } from "react";
+import { useState} from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
