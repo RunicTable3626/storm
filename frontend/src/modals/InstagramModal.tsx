@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from '../components/ContentRephraseButton';
-import { SignedOut } from "@clerk/clerk-react";
 
 interface InstagramModalProps {
   isOpen: boolean;
@@ -61,9 +60,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
         <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
       </div>
       <div className="button-container ">
-          <SignedOut>
           <ActionCompleteButton actionId={actionId} actionType="instaCount" onClick={closeModal}/>
-          </SignedOut>
           <button
             onClick={(e) => {
                 (e.target as HTMLButtonElement).blur()

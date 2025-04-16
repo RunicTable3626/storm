@@ -3,7 +3,6 @@ import Modal from "react-modal";
 import "./modalStyles.css";
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
-import { SignedOut } from "@clerk/clerk-react";
 
 
 interface PhonecallModalProps {
@@ -48,9 +47,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             <p >{callText}</p>
 
             <div className="button-container ">
-                <SignedOut>
                 <ActionCompleteButton actionId={actionId} actionType="callCount" onClick={closeModal}/>
-                </SignedOut>
                 <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
 

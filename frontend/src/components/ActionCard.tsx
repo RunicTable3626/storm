@@ -4,7 +4,7 @@ import EmailButton from "./EmailButton"
 import PhonecallButton from "./PhonecallButton";
 import InstagramButton from "./InstagramButton";
 import DeleteActionButton from "./DeleteActionButton";
-import { SignedIn } from "@clerk/clerk-react";
+import { SignedIn, useUser } from "@clerk/clerk-react";
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
@@ -38,33 +38,47 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
     setIsInstagramCommentActionCompleted(actionExists(action._id, "instaCount"));
   };
 
+  const { isSignedIn,  isLoaded } = useUser();
+
   useEffect(() => {
     // Initial check when component mounts
-    const storedActions: Action[] = JSON.parse(localStorage.getItem("actions") || "[]");
-    const currentTime = new Date().getTime();
+      const storedActions: Action[] = JSON.parse(localStorage.getItem("actions") || "[]");
+      const currentTime = new Date().getTime();
+  
+      // Check and clear actions older than 24 hours
+      const filteredActions = storedActions.filter(action => {
+        return currentTime - action.completionTimestamp <= 24 * 60 * 60 * 1000; // 24 hours in ms
+      });
+  
+      if (filteredActions.length !== storedActions.length) {
+        // If there were any outdated actions, update localStorage
+        console.log(filteredActions);
+        console.log(storedActions);
+        localStorage.setItem("actions", JSON.stringify(filteredActions));
+      }
+  
+      checkActionCompletion();
+  
+      // Listen for custom event in the same tab
+      window.addEventListener("action-added-to-local-storage", checkActionCompletion);
+  
+      // Cleanup listener when component unmounts
+      return () => {
+        window.removeEventListener("action-added-to-local-storage", checkActionCompletion);
+      };
 
-    // Check and clear actions older than 24 hours
-    const filteredActions = storedActions.filter(action => {
-      return currentTime - action.completionTimestamp <= 24 * 60 * 60 * 1000; // 24 hours in ms
-    });
-
-    if (filteredActions.length !== storedActions.length) {
-      // If there were any outdated actions, update localStorage
-      console.log(filteredActions);
-      console.log(storedActions);
-      localStorage.setItem("actions", JSON.stringify(filteredActions));
-    }
-
-    checkActionCompletion();
-
-    // Listen for custom event in the same tab
-    window.addEventListener("action-added-to-local-storage", checkActionCompletion);
-
-    // Cleanup listener when component unmounts
-    return () => {
-      window.removeEventListener("action-added-to-local-storage", checkActionCompletion);
-    };
   }, []);
+
+
+  useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
+    if (!isLoaded) return;
+  
+    if (isSignedIn) {
+      setIsCallActionCompleted(false);
+      setIsEmailActionCompleted(false);
+      setIsInstagramCommentActionCompleted(false);
+    }
+  }, [isLoaded, isSignedIn]);
   
   return (
     <div style={{ border: "2px solid #ccc", padding: "20px", marginBottom: "10px" }}>

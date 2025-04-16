@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 // pages/ActionsComponent.tsx
@@ -13,6 +14,7 @@ const ActionDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { isSignedIn } = useUser();
 
   
 
@@ -41,6 +43,12 @@ const ActionDashboard = () => {
   useEffect(() => {
     fetchActions();
   }, []);
+
+  useEffect(() => {
+    if (isSignedIn) {
+      localStorage.removeItem("actions");
+    }
+  }, [isSignedIn]);
 
   const handleDeleteAction = async (deletedId: string) => {
     setActions((prevActions) => prevActions.filter((action) => action._id !== deletedId));
