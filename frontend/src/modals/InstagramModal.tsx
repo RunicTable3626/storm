@@ -47,7 +47,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
         ✖
       </button>
 
-      <h2 className="text-xl font-bold mb-4 dark-style">Go to Instagram</h2>
+      <h2 className="text-xl font-bold mb-4 dark-style">Take action on Instagram</h2>
       <p ref={textRef} className="text-gray-700 mb-4 dark-style">{instaText}</p>
       <div className="button-container">
         {comment && <button onClick={ (e) => {
@@ -73,6 +73,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
 
       <div className = 'dark-style'>
       <h3>Tips!</h3>
+      <p><strong>IMPORTANT: This will open up Instagram on whatever account you are logged into! So make sure it's one you want to comment from.</strong></p>
       <ul>
         <li>Use 'Copy Text' to copy the comment on your screen</li>
         <li>Use 'Rephrase' to generate a new comment to avoid identical messages from  being sent.</li>

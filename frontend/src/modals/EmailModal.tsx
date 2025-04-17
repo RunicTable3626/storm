@@ -60,6 +60,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
 
             <div className = 'dark-style'>
                 <h3>Tips!</h3>
+                <p><strong>IMPORTANT: This link will open up Gmail on whatever account you are logged into! So make sure it's one you want to send an email from.</strong></p>
                 <ul>
                     <li>Use 'Rephrase' to generate a new email body or subject to avoid identical messages from  being sent.</li>
                     <li>You can even manually edit the email in the text box!</li>

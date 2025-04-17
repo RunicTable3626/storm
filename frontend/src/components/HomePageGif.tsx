@@ -1,7 +1,11 @@
 import { useState } from 'react';
-import dancingDuckKarlo from '../assets/dancing-duck-karlo.gif';
 
-const GifComponent = () => {
+
+type GifComponentProps = {
+  gifFile?: string;
+};
+
+const GifComponent: React.FC<GifComponentProps> = ({ gifFile }) => {
   const [loading, setLoading] = useState(true);
 
   const handleLoad = () => {
@@ -17,8 +21,8 @@ const GifComponent = () => {
     <div>
       {loading && <p>Loading...</p>}
       <img
-        src={dancingDuckKarlo}
-        alt="Dancing Duck Karlo GIF"
+        src={gifFile}
+        alt="8 Bit Animal Gif"
         onLoad={handleLoad}
         onError={handleError}
       />
@@ -27,3 +31,8 @@ const GifComponent = () => {
 };
 
 export default GifComponent;
+
+
+
+
+
