@@ -32,6 +32,7 @@ const ActionCreationPage = () => {
 
     const [tone, setTone] = useState("polite");
     const { getToken } = useAuth();
+    const [showGuide, setShowGuide] = useState(false);
 
     // Inside an async function
     
@@ -287,10 +288,51 @@ const ActionCreationPage = () => {
           </div>
         )}
           {/* Submit Button */}
-          <button type="submit">Create Action</button>
-        </form>
+        <button type="submit">Create Action</button>
+        
+        {message && 
         <p>{message}</p>
+        }
+
+        <button type="button" onClick={ (e) => {
+                    (e.target as HTMLButtonElement).blur()
+                    setShowGuide(!showGuide)
+                  }}>
+        {showGuide ? "Hide Guide" : "Show Guide"}
+        </button>
+
+        {showGuide && (
+        <div
+        style={{
+          maxWidth: "700px",
+          width: "100%",
+          wordWrap: "break-word",
+          padding: "16px",
+          borderRadius: "0.375rem", // rounded-md
+          fontSize: "1rem", // text-sm
+          marginTop: "0.5rem",
+        }}
+      >
+          <h4 className="font-semibold mb-2">How to Submit:</h4>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Fill out a relevant title and description for your action. Both these fields are mandatory to create an action.</li>
+            <li>If desired, fill out a tone as well.</li>
+            <li>If you click the 'Generate Content' button, it will generate content based on the description and the tone</li>
+            <li>Feel free to fill out the rest of the content like names, email addresses, links, phone numbers</li>
+            <li>Upon clicking 'Create Action', you will receive an alert informing you about what actions will be created</li>
+            <li>Only actions with all fields filled out will be in that alert.</li>
+            <li>Once confirmed, your action will be created and visible in the Action Dashboard!</li>
+          </ul>
+          <p><strong>This platform is intended solely for lawful and legitimate purposes. 
+            By using this service, you agree not to engage in any illegal, harmful, or unauthorized activities. 
+            The platform and its creators are not responsible for any misuse, user-generated content, or consequences 
+            resulting from violations of applicable laws or regulations.</strong></p>
+        </div>
+        )}
+        </form>
       </div>
+
+
     );
   };
 

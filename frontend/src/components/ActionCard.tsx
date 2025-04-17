@@ -81,7 +81,13 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
   }, [isLoaded, isSignedIn]);
   
   return (
-    <div style={{ border: "2px solid #ccc", padding: "20px", marginBottom: "10px" }}>
+    <div style={{ 
+      border: "2px solid #ccc",
+      padding: "20px",
+      marginBottom: "10px",          
+      maxWidth: "800px",  // If you want some flexibility
+      wordWrap: "break-word",  // Ensure long text wraps
+      }}>
       <h3>{action.title || ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
 
