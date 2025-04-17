@@ -29,7 +29,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
         > 
 
             {/* Close (X) button */}
-            <button className="close-button" onClick={() => {setGenBody(""); setSubjectText(""); onClose()}}>
+            <button className="close-button" onClick={onClose}>
                 ✖
             </button>
 

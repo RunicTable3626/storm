@@ -43,7 +43,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, pos
       overlayClassName="modal-overlay"
     >
       {/* Close (X) button */}
-      <button className="close-button" onClick={() => {setInstaText(""); closeModal()}}>
+      <button className="close-button" onClick={closeModal}>
         ✖
       </button>
 
