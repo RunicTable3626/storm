@@ -21,27 +21,28 @@ export const generateContent = async (req: Request, res: Response) => {
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const query: string = req.body.query as string;
     const tone: string = req.body.tone as string;
-    const queryContent = `Generate an email, a voicemail message, and a comment based on the following description: 
+    const queryContent = `You are a helpful assistant.\n\n
+
+                          Generate the following 3 outputs based on the description below:\n
+                          - An Email\n
+                          - A Voicemail message\n
+                          - A Social Media Comment\n\n
+
+                          Description:\n
                           ${query}\n\n
-                          
-                          Please do not deviate from the following format:\n
 
-                          Email:\n 
-                          - Subject: Provide a clear and relevant subject line.\n
-                          - Use a ${tone} tone.\n
-                          - Keep the message concise but informative.\n
-                          - End with an appropriate closing as a concerned citizen.\n\n
-                          
+                          Use a consistent ${tone} tone for all outputs.\n\n
+
+                          Return your response in the exact format below, with no extra commentary, headers, or blank lines:\n\n
+                          Email:\n
+                          Subject: <subject line here>\n                         
+                          Body: <email body here>\n\n
+
                           Voicemail:\n
-                          - Use a natural, conversational, but ${tone} tone.\n
-                          - Keep it brief (under 30 seconds).\n
-                          - End with a polite sign-off.
+                          <voicemail message here>\n\n
                           
-                          \n\nComment:\n
-                          - Use a ${tone} tone.\n
-                          - Keep it short and impactful.\n
-                          - Ensure it aligns with the key message in the email and voicemail.
-
+                          Comment:\n
+                          <comment here>
     `;
       const chatCompletion = await groq.chat.completions.create({
         messages: [
@@ -63,8 +64,8 @@ export const generateContent = async (req: Request, res: Response) => {
 
       // Step 2: Extract the subject and body from the email section
       const emailParts = emailSection.replace(/\n+/g, '\n').split("\n");
-      const subject = emailParts[1].trim(); // Get the line after "Subject:"
-      const body = emailParts.slice(2).join("\n").trim(); // Get everything after the subject line till "Voicemail:"
+      const subject = emailParts[1].trim().split('Subject: ')[1]; // Get the line after "Subject:"
+      const body = emailParts.slice(2).join("\n").trim().split('Body: ')[1]; // Get everything after the subject line till "Voicemail:"
 
       // Step 3: Extract voicemail message (remove quotes around it)
       const callScript = voicemailSection.replace(/^"|"$/g, "").trim(); // Remove quotes
@@ -103,8 +104,12 @@ export const rephraseContent = async (req: Request, res: Response) => {
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
     const content: string = req.body.content as string;
     const contentType: string = req.body.contentType as string;
-    const rephrasePrompt = `Rephrase the following ${contentType} exactly once, retaining the same tone and word count as the original:\n 
-                          ${content}
+    const rephrasePrompt = `Rephrase the following ${contentType} using completely different wording and sentence structure.\n
+                            Keep the original tone and the exact same word count.\n\n
+                            
+                            Respond with only the rephrased text. Do not include any labels, explanations, or extra formatting.\n\n
+                            
+                            ${content}
     `;
       const chatCompletion = await groq.chat.completions.create({
         messages: [
