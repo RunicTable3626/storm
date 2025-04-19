@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import PhonecallModal from "../modals/PhonecallModal"; // Import Modal component
 
 interface PhoneCallButtonProps {
-  phoneNumber: string;
-  callScript: string;
-  actionId: string;
+  action : any;
 }
 
 const PhonecallButton: React.FC<PhoneCallButtonProps> = ({
-  phoneNumber = "",
-  callScript = "",
-  actionId
+  action
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -27,7 +23,7 @@ const PhonecallButton: React.FC<PhoneCallButtonProps> = ({
           openModal()}}>Show Phone Number</button>
 
       {/* Conditionally render the modal */}
-      <PhonecallModal isOpen = {isModalOpen} phoneNumber={phoneNumber} callScript={callScript} actionId={actionId} closeModal={closeModal} />
+      <PhonecallModal isOpen = {isModalOpen} action = {action} closeModal={closeModal} />
     </div>
   );
 };

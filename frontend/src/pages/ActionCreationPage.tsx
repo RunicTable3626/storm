@@ -182,7 +182,7 @@ const ActionCreationPage = () => {
       const isConfirmed = window.confirm(`Are you sure you want to submit? Action types to be submitted:\n
         ${isValidEmail ? "- Email\n": ""}
         ${isValidCall ? "- Call\n": ""}
-        ${isValidInsta ? "- Instagram": ""}`);
+        ${isValidInsta ? "- Instagram Comment": ""}`);
 
       if (!isConfirmed) {
         return;
@@ -224,8 +224,8 @@ const ActionCreationPage = () => {
         <h2>Create Action</h2>
         <form style={{ display: "flex", flexDirection: "column", gap: "10px" }} onSubmit={handleSubmit}>
           {/* Main Form */}
-          <input type="text" name="title" placeholder="Title" onChange={handleMainChange} required />
-          <textarea name="description" placeholder="Description" onChange={handleMainChange} required ></textarea>
+          <input type="text" name="title" placeholder="Title" value={mainInfo.title} onChange={handleMainChange} required />
+          <textarea name="description" placeholder="Description" value={mainInfo.description} onChange={handleMainChange} required ></textarea>
 
           {/*Button to call Groq to autogenerate email subject + body and call info */}
           <textarea name="tone" placeholder="Tone (Defaults to polite)" onChange={(e) => setTone(e.target.value)} ></textarea>
@@ -269,8 +269,6 @@ const ActionCreationPage = () => {
             <textarea name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange}></textarea>
           </div>
         )}
-
-
 
 
           <button type="button" onClick={ (e) => {

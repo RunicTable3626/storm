@@ -57,6 +57,11 @@ textarea {
   font-size: 14px;
   line-height: 1.5;
   color: #333;
+  white-space: pre-wrap;        /* Allow text wrapping */
+  overflow-x: hidden;           /* Disable horizontal scrolling */
+  overflow-y: auto;             /* Enable vertical scrolling if necessary */
+  resize: vertical;             /* Optional: allow vertical resizing */
+
 }
 
 @media (prefers-color-scheme: dark) {

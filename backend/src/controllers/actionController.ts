@@ -320,9 +320,9 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
     session.endSession();
     res.status(200).json({ message: `Action with id ${actionId} deleted successfully, along with related call, email or insta entries`});
   } catch (error: unknown) {
+    await session.abortTransaction();
+    session.endSession();
     if (error instanceof Error) {
-      await session.abortTransaction();
-      session.endSession();
       console.error("Error deleting action and related entries:", error);
       res.status(500).json({ error: error.message });
     } else {
@@ -331,3 +331,68 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
   }
 };
 
+
+
+export const editAction = async (req: Request, res: Response): Promise<void> => {
+  //Deletes not just the action but all related types of actions in their respective collections.
+  const { actionId } = req.params;
+  const formData = req.body;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Find the Action document to get related IDs
+
+    if (formData.mainInfo) {
+        await Action.findByIdAndUpdate(
+        actionId,
+        { $set: formData.mainInfo },
+        { new: true, session} 
+      );
+    }
+      // Create a new action document
+      const action = await Action.findById(actionId).session(session);
+      //console.log(action);
+      if (!action) throw new Error("Action not found");
+    
+
+    if (formData.emailInfo && action.emailId) {
+      await Email.findByIdAndUpdate(
+        action.emailId,
+        { $set: formData.emailInfo },
+        { new: true, session }
+      );
+    }
+    
+    if (formData.callInfo && action.callId) {
+      await Call.findByIdAndUpdate(
+        action.callId,
+        { $set: formData.callInfo },
+        { new: true, session }
+      );
+    }
+    
+    if (formData.instaInfo && action.instaId) {
+      await Insta.findByIdAndUpdate(
+        action.instaId,
+        { $set: formData.instaInfo },
+        { new: true, session }
+      );
+    }
+
+    // Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: `Action with id ${actionId} updated successfully`});
+  } catch (error: unknown) {
+    await session.abortTransaction();
+    session.endSession();
+
+    if (error instanceof Error) {
+      console.error("Error deleting action and related entries:", error);
+      res.status(500).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: `An unknown error occurred while updating action ${actionId}` });
+    }
+  }
+};

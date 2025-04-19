@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
 import "./modalStyles.css";
 import ActionCompleteButton from "../components/ActionCompletedButton";
@@ -8,9 +8,7 @@ import ContentRephraseButton from "../components/ContentRephraseButton";
 interface PhonecallModalProps {
     isOpen: boolean;
     closeModal: () => void;
-    phoneNumber: string;
-    callScript: string;
-    actionId:   string;
+    action: any;
   }
   
 
@@ -23,9 +21,15 @@ function formatPhoneNumber(phoneNumber: string): string {
   return phoneNumber; // Return as is if it's not valid
 }
 
-const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phoneNumber, callScript, actionId}) => {
-    const [callText, setCallText] = useState(callScript);
+const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, action}) => {
+    const [callText, setCallText] = useState(action.callId.callScript);
+    const [phoneNumber, setPhoneNumber] = useState(action.callId.phoneNumber);
     const contentType = "voicemail";
+
+    useEffect(() => {
+        setCallText(action.callId.callScript);
+        setPhoneNumber(action.callId.phoneNumber);
+    }, [action.callId.callScript, action.callId.phoneNumber]); 
     
     return (
         <Modal
@@ -47,7 +51,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, phon
             <p >{callText}</p>
 
             <div className="button-container ">
-                <ActionCompleteButton actionId={actionId} actionType="callCount" onClick={closeModal}/>
+                <ActionCompleteButton actionId={action._id} actionType="callCount" onClick={closeModal}/>
                 <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
 

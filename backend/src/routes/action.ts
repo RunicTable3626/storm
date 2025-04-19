@@ -11,7 +11,8 @@ import {
     updateCount, 
     generateContent,
     rephraseContent,
-    deleteAction
+    deleteAction,
+    editAction
 } from "../controllers/actionController"
 
 actionRouter.get("/email", getEmailInfo);
@@ -23,6 +24,7 @@ actionRouter.patch("/updateCount", updateCount);
 actionRouter.post('/generate-content', requireAuth(), generateContent);
 actionRouter.post('/rephrase-content', rephraseContent);
 actionRouter.delete('/:actionId',  requireAuth(), deleteAction);
+actionRouter.patch('/:actionId',  requireAuth(), editAction);
 
 
 export default actionRouter; 

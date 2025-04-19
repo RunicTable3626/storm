@@ -1,23 +1,28 @@
 import React from "react";
 import Modal from "react-modal";
-import { useState} from "react";
+import { useState, useEffect} from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
 
 interface EmailModalProps {
   isOpen:       boolean;
-  email:        string;
-  subject:      string;
-  body:         string;
-  actionId:     string;
+  action:           any;
   onClose:() =>  void;
   onSend: () =>  void;
 }
 
-const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, actionId, onClose, onSend }) => {
-    const [genBody, setGenBody] = useState(body);
-    const [subjectText, setSubjectText] = useState(subject);
+const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSend }) => {
+    const [genBody, setGenBody] = useState(action.emailId.body);
+    const [subjectText, setSubjectText] = useState(action.emailId.subject);
+    const [emailAddress, setEmailAddress] = useState(action.emailId.emailAddress);
+
+    useEffect(() => {
+        setEmailAddress(action.emailId.emailAddress);
+        setGenBody(action.emailId.body);
+        setSubjectText(action.emailId.subject);
+      }, [action.emailId.emailAddress, action.emailId.body, action.emailId.subject]);
+    
 
   return (
         <Modal
@@ -35,7 +40,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
 
             <div className="emailContent ">
                 <div className="border">
-                    <strong>To:</strong> {email}
+                    <strong>To:</strong> {emailAddress}
                 </div>
                 <div className="border">
                     <div><strong>Subject:</strong> {subjectText}</div>
@@ -51,7 +56,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, email, subject, body, a
             </div>
 
             <div className="button-container">
-                <ActionCompleteButton actionId={actionId} actionType="emailCount" onClick={onClose}/>
+                <ActionCompleteButton actionId={action._id} actionType="emailCount" onClick={onClose}/>
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
                         Send Email

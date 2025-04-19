@@ -2,14 +2,11 @@ import React, { useState } from "react";
 import EmailModal from "../modals/EmailModal"; // Import the modal component
 
 interface EmailButtonProps {
-  email: string;
-  subject?: string;
-  body?: string;
-  actionId: string;
+  action: any
 }
 
-const EmailButton: React.FC<EmailButtonProps> = ({ email, subject = "", body = "", actionId }) => {
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
+  const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(action.emailId.emailAddress)}&su=${encodeURIComponent(action.emailId.subject)}&body=${encodeURIComponent(action.emailId.body)}`;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,7 +28,7 @@ const EmailButton: React.FC<EmailButtonProps> = ({ email, subject = "", body = "
         Send an Email
       </button>
 
-      <EmailModal isOpen={isModalOpen} email={email} subject={subject} body={body} actionId={actionId} onClose={closeModal} onSend={sendEmail} />
+      <EmailModal isOpen={isModalOpen} action={action} onClose={closeModal} onSend={sendEmail} />
     </div>
   );
 };

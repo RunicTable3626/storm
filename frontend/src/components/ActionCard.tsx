@@ -5,13 +5,15 @@ import PhonecallButton from "./PhonecallButton";
 import InstagramButton from "./InstagramButton";
 import DeleteActionButton from "./DeleteActionButton";
 import { SignedIn, useUser } from "@clerk/clerk-react";
+import EditActionButton from "./EditActionButton";
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
   onDelete: (actionId: string) => void;
+  onEdit: (actionId: string, formData: any) => void;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
 
   type Action = {
     id: string;
@@ -95,10 +97,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
       {!isEmailActionCompleted && action.emailId && (
         <div className="button-container">
           <EmailButton 
-            email= {action.emailId?.emailAddress || ""}
-            subject= {action.emailId?.subject || ""}
-            body= {action.emailId?.body || ""}
-            actionId= {action._id}
+            action={action}
           />
 
           <SignedIn>
@@ -111,9 +110,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
       {!isCallActionCompleted && action.callId && (
         <div className="button-container">
           <PhonecallButton
-            phoneNumber= {action.callId?.phoneNumber || ""}
-            callScript= {action.callId?.callScript || ""}
-            actionId= {action._id}
+            action = {action}
           />
 
           <SignedIn>
@@ -126,9 +123,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
       {!isInstagramCommentActionCompleted && action.instaId && (
         <div className="button-container">
           <InstagramButton 
-          postId={action.instaId.instagramLink || ""} 
-          comment={action.instaId.comment || ""}
-          actionId= {action._id}
+          action = {action}
           />
         
         <SignedIn>
@@ -151,13 +146,17 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete }) => {
 
       <SignedIn>
       {action && (
-        <div>
+        <div className="button-container">
           <DeleteActionButton
           actionId = {action._id}
           onDelete = {onDelete}
           />
+          <EditActionButton
+            action = {action}
+            onEdit = {onEdit}
+          />
         </div>
-        ) }
+        ) }    
       </SignedIn>
     </div>
   );
