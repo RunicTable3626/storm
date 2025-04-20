@@ -100,6 +100,10 @@ const ActionDashboard = () => {
       updatedAction.emailId = { ...updatedAction.emailId, ...formData.emailInfo };
     }
 
+    if (formData.callInfo) {
+      updatedAction.callId = { ...updatedAction.callId, ...formData.callInfo };
+    }
+
     if (formData.instaInfo) {
       updatedAction.instaId = { ...updatedAction.instaId, ...formData.instaInfo };
     }
@@ -110,8 +114,6 @@ const ActionDashboard = () => {
       updatedActions[actionIndex] = updatedAction;
       return updatedActions;
     });
-
-    console.log(updatedAction)
 
   }
 
