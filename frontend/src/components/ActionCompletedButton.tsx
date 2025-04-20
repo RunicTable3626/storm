@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ActionCompleteModal from "../modals/ActionCompleteModal";
+import { useAuth } from '@clerk/clerk-react';
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {
@@ -17,6 +18,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const {isLoaded, isSignedIn} = useAuth();
 
   const saveAction = (actionId: string, actionType: string) => {
     const stored = JSON.parse(localStorage.getItem('actions') || '[]');
@@ -50,7 +52,10 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       const data = await response.json();
       console.log(`${actionType} response: ${data.message}`);
       setCompleted(true);
-      setTimeout(() => {onClick();saveAction(actionId, actionType);}, 1000);
+      setTimeout(() => {
+        onClick(); 
+        if(!(isSignedIn && isLoaded)) saveAction(actionId, actionType);
+      }, 1000);
     } catch (error) {
       console.error("Error:", error);
     }
