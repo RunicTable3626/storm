@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ActionCompleteModal from "../modals/ActionCompleteModal";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {
@@ -13,6 +14,9 @@ interface ActionCompleteButtonProps {
 
 const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
   const [completed, setCompleted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const saveAction = (actionId: string, actionType: string) => {
     const stored = JSON.parse(localStorage.getItem('actions') || '[]');
@@ -54,8 +58,10 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
 
   return (
         <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <button onClick={handleClick}>Complete Action</button>
+        <button onClick={openModal}>Complete Action</button>
         {completed && <span style={{ color: "green", marginLeft: "10px" }}>Action Completed!</span>}
+
+        <ActionCompleteModal isOpen = {isModalOpen} closeModal={closeModal} handleClick={handleClick}/>
         </div>
   )
 };
