@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
@@ -12,7 +12,6 @@ interface InstagramModalProps {
 
 const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, action}) => {
   const [copied, setCopied] = useState(false);
-  const textRef = useRef<HTMLParagraphElement>(null);
   const [instaText, setInstaText] = useState(action.instaId.comment);
   const [instaUrl, setInstaUrl] = useState(action.instaId.instagramLink)
   const contentType = "instagram comment";
@@ -24,17 +23,15 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, act
   }, [action.instaId.comment, action.instaId.instagramLink]); 
 
 
-  const handleCopy = async () => {
-    const text = textRef.current?.innerText;
-  
+  const handleCopy = async (text: string) => {
     if (!text) {
-      return console.error('Nothing to copy: textRef is null or empty');
+      return console.error('Nothing to copy');
     }
   
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 1000);
     } catch (err) {
       console.error('Text copy failed:', err);
     }
@@ -54,14 +51,14 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, act
       </button>
 
       <h2 className="text-xl font-bold mb-4 dark-style">Take action on Instagram</h2>
-      <p ref={textRef} className="text-gray-700 mb-4 dark-style">{instaText}</p>
+      <p className="text-gray-700 mb-4 dark-style">{instaText}</p>
       <div className="button-container">
         {action.instaId.comment && <button onClick={ (e) => {
           (e.target as HTMLButtonElement).blur()
-          handleCopy()}
+          handleCopy(instaText)}
         }
         >Copy Text</button>}
-        {copied && action.instaId.comment && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
+        {copied && instaText && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
 
         <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
       </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-import { useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
@@ -17,12 +17,27 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
     const [genBody, setGenBody] = useState(action.emailId.body);
     const [subjectText, setSubjectText] = useState(action.emailId.subject);
     const [emailAddress, setEmailAddress] = useState(action.emailId.emailAddress);
+    const [subjectCopied, setSubjectCopied] = useState(false);
+    const [bodyCopied, setBodyCopied] = useState(false);
+    
 
     useEffect(() => {
         setEmailAddress(action.emailId.emailAddress);
         setGenBody(action.emailId.body);
         setSubjectText(action.emailId.subject);
       }, [action.emailId.emailAddress, action.emailId.body, action.emailId.subject]);
+
+    const handleCopy = async (text: string) => {
+        if (!text) {
+          return console.error('Nothing to copy');
+        }
+      
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (err) {
+          console.error('Text copy failed:', err);
+        }
+      };
     
 
   return (
@@ -57,6 +72,27 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
             </div>
 
             <div className="button-container">
+                {subjectText && <button onClick={ (e) => {
+                (e.target as HTMLButtonElement).blur()
+                handleCopy(subjectText);
+                setSubjectCopied(true);
+                setTimeout(() => setSubjectCopied(false), 500);}
+                }
+                >Copy Subject</button>}
+                {subjectCopied && subjectText && <span style={{ color: 'green', marginLeft: '10px' }}>Subject copied!</span>}
+
+
+                {genBody && <button onClick={ (e) => {
+                (e.target as HTMLButtonElement).blur()
+                handleCopy(genBody);
+                setBodyCopied(true);
+                setTimeout(() => setBodyCopied(false), 500);}
+                }
+                >Copy Body</button>}
+                {bodyCopied && genBody && <span style={{ color: 'green', marginLeft: '10px' }}>Body copied!</span>}
+            </div>
+
+            <div className="button-container">
                 <ActionCompleteButton actionId={action._id} actionType="emailCount" onClick={onClose}/>
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
@@ -66,12 +102,13 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
 
             <div className = 'dark-style'>
                 <h3>Tips!</h3>
-                <p><strong>IMPORTANT: This link will open up Gmail on whatever account you are logged into! So make sure it's one you want to send an email from.</strong></p>
+                <p><strong>IMPORTANT: 'Send Email' will open up Gmail on whatever account you are logged into! So make sure it's one you want to send an email from.</strong></p>
                 <ul>
                     <li>Use 'Rephrase' to generate a new email body or subject to avoid identical messages from  being sent.</li>
                     <li>You can even manually edit the email in the text box!</li>
                     <li>Once you're ready, use 'Send Email' to use your email account to send the email. As of now, we only support Gmail accounts.</li>
-                    <li>Don't forget to return to the app and use 'Complete Action' to confirm that you have finished this action</li>
+                    <li>If you prefer to use another type of email, you can click 'Copy Subject' and 'Copy Body' to manually copy content and paste it into your email app.</li>
+                    <li>Don't forget to return here and use 'Complete Action' to confirm that you have finished this action</li>
                     <li>Lastly, thank you so much for helping grassroots campaigns, <strong>one action at a time!</strong></li>
                 </ul>
                 </div>
