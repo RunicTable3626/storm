@@ -35,4 +35,13 @@ This is built using the MERN stack
 * React.js (Frontend library to render a functional user interface)
 * Node.js (backend framework that helps power the tofu and potatoes of this thing)
 
+We also use SaaS products such as:
+* Groq (https://groq.com/) to handle content generation for different types of actions. We are primarily leveraging Meta's llama-3.1-8b-instant model. 
+* Clerk (https://clerk.com/) to handle user/admin authentication and implement Role-based Access Control (RBAC) functionalities 
+
+For deployment, we utilize:
+* Vercel (https://vercel.com/) to host our frontend
+* Render (https://render.com/) to host our backend
+
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
