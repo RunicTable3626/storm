@@ -19,70 +19,92 @@ const MODEL_NAME = "llama-3.1-8b-instant";
 export const generateContent = async (req: Request, res: Response) => {
   try {
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    const query: string = req.body.query as string;
-    const tone: string = req.body.tone as string;
+    const query: string = req.body.query;
+    const tone: string = req.body.tone;
+
     const queryContent = `You are a helpful assistant.\n\n
 
-                          Generate the following 3 outputs based on the description below:\n
-                          - An Email\n
-                          - A Voicemail message\n
-                          - A Social Media Comment\n\n
-
-                          Description:\n
-                          ${query}\n\n
-
-                          Use a consistent ${tone} tone for all outputs.\n\n
-
-                          Return your response in the exact format below, with no extra commentary, headers, or blank lines:\n\n
-                          Email:\n
-                          Subject: <subject line here>\n                         
-                          Body: <email body here>\n\n
-
-                          Voicemail:\n
-                          <voicemail message here>\n\n
-                          
-                          Comment:\n
-                          <comment here>
+    Generate the following 3 outputs based on the description below:\n
+    - An Email\n
+    - A Voicemail message\n
+    - A Social Media Comment\n\n
+    
+    Description:\n
+    ${query}\n\n
+    
+    Use a consistent ${tone} tone for all outputs.\n\n
+    
+    Return your response in the exact format below, with no extra commentary, headers, or blank lines:\n\n
+    Email:\n
+    Subject: <subject line here>\n                         
+    Body: <email body here>\n\n
+    
+    Voicemail:\n
+    <voicemail message here>\n\n
+    
+    Comment:\n
+    <comment here>
     `;
+
+    let generatedText = "";
+    let subject = "";
+    let body = "";
+    let callScript = "";
+    let comment = "";
+
+    const MAX_RETRIES = 3;
+    let attempts = 0;
+    let parsedSuccessfully = false;
+
+    while (attempts < MAX_RETRIES && !parsedSuccessfully) {
       const chatCompletion = await groq.chat.completions.create({
-        messages: [
-          {
-            role: "user",
-            content: queryContent,
-          },
-        ],
+        messages: [{ role: "user", content: queryContent }],
         model: MODEL_NAME,
       });
-  
-      const generatedText = chatCompletion.choices[0]?.message?.content || "";
 
+      generatedText = chatCompletion.choices[0]?.message?.content || "";
+      console.log(`Attempt ${attempts + 1}:`);
+      console.log(generatedText);
 
-      // Step 1: Split the input into sections (by "Voicemail:" and "Comment:" markers)
-      const emailSection = generatedText.split('Voicemail:')[0].trim(); // Everything before "Voicemail:"
-      const voicemailSection = generatedText.split('Comment:')[0].split('Voicemail:')[1].trim(); // Everything between "Voicemail:" and "Comment:"
-      const commentSection = generatedText.split('Comment:')[1].trim(); // Everything after "Comment:"
+      // Validation checks BEFORE using split or trim
+      if (
+        generatedText.includes("Subject:") &&
+        generatedText.includes("Body:") &&
+        generatedText.includes("Voicemail:") &&
+        generatedText.includes("Comment:")
+      ) {
+        const emailSection = generatedText.split("Voicemail:")[0];
+        const voicemailSection = generatedText.split("Comment:")[0].split("Voicemail:")[1];
+        const commentSection = generatedText.split("Comment:")[1];
 
-      // Step 2: Extract the subject and body from the email section
-      const emailParts = emailSection.replace(/\n+/g, '\n').split("\n");
-      const subject = emailParts[1].trim().split('Subject: ')[1]; // Get the line after "Subject:"
-      const body = emailParts.slice(2).join("\n").trim().split('Body: ')[1]; // Get everything after the subject line till "Voicemail:"
+        const emailParts = emailSection.replace(/\n+/g, "\n").split("\n");
+        const subjectLine = emailParts.find((line) => line.startsWith("Subject: "));
+        const bodyLine = emailParts.find((line) => line.includes("Body: "));
 
-      // Step 3: Extract voicemail message (remove quotes around it)
-      const callScript = voicemailSection.replace(/^"|"$/g, "").trim(); // Remove quotes
+        subject = subjectLine?.split("Subject: ")[1]?.trim() || "";
+        body = bodyLine?.split("Body: ")[1]?.trim() || "";
+        callScript = voicemailSection?.replace(/^"|"$/g, "").trim() || "";
+        comment = commentSection?.replace(/^"|"$/g, "").trim() || "";
 
-      // Step 4: Extract comment message (remove quotes around it)
-      const comment = commentSection.replace(/^"|"$/g, "").trim(); // Remove quotes
-      res.status(200).json({subject, body, callScript, comment});
-    
-  } catch (error: unknown) {
-    // Type assertion to make sure `error` is an `Error` object
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred." });
+        if (subject && body && callScript && comment) {
+          parsedSuccessfully = true;
+        }
+      }
+
+      attempts++;
     }
+
+    if (!parsedSuccessfully) {
+      res.status(500).json({ error: "Failed to parse Groq response after multiple retries." });
+    }
+
+    res.status(200).json({ subject, body, callScript, comment });
+
+  } catch (error) {
+    res.status(500).json({ error: "Unexpected server error." });
   }
-}
+};
+
 
 function normalizeQuotes(str: string) { //helper for rephraseContent
   const first = str[0];

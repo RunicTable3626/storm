@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
 import { useAuth } from "@clerk/clerk-react";
+import TextareaAutosize from 'react-textarea-autosize';
 
 
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
@@ -30,7 +31,7 @@ const ActionCreationPage = () => {
         instagramLink: "", 
     });
 
-    const [tone, setTone] = useState("polite");
+    const [tone, setTone] = useState("");
     const { getToken } = useAuth();
     const [showGuide, setShowGuide] = useState(false);
 
@@ -48,6 +49,7 @@ const ActionCreationPage = () => {
         const token = await getToken();
         if (token) {
           // Proceed only if token is available
+          if (!tone) setTone("polite");
           const generatedData = await generateContent(mainInfo.description, tone, token);
           if (generatedData) {
             // Assuming API returns these fields
@@ -225,10 +227,10 @@ const ActionCreationPage = () => {
         <form style={{ display: "flex", flexDirection: "column", gap: "10px" }} onSubmit={handleSubmit}>
           {/* Main Form */}
           <input type="text" name="title" placeholder="Title" value={mainInfo.title} onChange={handleMainChange} required />
-          <textarea name="description" placeholder="Description" value={mainInfo.description} onChange={handleMainChange} required ></textarea>
+          <TextareaAutosize name="description" placeholder="Description" value={mainInfo.description} onChange={handleMainChange} required ></TextareaAutosize>
 
           {/*Button to call Groq to autogenerate email subject + body and call info */}
-          <textarea name="tone" placeholder="Tone (Defaults to polite)" onChange={(e) => setTone(e.target.value)} ></textarea>
+          <textarea name="tone" placeholder="Tone (Defaults to polite)" value={tone} onChange={(e) => setTone(e.target.value)} ></textarea>
           <button type="button" onClick={ (e) => {
                     (e.target as HTMLButtonElement).blur();
                     handleGenerate();
@@ -248,7 +250,7 @@ const ActionCreationPage = () => {
             <input type="text" name="name" placeholder="Name of Recipient" value={emailInfo.name} onChange={handleEmailChange} />
             <input type="email" name="emailAddress" placeholder="Email Address" value={emailInfo.emailAddress} onChange={handleEmailChange} />
             <input type="text" name="subject" placeholder="Subject" value={emailInfo.subject} onChange={handleEmailChange} />
-            <textarea name="body" placeholder="Body" value={emailInfo.body} onChange={handleEmailChange}></textarea>
+            <TextareaAutosize name="body" placeholder="Body" value={emailInfo.body} onChange={handleEmailChange}></TextareaAutosize>
           </div>
         )}
 
@@ -266,7 +268,7 @@ const ActionCreationPage = () => {
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input type="text" name="name" placeholder="Name" value={callInfo.name} onChange={handleCallChange} />
             <input type="text" name="phoneNumber" placeholder="Phone Number" value={callInfo.phoneNumber} onChange={handleCallChange} />
-            <textarea name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange}></textarea>
+            <TextareaAutosize name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange}></TextareaAutosize>
           </div>
         )}
 
@@ -281,7 +283,7 @@ const ActionCreationPage = () => {
           {showInstaSubForm && (
           <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <input type="text" name="name" placeholder="Name" value={instaInfo.name} onChange={handleInstaChange} />
-            <textarea name="comment" placeholder="Comment" value={instaInfo.comment} onChange={handleInstaChange}></textarea>
+            <TextareaAutosize name="comment" placeholder="Comment" value={instaInfo.comment} onChange={handleInstaChange}></TextareaAutosize>
             <input type="text" name="instagramLink" placeholder="Instagram Link" value={instaInfo.instagramLink} onChange={handleInstaChange} />
           </div>
         )}

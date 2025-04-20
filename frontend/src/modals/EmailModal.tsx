@@ -5,6 +5,7 @@ import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
 
+
 interface EmailModalProps {
   isOpen:       boolean;
   action:           any;

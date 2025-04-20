@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import Modal from "react-modal";
 import isEqual from 'lodash.isequal';
 import "./modalStyles.css";
+import TextareaAutosize from 'react-textarea-autosize';
+
 
 
 interface EditActionModalProps {
@@ -267,7 +269,7 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
           <div>Title:</div>
           <input type="text" name="title" placeholder="Title" value={mainInfo.title} onChange={handleMainChange} required />
           <div>Description:</div>
-          <textarea name="description" placeholder="Description" value= {mainInfo.description} onChange={handleMainChange} required ></textarea>
+          <TextareaAutosize name="description" placeholder="Description" value= {mainInfo.description} onChange={handleMainChange} required></TextareaAutosize>
   
           {/* Email subform */}
         {emailInfo && (
@@ -280,7 +282,7 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
             <div>Subject:</div>
             <input type="text" name="subject" placeholder="Subject" value={emailInfo.subject} onChange={handleEmailChange} required />
             <div>Body:</div>
-            <textarea name="body" placeholder="Body" value={emailInfo.body} onChange={handleEmailChange} required></textarea>
+            <TextareaAutosize name="body" placeholder="Body" value={emailInfo.body} onChange={handleEmailChange} required></TextareaAutosize>
           </div>
         )}    
 
@@ -293,7 +295,7 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
             <div>Phone Number:</div>
             <input type="text" name="phoneNumber" placeholder="Phone Number" value={callInfo.phoneNumber} onChange={handleCallChange} required />
             <div>Call Script:</div>
-            <textarea name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange} required></textarea>
+            <TextareaAutosize name="callScript" placeholder="Call Script" value={callInfo.callScript} onChange={handleCallChange} required></TextareaAutosize>
           </div>            
         )}
 
@@ -304,7 +306,7 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
             <div>Post Name:</div>
             <input type="text" name="name" placeholder="Name" value={instaInfo.name} onChange={handleInstaChange} required />
             <div>Comment:</div>
-            <textarea name="comment" placeholder="Comment" value={instaInfo.comment} onChange={handleInstaChange} required></textarea>
+            <TextareaAutosize name="comment" placeholder="Comment" value={instaInfo.comment} onChange={handleInstaChange} required></TextareaAutosize>
             <div>Instagram Link:</div>
             <input type="text" name="instagramLink" placeholder="Instagram Link" value={instaInfo.instagramLink} onChange={handleInstaChange} required />
           </div>
