@@ -24,7 +24,7 @@ const ActionCompleteModal: React.FC<ActionCompleteModalProps> = ({isOpen, closeM
             </button>
             <div className="dark-style">
             <h2>Are you sure you have completed this action?</h2>
-            <h3>If you click 'Confirm', you will not be able to do this action for 24 hours.</h3>
+            <h3>If you click 'Confirm', You will not be able to redo this action.</h3>
             </div>
 
             <div className="button-container">

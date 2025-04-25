@@ -7,6 +7,7 @@ import Email  from '../models/emailModel';
 import Call from '../models/callModel';         
 import Insta from '../models/instaModel'; 
 import Groq from "groq-sdk";
+import dayjs from "dayjs"; // Using dayjs for date manipulation
 
 const POST_ID = process.env.POST_ID as string;
 const EMAIL = process.env.EMAIL as string;
@@ -249,6 +250,32 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
     res.status(500).json({ error: "Error fetching actions" });
   }
 };
+
+export const getActionsFromLastNDays = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Get the number of days from the query parameter (or use 7 as a default)
+    const daysAgo = parseInt(req.query.daysAgo as string) || 7;
+
+    // Calculate the timestamp for the given number of days ago
+    const targetDate = dayjs().subtract(daysAgo, "day").toDate();
+
+    const actions = await Action.find({
+      createdAt: {
+        $gte: targetDate, // Retrieve actions from the given number of days ago or later
+        $lt: dayjs().toDate(), // Less than the current timestamp
+      },
+    })
+      .populate("emailId") // Populate related email info
+      .populate("callId")  // Populate related call info
+      .populate("instaId"); // Populate related Instagram info  
+
+    res.status(200).json(actions);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching actions" });
+  }
+};
+
 
 export const updateCount = async (req: Request, res: Response): Promise<void> => {
   try {

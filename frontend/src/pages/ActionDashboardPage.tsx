@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 
@@ -39,14 +38,14 @@ const ActionDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { isSignedIn } = useUser();
 
   
 
   // Fetch function
   const fetchActions = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/actions`); // Adjust URL if necessary
+      const daysAgo = 100;
+      const response = await fetch(`${API_URL}/api/actions/lastNDays?daysAgo=${daysAgo}`);
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
@@ -64,16 +63,41 @@ const ActionDashboard = () => {
     }
   };
 
+
+  function syncLocalActions() { 
+    //checks if any localStorage action ids are not in fetched actions
+    const stored = localStorage.getItem("actions");
+    if (!stored) return;
+  
+    try {
+      const storedActions = JSON.parse(stored);
+      if (!Array.isArray(storedActions)) return;
+  
+      const validIds = new Set(actions.map(a => a._id));
+  
+      const filteredActions = storedActions.filter(
+        (action: { id: string }) => validIds.has(action.id)
+      );
+  
+      localStorage.setItem("actions", JSON.stringify(filteredActions));
+    } catch (err) {
+      console.error("Failed to sync localStorage actions:", err);
+    }
+  }
+
   // Fetch data on component mount
+  //Kept separate to prevent empty actions variable being accessed in syncLocalActions() due to delay.
   useEffect(() => {
     fetchActions();
   }, []);
 
   useEffect(() => {
-    if (isSignedIn) {
-      localStorage.removeItem("actions");
+    if (actions.length > 0) {
+      syncLocalActions();
     }
-  }, [isSignedIn]);
+  }, [actions]);
+
+
 
   const handleDeleteAction = async (deletedId: string) => {
     setActions((prevActions) => prevActions.filter((action) => action._id !== deletedId));
