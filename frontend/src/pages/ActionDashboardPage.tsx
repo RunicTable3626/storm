@@ -44,7 +44,7 @@ const ActionDashboard = () => {
   // Fetch function
   const fetchActions = async () => {
     try {
-      const daysAgo = 100;
+      const daysAgo = 7;
       const response = await fetch(`${API_URL}/api/actions/lastNDays?daysAgo=${daysAgo}`);
       const data = await response.json();
 
