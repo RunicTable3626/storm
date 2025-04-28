@@ -22,7 +22,9 @@
 ## About The Project
 
 All digital action platforms that I saw were proprietary to large non-profits, leveraging their network effect and resources in order to supplement their digital campaigns. I made this to offer a similar opportunity to organize grassroots campaigns!
-Please check 'LICENSE' before cloning and/or deploying an instance of this project.
+
+License: Non-Commercial Use Only. No warranties. See LICENSE for full terms.
+Contact hotsaucelumberjack@proton.me for commercial licensing.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
