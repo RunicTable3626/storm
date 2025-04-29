@@ -3,7 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
-import actionRouter from "./routes/action";
+import actionsRouter from "./routes/actions";
+import notificationsRouter from "./routes/notifications";
 import { clerkMiddleware, getAuth } from '@clerk/express'
 
 
@@ -38,7 +39,7 @@ const connectDB = async (): Promise<void> => {
 connectDB();
 
 // Routes
-app.use("/api/actions", actionRouter);
+app.use("/api/actions", actionsRouter);
 
 app.get("/", (req, res) => {
   const auth = getAuth(req);
