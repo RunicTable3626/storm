@@ -3,12 +3,10 @@ import { requireAuth } from '@clerk/express'
 const notificationsRouter = express.Router();
 
 import {
-    createSubscriber
+    createSubscriber, 
+    postCreateActionNotification
 } from "../controllers/notificationController"
 
-notificationsRouter.post("/create-action", requireAuth(), postNotification);
 notificationsRouter.post("/subscribe", createSubscriber);
-notificationsRouter.get("/subscribe", getSubscribers);
-
-
+notificationsRouter.post("/create-action", requireAuth(), postCreateActionNotification);
 export default notificationsRouter; 

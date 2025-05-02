@@ -1,40 +1,60 @@
 import { Bell, BellRing } from "lucide-react"; // Using two icons: Bell (idle) and BellRing (subscribed)
 import { useState } from "react";
+import { requestFcmToken } from "../utils/fcm";
+import { v4 as uuidv4 } from "uuid";
+const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
+
 
 const NotificationButton = () => {
   const [subscribing, setSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState('');
 
   const handleSubscribe = async () => {
     setSubscribing(true);
-    setError(null);
+    const existingId = localStorage.getItem("stormUserId");
+    const userId = existingId || uuidv4();
+    if (!existingId) localStorage.setItem("stormUserId", userId);
 
     try {
-      const response = await fetch('/api/notifications/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // Optionally, you can send additional data like FCM token here if you want
-        }),
-      });
+        const fcmToken = await requestFcmToken();
+  
+        if (fcmToken) {
+            const response = await fetch(`${API_URL}/api/notifications/subscribe`, {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId, fcmToken }),
+            });
 
-      if (response.ok) {
-        setSubscribed(true);
-      } else {
-        const data = await response.json();
-        setError(data.message || "Subscription failed.");
-      }
+            if (response.ok) {
+                const data = await response.json();
+                setSubscribed(true);
+                setMessage(data.message);
+                setTimeout(() => {setSubscribed(false); setMessage('');}, 1000); 
+              } else {
+                const data = await response.json();
+                setMessage(data.message || "Subscription failed.")
+                setTimeout(() => {setMessage('');}, 1000); 
+                console.error(data.message || "Subscription failed.");
+              }
+
+        } else {
+            console.warn("No FCM token received. Permission may be blocked");
+        }
+
     } catch (err) {
-      setError("Network error while subscribing.");
+      setMessage("Network error while subscribing.")  
+      console.error("Network error while subscribing.");
+      setTimeout(() => {setMessage('');}, 1000); 
     } finally {
       setSubscribing(false);
     }
   };
 
   return (
+    <div>
     <button
       onClick={handleSubscribe}
       disabled={subscribing || subscribed}
@@ -42,6 +62,8 @@ const NotificationButton = () => {
     >
       {subscribed ? <BellRing size={24} /> : <Bell size={24} />}
     </button>
+    {message && <span style={{ color: "black", marginLeft: "10px" }}>{message}</span>}
+    </div>
   );
 };
 

@@ -214,10 +214,7 @@ const ActionCreationPage = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`, // Reuse the SAME token
             },
-            body: JSON.stringify({
-              mainMessage: "New Action Created!",
-              actionTitle: mainInfo.title,
-            }),
+            body: JSON.stringify({ title: mainInfo.title })
           });
 
           if (!notificationResponse.ok) {
