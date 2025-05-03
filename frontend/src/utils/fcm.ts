@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { getMessaging, getToken} from "firebase/messaging";
 
 // Firebase config using Vite environment variables
 const firebaseConfig = {
@@ -39,18 +39,24 @@ export const requestFcmToken = async (): Promise<string | null> => {
   }
 };
 
-/**
- * Listen for foreground messages.
- */
-export const onForegroundMessage = (callback: (payload: any) => void): void => {
-  onMessage(messaging, callback);
-};
-
 export const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
       const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
       console.log("Service worker registered:", registration);
+
+      const sendConfig = () => {
+        if (registration.active) {
+          registration.active.postMessage({ firebaseConfig });
+        } else {
+          navigator.serviceWorker.ready.then((reg) => {
+            reg.active?.postMessage({ firebaseConfig });
+          });
+        }
+      };
+
+      // Wait a bit to ensure the SW is ready to receive messages
+      setTimeout(sendConfig, 1000);
     } catch (err) {
       console.error("Service worker registration failed:", err);
     }

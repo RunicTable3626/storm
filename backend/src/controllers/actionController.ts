@@ -65,7 +65,6 @@ export const generateContent = async (req: Request, res: Response) => {
 
       generatedText = chatCompletion.choices[0]?.message?.content || "";
       console.log(`Attempt ${attempts + 1}:`);
-      console.log(generatedText);
 
       // Validation checks BEFORE using split or trim
       if (
@@ -74,6 +73,7 @@ export const generateContent = async (req: Request, res: Response) => {
         generatedText.includes("Voicemail:") &&
         generatedText.includes("Comment:")
       ) {
+        console.log(generatedText);
         const emailSection = generatedText.split("Voicemail:")[0];
         const voicemailSection = generatedText.split("Comment:")[0].split("Voicemail:")[1];
         const commentSection = generatedText.split("Comment:")[1];
@@ -97,9 +97,9 @@ export const generateContent = async (req: Request, res: Response) => {
 
     if (!parsedSuccessfully) {
       res.status(500).json({ error: "Failed to parse Groq response after multiple retries." });
+    } else {
+      res.status(200).json({ subject, body, callScript, comment });
     }
-
-    res.status(200).json({ subject, body, callScript, comment });
 
   } catch (error) {
     res.status(500).json({ error: "Unexpected server error." });

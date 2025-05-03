@@ -158,8 +158,6 @@ const ActionCreationPage = () => {
 
     }
       
-
-  
     // Submit form data
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -342,6 +340,7 @@ const ActionCreationPage = () => {
         </div>
         )}
         </form>
+        
       </div>
 
 

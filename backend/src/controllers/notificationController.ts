@@ -1,4 +1,4 @@
-import { Express, Request, Response } from 'express';
+import {Request, Response } from 'express';
 import Subscriber from '../models/subscriberModel';  // Your Mongoose model
 import admin from '../lib/firebaseAdmin';
 
@@ -18,8 +18,14 @@ export const createSubscriber = async (req: Request, res: Response) : Promise<vo
     const existingSubscriber = await Subscriber.findOne({ userId });
 
     if (existingSubscriber) {
-      // Subscriber exists, skip creation
-      res.status(200).json({ message: 'User already subscribed' });
+        if (existingSubscriber.fcmToken !== fcmToken) {
+            existingSubscriber.fcmToken = fcmToken;
+            await existingSubscriber.save();
+            res.status(200).json({ message: 'Subscription updated successfully' });
+        } else {
+            res.status(200).json({ message: 'User already subscribed' });
+
+        }
     } else {
 
         const newSubscriber = new Subscriber({
@@ -42,42 +48,50 @@ export const createSubscriber = async (req: Request, res: Response) : Promise<vo
 
 
 export const postCreateActionNotification = async (req: Request, res: Response) => {
-    const { message } = req.body.title;
+    const { title } = req.body;
+    console.log('Title: ',title)
 
-    if (!message) {
+    if (!title) {
       res.status(400).json({ message: 'Notification message is required.' });
+    } else {
+        try {
+            // Retrieve all subscribers (FCM tokens)
+            const subscribers = await Subscriber.find({}, 'fcmToken');
+            const tokens = subscribers.map(sub => sub.fcmToken);
+        
+            if (tokens.length === 0) {
+              res.status(200).json({ message: 'No subscribers to notify.' });
+            } else {
+                    // Build the message object with notification payload
+            const messagePayload: admin.messaging.MulticastMessage = {
+                notification: {
+                    title: 'New Action!',
+                    body: title,
+                  },
+                  data: {
+                    title: 'New Action!',
+                    body: title,
+                  },
+                  tokens,
+                };
+            // Send notification to all tokens
+            const response = await admin.messaging().sendEachForMulticast(messagePayload);
+            console.log("FCM response:", response);
+        
+            // Check for failures
+              const failedTokens = response.failureCount > 0 ? response.responses.filter(r => !r.success) : [];
+              if (failedTokens.length > 0) {
+                  console.error('Failed to send notifications to tokens:', failedTokens);
+                  res.status(500).json({ message: 'Failed to send notifications to some users.' });
+              } else {
+                  res.status(200).json({ message: 'Notifications sent successfully.' });
+              }
+            }
+          } catch (error) {
+            console.error('Error broadcasting notification:', error);
+            res.status(500).json({ message: 'Failed to send notifications.' });
+          }
     }
   
-    try {
-      // Retrieve all subscribers (FCM tokens)
-      const subscribers = await Subscriber.find({}, 'fcmToken');
-      const tokens = subscribers.map(sub => sub.fcmToken);
-  
-      if (tokens.length === 0) {
-        res.status(200).json({ message: 'No subscribers to notify.' });
-      } {
-              // Build the message object with notification payload
-      const messagePayload: admin.messaging.MulticastMessage = {
-        notification: {
-          title: 'New Alert',
-          body: message,
-        },
-        tokens: tokens, // List of device tokens to send the message to
-      };
-      // Send notification to all tokens
-      const response = await admin.messaging().sendEachForMulticast(messagePayload);
-  
-      // Check for failures
-        const failedTokens = response.failureCount > 0 ? response.responses.filter(r => !r.success) : [];
-        if (failedTokens.length > 0) {
-            console.error('Failed to send notifications to tokens:', failedTokens);
-            res.status(500).json({ message: 'Failed to send notifications to some users.' });
-        } else {
-            res.status(200).json({ message: 'Notifications sent successfully.' });
-        }
-      }
-    } catch (error) {
-      console.error('Error broadcasting notification:', error);
-      res.status(500).json({ message: 'Failed to send notifications.' });
-    }
+
   };

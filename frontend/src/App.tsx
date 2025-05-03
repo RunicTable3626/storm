@@ -6,14 +6,18 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Sidebar from "./components/Sidebar";
 import Modal from "react-modal";
 import { useUser } from '@clerk/clerk-react';
+import React, { useEffect } from "react";
+import { registerServiceWorker } from "./utils/fcm"; // adjust path as needed
+
 
 Modal.setAppElement("#root");
 
-
-
-
-
 const App = () => {
+  useEffect(() => {
+    registerServiceWorker();
+  }, []);
+
+
   interface ProtectedRouteProps {
     element: any; // Using 'any' type for the 'element' prop
   }
