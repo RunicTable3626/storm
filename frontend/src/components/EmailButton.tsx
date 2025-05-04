@@ -6,14 +6,14 @@ interface EmailButtonProps {
 }
 
 const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
-  const emailUrl = `mailto:${action.emailId.emailAddress}?subject=${encodeURIComponent(action.emailId.subject)}&body=${encodeURIComponent(action.emailId.body)}`;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const sendEmail = () => {
+  const sendEmail = (subject: string, body: string) => {
+    const emailUrl = `mailto:${action.emailId.emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     if (navigator.userAgent.includes("Mobi")) {
       // Mobile devices might not open a new tab properly, so use location.href instead
       window.location.href = emailUrl;

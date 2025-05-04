@@ -10,7 +10,7 @@ interface EmailModalProps {
   isOpen:       boolean;
   action:           any;
   onClose:() =>  void;
-  onSend: () =>  void;
+  onSend: ( subjectText: string, genBody: string) =>  void;
 }
 
 const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSend }) => {
@@ -95,7 +95,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
             <div className="button-container">
                 <ActionCompleteButton actionId={action._id} actionType="emailCount" onClick={onClose}/>
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
-                <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
+                <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend(subjectText, genBody)}}> 
                         Send Email
                 </button>
             </div>
