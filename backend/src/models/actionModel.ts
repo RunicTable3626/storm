@@ -14,6 +14,7 @@ export interface IAction extends Document {
   emailCount?: number;
   callCount?: number;
   instaCount?: number;
+  createdBy: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -28,6 +29,7 @@ const actionSchema = new mongoose.Schema({
   emailCount:   { type: Number},
   callCount:    { type: Number},
   instaCount:   { type: Number},
+  createdBy:    { type: String},
 }, { timestamps: true });
 
 const Action = mongoose.model<IAction>("Action", actionSchema);
