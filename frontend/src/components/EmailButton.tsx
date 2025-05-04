@@ -6,7 +6,7 @@ interface EmailButtonProps {
 }
 
 const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(action.emailId.emailAddress)}&su=${encodeURIComponent(action.emailId.subject)}&body=${encodeURIComponent(action.emailId.body)}`;
+  const emailUrl = `mailto:${action.emailId.emailAddress}?subject=${encodeURIComponent(action.emailId.subject)}&body=${encodeURIComponent(action.emailId.body)}`;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -14,7 +14,13 @@ const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
   const closeModal = () => setIsModalOpen(false);
 
   const sendEmail = () => {
-    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+    if (navigator.userAgent.includes("Mobi")) {
+      // Mobile devices might not open a new tab properly, so use location.href instead
+      window.location.href = emailUrl;
+    } else {
+      // Desktop devices can open in a new tab
+      window.open(emailUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
