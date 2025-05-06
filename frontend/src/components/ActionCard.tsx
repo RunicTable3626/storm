@@ -6,6 +6,8 @@ import InstagramButton from "./InstagramButton";
 import DeleteActionButton from "./DeleteActionButton";
 import { SignedIn, useUser } from "@clerk/clerk-react";
 import EditActionButton from "./EditActionButton";
+const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
+
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
@@ -35,6 +37,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
   const [isEmailActionCompleted, setIsEmailActionCompleted] = useState(false);
   const [isCallActionCompleted, setIsCallActionCompleted] = useState(false);
   const [isInstagramCommentActionCompleted, setIsInstagramCommentActionCompleted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const checkActionCompletion = () => {
     setIsEmailActionCompleted(actionExists(action._id, "emailCount"));
@@ -80,6 +83,8 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         <strong>This can be modified by currently logged-in user</strong>
       </p>  
       )}
+
+
 
       <h3>{action.title || ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
@@ -135,6 +140,8 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
           : "Unknown"}</p>
       )}
 
+
+
       <SignedIn>
       {action && user && (userEmail === action.createdBy || !action.createdBy) && (
         <div className="button-container">
@@ -149,7 +156,26 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         </div>
         ) }    
       </SignedIn>
-    </div>
+
+
+      {action.shareId &&  (
+        <div> 
+        <p><strong>Click to copy and share Action through the link below!</strong></p>
+        <button
+          onClick={(e) => {
+          (e.target as HTMLButtonElement).blur()
+            navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/${action.shareId}`);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1000);
+          }}>
+          {` Click to Copy:  ${ALLOWED_ORIGIN}/${action.shareId}`}
+        </button>
+        {copied && action.shareId && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
+      </div>
+      )}
+
+
+</div>
   );
 };
 

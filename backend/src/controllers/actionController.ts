@@ -9,6 +9,7 @@ import Insta from '../models/instaModel';
 import Groq from "groq-sdk";
 import dayjs from "dayjs"; // Using dayjs for date manipulation
 import { getAuth, clerkClient } from '@clerk/express';
+import { nanoid } from 'nanoid';
 
 const POST_ID = process.env.POST_ID as string;
 const EMAIL = process.env.EMAIL as string;
@@ -222,6 +223,8 @@ export const postAction = async (req: Request, res: Response) => {
       await instaDetails.save();
       instaId = instaDetails._id;  // Store _id if the instaInfo is valid
     }
+
+    const shareId = nanoid(10);
     
     // Create the action document, using the saved IDs or null if not valid
     const actionDetails = new Action({
@@ -230,12 +233,13 @@ export const postAction = async (req: Request, res: Response) => {
       callId,       // Reference to Call collection, will be null if callDetails is not created
       instaId,      // Reference to Insta collection, will be null if instaDetails is not created
       createdBy,
+      shareId,
     });
 
     await actionDetails.save()
-    console.log("Saved Action ID:", actionDetails._id);
+    console.log("Saved Action ID:", actionDetails.shareId);
 
-    res.status(201).json({ message: "Action created successfully!", actionDetails });
+    res.status(201).json({ shareId: actionDetails.shareId});
   } catch (error: unknown) {
     // Type assertion to make sure `error` is an `Error` object
     if (error instanceof Error) {
