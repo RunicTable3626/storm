@@ -14,6 +14,9 @@ interface ActionProps {
 }
 
 const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
+  const {user} = useUser();
+
+  const userEmail = user?.emailAddresses[0].emailAddress;
 
   type Action = {
     id: string;
@@ -73,6 +76,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       wordWrap: "break-word",  // Ensure long text wraps
       }}>
       <h3>{action.title || ""}</h3>
+      <p><strong>Created By: </strong> {action.createdBy || "Anonymous"}</p> {/*remove this and replace this with user provided name or take it out altogether. */}
       <p><strong>Description:</strong> {action.description || ""}</p>
 
       {/* Display Email Info */}
@@ -127,7 +131,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       )}
 
       <SignedIn>
-      {action && (
+      {action && user && (userEmail === action.createdBy || !action.createdBy) && (
         <div className="button-container">
           <DeleteActionButton
           actionId = {action._id}
