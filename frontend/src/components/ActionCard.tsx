@@ -14,6 +14,9 @@ interface ActionProps {
 }
 
 const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
+  const {user} = useUser();
+
+  const userEmail = user?.emailAddresses[0].emailAddress;
 
   type Action = {
     id: string;
@@ -72,6 +75,12 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       maxWidth: "800px",  // If you want some flexibility
       wordWrap: "break-word",  // Ensure long text wraps
       }}>
+      {user && (userEmail === action.createdBy || !action.createdBy) && (
+      <p  style={{ color: 'green' }}>
+        <strong>This can be modified by currently logged-in user</strong>
+      </p>  
+      )}
+
       <h3>{action.title || ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
 
@@ -127,7 +136,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       )}
 
       <SignedIn>
-      {action && (
+      {action && user && (userEmail === action.createdBy || !action.createdBy) && (
         <div className="button-container">
           <DeleteActionButton
           actionId = {action._id}
