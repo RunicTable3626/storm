@@ -75,8 +75,13 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       maxWidth: "800px",  // If you want some flexibility
       wordWrap: "break-word",  // Ensure long text wraps
       }}>
+      {user && (userEmail === action.createdBy || !action.createdBy) && (
+      <p  style={{ color: 'green' }}>
+        <strong>This can be modified by currently logged-in user</strong>
+      </p>  
+      )}
+
       <h3>{action.title || ""}</h3>
-      <p><strong>Created By: </strong> {action.createdBy || "Anonymous"}</p> {/*remove this and replace this with user provided name or take it out altogether. */}
       <p><strong>Description:</strong> {action.description || ""}</p>
 
       {/* Display Email Info */}
