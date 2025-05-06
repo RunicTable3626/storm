@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth} from "@clerk/clerk-react";
 import TextareaAutosize from 'react-textarea-autosize';
 
 

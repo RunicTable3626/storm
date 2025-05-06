@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const navigate = useNavigate();
-
   const {isLoaded: userLoaded } = useUser();
   const {isLoaded: sessionLoaded } = useSession();
 
