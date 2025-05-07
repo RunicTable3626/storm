@@ -41,22 +41,30 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
   const [isInstagramCommentActionCompleted, setIsInstagramCommentActionCompleted] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const checkActionCompletion = () => {
+  const checkAndSetActionCompletion = () => {
     setIsEmailActionCompleted(actionExists(action._id, "emailCount"));
     setIsCallActionCompleted(actionExists(action._id, "callCount"));
     setIsInstagramCommentActionCompleted(actionExists(action._id, "instaCount"));
+  };
+
+  const isAllActionsCompleted = () => {
+    return (
+      (isEmailActionCompleted || !action.emailId) &&
+      (isCallActionCompleted || !action.callId) &&
+      (isInstagramCommentActionCompleted || !action.instaId)
+    );
   };
 
   const { isSignedIn,  isLoaded } = useUser();
 
   useEffect(() => {
       // Listen for custom event in the same tab
-      checkActionCompletion(); //checking everytime an action card is rendered
-      window.addEventListener("action-added-to-local-storage", checkActionCompletion);
+      checkAndSetActionCompletion(); //checking everytime an action card is rendered
+      window.addEventListener("action-added-to-local-storage", checkAndSetActionCompletion);
   
       // Cleanup listener when component unmounts
       return () => {
-        window.removeEventListener("action-added-to-local-storage", checkActionCompletion);
+        window.removeEventListener("action-added-to-local-storage", checkAndSetActionCompletion);
       };
 
   }, []);
@@ -85,18 +93,14 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
       </p>  
       )}
 
-      { (isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId)
-        && (
-          <p style={{ color: ' #747bff' }}>{isLinkedBool? "You have already completed this shared action!" : ""}</p>
-        )
-      }
-
-
-      { !((isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId))
-        && (
-          <p style={{ color: ' #747bff' }}>{isLinkedBool? "Someone shared this action with you!" : ""}</p>
-        )
-      }
+      {isLinkedBool && (
+        <p style={{ color: '#747bff' }}>
+          { isAllActionsCompleted()
+            ? "You have already completed this shared action!"
+            : "Someone shared this action with you!"
+          }
+        </p>
+      )}
 
 
       <h3>{action.title || ""}</h3>
@@ -141,7 +145,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
         </div>
       )}
 
-      { (isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId)
+      { isAllActionsCompleted()
         && (
           <p>All Actions Completed!</p>
         )

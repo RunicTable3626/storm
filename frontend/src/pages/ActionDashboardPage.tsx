@@ -169,7 +169,7 @@ const ActionDashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
-      {shareIdFromUrl && !highlighted && 
+      {shareIdFromUrl && !highlighted && !loading &&
       <p style={{ color: "orange" }}>The shared action associated with your link doesn't exist, was deleted or has expired</p>
       }
 
