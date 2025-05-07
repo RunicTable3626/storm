@@ -61,24 +61,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
 
   }, []);
 
-  useEffect(() => {
-    if (
-      (isEmailActionCompleted || !action.emailId) &&
-      (isCallActionCompleted || !action.callId) &&
-      (isInstagramCommentActionCompleted || !action.instaId)
-    ) {
-      setIsLinkedBool(false);
-    }
-  }, [
-    isEmailActionCompleted,
-    isCallActionCompleted,
-    isInstagramCommentActionCompleted,
-    action.emailId,
-    action.callId,
-    action.instaId
-  ]);
-
-
   useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
     if (!isLoaded) return;
   
@@ -103,7 +85,18 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
       </p>  
       )}
 
-      <p style={{ color: '#747bff' }}>{isLinkedBool? "Someone shared this action with you!" : ""}</p>
+      { (isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId)
+        && (
+          <p style={{ color: ' #747bff' }}>{isLinkedBool? "You have already completed this shared action!" : ""}</p>
+        )
+      }
+
+
+      { !((isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId))
+        && (
+          <p style={{ color: ' #747bff' }}>{isLinkedBool? "Someone shared this action with you!" : ""}</p>
+        )
+      }
 
 
       <h3>{action.title || ""}</h3>
@@ -159,7 +152,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
           ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A")
           : "Unknown"}</p>
       )}
-
 
 
       <SignedIn>
