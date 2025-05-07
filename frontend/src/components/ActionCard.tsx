@@ -168,7 +168,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
             setCopied(true);
             setTimeout(() => setCopied(false), 1000);
           }}>
-          {` Click to Copy:  ${ALLOWED_ORIGIN}/${action.shareId}`}
+          {"Copy Action Link"}
         </button>
         {copied && action.shareId && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
       </div>

@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 
 // pages/ActionsComponent.tsx
 import ActionCard from "../components/ActionCard"; // Import the ActionCard component
+
+
+
 
 
 interface Email {
@@ -32,13 +36,17 @@ interface Action {
   emailId?: Email;
   callId?: Call;
   instaId?: Insta;
+  shareId?: string;
 }
 
 const ActionDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
 
+  const location = useLocation();
+  const shareIdFromUrl = location.state?.shareId;
   
 
   // Fetch function
@@ -142,6 +150,18 @@ const ActionDashboard = () => {
   }
 
 
+  const reversed = actions.slice().reverse(); // Descending order (latest first)
+
+  const highlighted = shareIdFromUrl
+  ? reversed.find((action) => action.shareId === shareIdFromUrl)
+  : null;
+
+  const rest = shareIdFromUrl
+  ? reversed.filter((action) => action.shareId !== shareIdFromUrl)
+  : reversed;
+
+  const finalList = highlighted ? [highlighted, ...rest] : rest;
+
   return (
     <div>
       <h2>Actions Dashboard</h2>
@@ -149,7 +169,11 @@ const ActionDashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
-      {actions.slice().reverse().map((action) => (
+      {shareIdFromUrl && !highlighted && 
+      <p style={{ color: "orange" }}>The shared action associated with your link is either invalid, deleted or expired</p>
+      }
+      
+      {finalList.map((action) => (
         <ActionCard key={action._id} action={action} onDelete={handleDeleteAction} onEdit={handleEditAction}/>
       ))}
     </div>
