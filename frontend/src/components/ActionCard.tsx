@@ -11,12 +11,14 @@ const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
+  isLinked: boolean
   onDelete: (actionId: string) => void;
   onEdit: (actionId: string, formData: any) => void;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit }) => {
   const {user} = useUser();
+  const [isLinkedBool, setIsLinkedBool] = useState(isLinked); //to deactivate linked styling after action completion
 
   const userEmail = user?.emailAddresses[0].emailAddress;
 
@@ -59,6 +61,23 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
 
   }, []);
 
+  useEffect(() => {
+    if (
+      (isEmailActionCompleted || !action.emailId) &&
+      (isCallActionCompleted || !action.callId) &&
+      (isInstagramCommentActionCompleted || !action.instaId)
+    ) {
+      setIsLinkedBool(false);
+    }
+  }, [
+    isEmailActionCompleted,
+    isCallActionCompleted,
+    isInstagramCommentActionCompleted,
+    action.emailId,
+    action.callId,
+    action.instaId
+  ]);
+
 
   useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
     if (!isLoaded) return;
@@ -72,7 +91,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
   
   return (
     <div style={{ 
-      border: "2px solid #ccc",
+      border: isLinkedBool? "10px solid #ccc" : "2px solid #ccc",
       padding: "20px",
       marginBottom: "10px",          
       maxWidth: "800px",  // If you want some flexibility
@@ -84,6 +103,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
       </p>  
       )}
 
+      <p style={{ color: '#747bff' }}>{isLinkedBool? "Someone shared this action with you!" : ""}</p>
 
 
       <h3>{action.title || ""}</h3>
@@ -164,7 +184,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         <button
           onClick={(e) => {
           (e.target as HTMLButtonElement).blur()
-            navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/${action.shareId}`);
+            navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${action.shareId}`);
             setCopied(true);
             setTimeout(() => setCopied(false), 1000);
           }}>

@@ -152,15 +152,21 @@ const ActionDashboard = () => {
 
   const reversed = actions.slice().reverse(); // Descending order (latest first)
 
-  const highlighted = shareIdFromUrl
-  ? reversed.find((action) => action.shareId === shareIdFromUrl)
-  : null;
+  const finalList = reversed.reduce(
+    (acc: { highlighted: Action | null; rest: Action[] }, action) => {
+      if (shareIdFromUrl && action.shareId === shareIdFromUrl) {
+        acc.highlighted = action; // Store the highlighted action
+      } else {
+        acc.rest.push(action); // Add the non-highlighted action to rest
+      }
+      return acc;
+    },
+    { highlighted: null, rest: [] } // Initial accumulator value
+  );
 
-  const rest = shareIdFromUrl
-  ? reversed.filter((action) => action.shareId !== shareIdFromUrl)
-  : reversed;
-
-  const finalList = highlighted ? [highlighted, ...rest] : rest;
+  const highlighted = finalList.highlighted
+  const isHighlighted = highlighted? true: false;
+  const result = finalList.highlighted ? [finalList.highlighted, ...finalList.rest] : finalList.rest;
 
   return (
     <div>
@@ -169,12 +175,17 @@ const ActionDashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
-      {shareIdFromUrl && !highlighted && 
+      {shareIdFromUrl && !isHighlighted && 
       <p style={{ color: "orange" }}>The shared action associated with your link is either invalid, deleted or expired</p>
       }
-      
-      {finalList.map((action) => (
-        <ActionCard key={action._id} action={action} onDelete={handleDeleteAction} onEdit={handleEditAction}/>
+
+      {result.map((action) => (
+        <ActionCard 
+        key={action._id} 
+        action={action} 
+        isLinked={isHighlighted && action._id === highlighted?._id}
+        onDelete={handleDeleteAction} 
+        onEdit={handleEditAction}/>
       ))}
     </div>
   );

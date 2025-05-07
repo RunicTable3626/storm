@@ -296,7 +296,7 @@ const ActionCreationPage = () => {
             <p>{message}</p>
             <button
               onClick={() => {
-                navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/${shareId}`);
+                navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${shareId}`);
               }}>
               {"Copy Action Link"}
             </button>
