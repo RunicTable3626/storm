@@ -18,7 +18,6 @@ interface ActionProps {
 
 const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit }) => {
   const {user} = useUser();
-  const [isLinkedBool, setIsLinkedBool] = useState(isLinked); //to deactivate linked styling after action completion
 
   const userEmail = user?.emailAddresses[0].emailAddress;
 
@@ -81,7 +80,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
   
   return (
     <div style={{ 
-      border: isLinkedBool? "10px solid #ccc" : "2px solid #ccc",
+      border: isLinked? "10px solid #ccc" : "2px solid #ccc",
       padding: "20px",
       marginBottom: "10px",          
       maxWidth: "800px",  // If you want some flexibility
@@ -93,7 +92,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
       </p>  
       )}
 
-      {isLinkedBool && (
+      {isLinked && (
         <p style={{ color: '#747bff' }}>
           { isAllActionsCompleted()
             ? "You have already completed this shared action!"
