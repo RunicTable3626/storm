@@ -3,9 +3,10 @@ import EmailModal from "../modals/EmailModal"; // Import the modal component
 
 interface EmailButtonProps {
   action: any
+  isAdminView: boolean
 }
 
-const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
+const EmailButton: React.FC<EmailButtonProps> = ({ action, isAdminView}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -34,7 +35,7 @@ const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
         Send an Email
       </button>
 
-      <EmailModal isOpen={isModalOpen} action={action} onClose={closeModal} onSend={sendEmail} />
+      <EmailModal isOpen={isModalOpen} action={action} isAdminView={isAdminView} onClose={closeModal} onSend={sendEmail} />
     </div>
   );
 };

@@ -9,6 +9,7 @@ import {
     postAction, 
     getAllActions, 
     getActionsFromLastNDays,
+    getAllCreatedActions,
     updateCount, 
     generateContent,
     rephraseContent,
@@ -22,6 +23,7 @@ actionRouter.get("/phone", getCallInfo);
 actionRouter.post("/", requireAuth(), postAction);
 actionRouter.get("/", getAllActions);
 actionRouter.get("/lastNDays", getActionsFromLastNDays);
+actionRouter.get("/created", requireAuth(), getAllCreatedActions);
 actionRouter.patch("/updateCount", updateCount);
 actionRouter.post('/generate-content', requireAuth(), generateContent);
 actionRouter.post('/rephrase-content', rephraseContent);

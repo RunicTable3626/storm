@@ -292,6 +292,28 @@ export const getActionsFromLastNDays = async (req: Request, res: Response): Prom
 };
 
 
+export const getAllCreatedActions = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = getAuth(req);
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
+  try {
+    const user = await clerkClient.users.getUser(userId);
+    const createdBy = user.emailAddresses[0]?.emailAddress;
+    const actions = await Action.find({createdBy})
+      .populate("emailId") // Populate related email info
+      .populate("callId")  // Populate related call info
+      .populate("instaId"); // Populate related Instagram info  
+    res.status(200).json(actions);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching actions" });
+  }
+  }
+};
+
+
 export const updateCount = async (req: Request, res: Response): Promise<void> => {
   try {
     const {actionType, actionId} = req.body; 
