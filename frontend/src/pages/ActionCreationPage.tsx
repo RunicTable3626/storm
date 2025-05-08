@@ -224,8 +224,23 @@ const ActionCreationPage = () => {
   
     return (
       <div>
-        <h2>Create Action</h2>
         <form style={{ display: "flex", flexDirection: "column", gap: "10px" }} onSubmit={handleSubmit}>
+          <h2>Create Action</h2>
+
+        {message && shareId && ( 
+          <p>{message}</p>
+        )}
+     
+        {message && shareId && (
+            <button type="button"
+              onClick={(e) => {
+                (e.target as HTMLButtonElement).blur();
+                navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${shareId}`);
+              }}>
+              {"Copy Action Link"}
+            </button>
+        )}
+
           {/* Main Form */}
           <input type="text" name="title" placeholder="Title" value={mainInfo.title} onChange={handleMainChange} required />
           <TextareaAutosize name="description" placeholder="Description" value={mainInfo.description} onChange={handleMainChange} required ></TextareaAutosize>
@@ -290,19 +305,6 @@ const ActionCreationPage = () => {
         )}
           {/* Submit Button */}
         <button type="submit">Create Action</button>
-        
-        {message && shareId && (
-        <div> 
-            <p>{message}</p>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${shareId}`);
-              }}>
-              {"Copy Action Link"}
-            </button>
-        </div>
-        )
-        }
 
 
         <button type="button" onClick={ (e) => {
