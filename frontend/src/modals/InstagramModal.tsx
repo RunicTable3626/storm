@@ -63,7 +63,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, act
         <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
       </div>
       <div className="button-container ">
-          <ActionCompleteButton actionId={action._id} actionType="instaCount" onClick={closeModal}/>
+          <ActionCompleteButton action={action} actionType="instaCount" onClick={closeModal}/>
           <button
             onClick={(e) => {
                 (e.target as HTMLButtonElement).blur()
