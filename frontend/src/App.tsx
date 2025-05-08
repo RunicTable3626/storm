@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-do
 import HomePage from "./pages/HomePage";
 import ActionCreationPage from "./pages/ActionCreationPage";
 import ActionDashboardPage from "./pages/ActionDashboardPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 import ShareIdRedirect from "./pages/ShareIdRedirect";
 import NotFoundPage from "./pages/NotFoundPage";
 import Sidebar from "./components/Sidebar";
@@ -39,6 +40,9 @@ const App = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/action-dashboard" element={<ActionDashboardPage/>} />
+            <Route 
+              path="/admin-dashboard" 
+              element={<ProtectedRoute element={<AdminDashboardPage />} />}/> 
             <Route 
               path="/create-action" 
               element={<ProtectedRoute element={<ActionCreationPage />} />}/> 
