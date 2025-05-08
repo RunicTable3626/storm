@@ -178,6 +178,7 @@ const ActionDashboard = () => {
         key={action._id} 
         action={action} 
         isLinked={action._id === highlighted?._id}
+        isAdminView={false}
         onDelete={handleDeleteAction} 
         onEdit={handleEditAction}/>
       ))}
