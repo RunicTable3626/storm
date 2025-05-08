@@ -37,6 +37,7 @@ interface Action {
   callId?: Call;
   instaId?: Insta;
   shareId?: string;
+  createdBy: string;
 }
 
 const AdminDashboard = () => {
@@ -123,27 +124,38 @@ const AdminDashboard = () => {
       return updatedActions;
     });
 
-    console.log('Actions : ', actions);
 
   }
 
-
   return (
-    <div>
-      <h2>Admin Dashboard</h2>
+<div>
+  <h2>Admin Dashboard</h2>
+  
+
+  <div className="flex flex-row gap-4 w-full">
+    <div className="w-1/2">
+    <p>Admin Email: {actions[0]?.createdBy || '' }</p>
+    <p>Use this dashboard to monitor, edit and delete actions that you have created!</p>
+    </div>
+
+    <div className="w-1/2">
       {loading && <p>Loading actions...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {actions.slice().reverse().map((action) => (
-        <ActionCard 
-        key={action._id} 
-        action={action} 
-        isLinked={false}
-        isAdminView={true}
-        onDelete={handleDeleteAction} 
-        onEdit={handleEditAction}/>
-      ))}
+      {Array.isArray(actions) &&
+        actions.slice().reverse().map((action) => (
+          <ActionCard 
+            key={action._id} 
+            action={action} 
+            isLinked={false}
+            isAdminView={true}
+            onDelete={handleDeleteAction} 
+            onEdit={handleEditAction}
+          />
+        ))}
     </div>
+  </div>
+</div>
   );
 };
 
