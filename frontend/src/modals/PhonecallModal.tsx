@@ -51,7 +51,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, acti
             <p >{callText}</p>
 
             <div className="button-container ">
-                <ActionCompleteButton actionId={action._id} actionType="callCount" onClick={closeModal}/>
+                <ActionCompleteButton action={action} actionType="callCount" onClick={closeModal}/>
                 <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
 

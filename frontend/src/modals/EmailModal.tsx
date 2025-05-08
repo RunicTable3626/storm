@@ -93,7 +93,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
             </div>
 
             <div className="button-container">
-                <ActionCompleteButton actionId={action._id} actionType="emailCount" onClick={onClose}/>
+                <ActionCompleteButton action={action} actionType="emailCount" onClick={onClose}/>
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend(subjectText, genBody)}}> 
                         Send Email
