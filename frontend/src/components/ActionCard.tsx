@@ -12,11 +12,12 @@ const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
   isLinked: boolean
+  isAdminView: boolean
   onDelete: (actionId: string) => void;
   onEdit: (actionId: string, formData: any) => void;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDelete, onEdit }) => {
   const {user} = useUser();
 
   const userEmail = user?.emailAddresses[0].emailAddress;
@@ -71,7 +72,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
   useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
     if (!isLoaded) return;
   
-    if (isSignedIn && (userEmail === action.createdBy)) {
+    if (isSignedIn && isAdminView) {
       setIsCallActionCompleted(false);
       setIsEmailActionCompleted(false);
       setIsInstagramCommentActionCompleted(false);
@@ -86,11 +87,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
       maxWidth: "800px",  // If you want some flexibility
       wordWrap: "break-word",  // Ensure long text wraps
       }}>
-      {user && (userEmail === action.createdBy || !action.createdBy) && (
-      <p  style={{ color: 'green' }}>
-        <strong>This can be modified by currently logged-in user</strong>
-      </p>  
-      )}
 
       {isLinked && (
         <p style={{ color: '#747bff' }}>
@@ -110,6 +106,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
         <div className="button-container">
           <EmailButton 
             action={action}
+            isAdminView={isAdminView}
           />
 
           <SignedIn>
@@ -126,10 +123,11 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
         <div className="button-container">
           <PhonecallButton
             action = {action}
+            isAdminView = {isAdminView}
           />
 
           <SignedIn>
-            {(user && (userEmail === action.createdBy || !action.createdBy)) && (
+            {(isAdminView) && (
             <p>Call Actions: {action.callCount || 'None'}</p>
           )
           }
@@ -142,10 +140,11 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
         <div className="button-container">
           <InstagramButton 
           action = {action}
+          isAdminView = {isAdminView}
           />
         
         <SignedIn>
-          {(user && (userEmail === action.createdBy || !action.createdBy)) && (
+          {(isAdminView) && (
             <p>Comment Actions: {action.instaCount || 'None'}</p>
           )
           }
@@ -167,7 +166,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
 
 
       <SignedIn>
-      {action && user && (userEmail === action.createdBy || !action.createdBy) && (
+      {action && isAdminView && (
         <div className="button-container">
           <DeleteActionButton
           actionId = {action._id}

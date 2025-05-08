@@ -9,11 +9,12 @@ import ContentRephraseButton from "../components/ContentRephraseButton";
 interface EmailModalProps {
   isOpen:       boolean;
   action:           any;
+  isAdminView:      boolean;
   onClose:() =>  void;
   onSend: ( subjectText: string, genBody: string) =>  void;
 }
 
-const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSend }) => {
+const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action, isAdminView,  onClose, onSend }) => {
     const [genBody, setGenBody] = useState(action.emailId.body);
     const [subjectText, setSubjectText] = useState(action.emailId.subject);
     const [emailAddress, setEmailAddress] = useState(action.emailId.emailAddress);
@@ -92,8 +93,12 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
                 {bodyCopied && genBody && <span style={{ color: 'green', marginLeft: '10px' }}>Body copied!</span>}
             </div>
 
+
             <div className="button-container">
+                {
+                !isAdminView &&
                 <ActionCompleteButton action={action} actionType="emailCount" onClick={onClose}/>
+                }
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend(subjectText, genBody)}}> 
                         Send Email
