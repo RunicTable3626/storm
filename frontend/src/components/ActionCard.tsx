@@ -71,7 +71,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
   useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
     if (!isLoaded) return;
   
-    if (isSignedIn) {
+    if (isSignedIn && (userEmail === action.createdBy)) {
       setIsCallActionCompleted(false);
       setIsEmailActionCompleted(false);
       setIsInstagramCommentActionCompleted(false);
@@ -102,7 +102,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
       )}
 
 
-      <h3>{action.title || ""}</h3>
+      <h3>{action.title|| ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
 
       {/* Display Email Info */}
@@ -113,7 +113,10 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
           />
 
           <SignedIn>
+            {(user && (userEmail === action.createdBy || !action.createdBy)) && (
             <p>Email Actions: {action.emailCount || 'None'}</p>
+          )
+          }
           </SignedIn>
         </div>
       )}
@@ -126,7 +129,10 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
           />
 
           <SignedIn>
+            {(user && (userEmail === action.createdBy || !action.createdBy)) && (
             <p>Call Actions: {action.callCount || 'None'}</p>
+          )
+          }
           </SignedIn>
         </div>
       )}
@@ -139,7 +145,10 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, onDelete, onEdit 
           />
         
         <SignedIn>
+          {(user && (userEmail === action.createdBy || !action.createdBy)) && (
             <p>Comment Actions: {action.instaCount || 'None'}</p>
+          )
+          }
         </SignedIn>
         </div>
       )}

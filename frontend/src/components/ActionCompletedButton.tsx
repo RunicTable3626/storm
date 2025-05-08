@@ -55,7 +55,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       setCompleted(true);
       setTimeout(() => {
         onClick(); 
-        if(!((isSignedIn && isLoaded) || (userEmail === action.createdBy || !action.createdBy))) { 
+        if(!(isSignedIn && isLoaded && (userEmail === action.createdBy || !action.createdBy))) { 
           //if user is not signed in or if user is not the creator or if action has no creator info
           saveAction(action._id, actionType);
         } 
