@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import ActionCompleteModal from "../modals/ActionCompleteModal";
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth, useUser } from '@clerk/clerk-react';
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {
   actionType: string;
-  actionId: string;
+  action: any;
   onClick: () => void;
   
 }
@@ -13,18 +13,20 @@ interface ActionCompleteButtonProps {
 
 
 
-const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
+const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, action, onClick }) => {
   const [completed, setCompleted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
   const {isLoaded, isSignedIn} = useAuth();
+  const {user} = useUser();
+  const userEmail = user?.emailAddresses[0].emailAddress;
 
   const saveAction = (actionId: string, actionType: string) => {
     const stored = JSON.parse(localStorage.getItem('actions') || '[]');
 
     const exists = stored.some(
-      (action: { id: string; type: string }) => action.id === actionId && action.type === actionType
+      (localStorageAction: { id: string; type: string }) => localStorageAction.id === actionId && localStorageAction.type === actionType
     );
   
     if (!exists) {
@@ -42,7 +44,7 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             actionType: actionType,
-            actionId: actionId 
+            actionId: action._id 
         }), // Please pass the action id too in order to index
       });
 
@@ -53,7 +55,10 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       setCompleted(true);
       setTimeout(() => {
         onClick(); 
-        if(!(isSignedIn && isLoaded)) saveAction(actionId, actionType);
+        if(!(isSignedIn && isLoaded && (userEmail === action.createdBy || !action.createdBy))) { 
+          //if user is not signed in or if user is not the creator or if action has no creator info
+          saveAction(action._id, actionType);
+        } 
       }, 1000);
     } catch (error) {
       console.error("Error:", error);
