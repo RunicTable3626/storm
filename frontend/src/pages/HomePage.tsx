@@ -3,6 +3,7 @@ import dancingDuckKarlo from '../assets/dancing-duck-karlo.gif';
 import {useUser, useSession } from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom';
 
+
 const HomePage = () => {
   const navigate = useNavigate();
   const {isLoaded: userLoaded } = useUser();

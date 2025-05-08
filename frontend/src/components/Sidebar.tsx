@@ -7,28 +7,24 @@ const Sidebar = () => {
   return (
     <nav>
       <NavLink to="/" end className="nav-link">
-      Home
+        Home
       </NavLink>
       <NavLink to="/action-dashboard" end className="nav-link">
-      Action Dashboard
-      </NavLink>
-
-      <SignedIn>
+        Action Dashboard
+      </NavLink><SignedIn>
         <NavLink to="/create-action" className="nav-link">
-        Create Action
+          Create Action
         </NavLink>
-
         <UserButton />
       </SignedIn>
-
+      
       <SignedOut>
-      <SignInButton>
-        <button>Admin Login</button>
-      </SignInButton>
-      </SignedOut>
+        <SignInButton>
+          <button>Admin Login</button>
+        </SignInButton>
+      </SignedOut><GlobalAudio />
 
 
-      <GlobalAudio/>
 
 
     </nav>
