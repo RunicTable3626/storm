@@ -13,7 +13,6 @@ self.addEventListener("message", (event) => {
 
 // Add the push event listener at the top of the worker script (this is critical)
 self.addEventListener('push', (event) => {
-  console.log('Push event received', event);
 
   const payload = event.data ? event.data.json() : {};
   const { title, body } = payload.notification || {};
@@ -29,7 +28,6 @@ self.addEventListener('push', (event) => {
 
 // Add the notificationclick event listener
 self.addEventListener('notificationclick', (event) => {
-  console.log('Notification clicked', event);
 
   // Handle notification click actions (e.g., open the app or a specific page)
   event.notification.close(); // Close the notification

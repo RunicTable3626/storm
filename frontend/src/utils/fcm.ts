@@ -27,7 +27,6 @@ export const requestFcmToken = async (): Promise<string | null> => {
       vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY as string, // required if using WebPush
     });
     if (token) {
-      console.log("FCM token retrieved:", token);
       return token;
     } else {
       console.warn("No registration token available.");
@@ -43,7 +42,6 @@ export const registerServiceWorker = async () => {
   if ("serviceWorker" in navigator) {
     try {
       const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
-      console.log("Service worker registered:", registration);
 
       const sendConfig = () => {
         if (registration.active) {
