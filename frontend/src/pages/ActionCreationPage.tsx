@@ -1,6 +1,6 @@
 import { useState } from "react";
-import {generateContent} from "../utils/llm.tsx"
-import { useAuth} from "@clerk/clerk-react";
+import {generateContent} from "../utils/llm.ts"
+import { useAuth } from "@clerk/clerk-react";
 import TextareaAutosize from 'react-textarea-autosize';
 const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
 
@@ -83,10 +83,6 @@ const ActionCreationPage = () => {
       } catch (error) {
         console.error("Error generating content:", error);
       }
-  
-      
-
-      
 
   };
 
@@ -164,6 +160,7 @@ const ActionCreationPage = () => {
 
     }
       
+      
     // Submit form data
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -210,8 +207,23 @@ const ActionCreationPage = () => {
         const data = await response.json();
         if (response.ok) {
           setMessage("Action created successfully");
-          setShareId(data.shareId);
-          clearForm();
+          
+
+          const notificationResponse = await fetch(`${API_URL}/api/notifications/create-action`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // Reuse the SAME token
+            },
+            body: JSON.stringify({ title: mainInfo.title })
+          });
+
+          if (!notificationResponse.ok) {
+            console.error("Failed to send notification");
+          } else {
+            console.log("Notifications sent!");
+          }
+        clearForm();
         } else {
           setMessage(data.message || "Error creating Action.");
         }
@@ -343,6 +355,7 @@ const ActionCreationPage = () => {
         </div>
         )}
         </form>
+        
       </div>
 
 

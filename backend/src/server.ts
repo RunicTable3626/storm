@@ -3,8 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import mongoose from "mongoose";
-import actionRouter from "./routes/action";
-import { clerkMiddleware, getAuth } from '@clerk/express'
+import actionsRouter from "./routes/actions";
+import notificationsRouter from "./routes/notifications";
+import { clerkMiddleware} from '@clerk/express'
 
 
 
@@ -38,23 +39,7 @@ const connectDB = async (): Promise<void> => {
 connectDB();
 
 // Routes
-app.use("/api/actions", actionRouter);
-
-app.get("/", (req, res) => {
-  const auth = getAuth(req);
-
-  if (auth.userId) {
-    res.json({
-      message: "Session found",
-      userId: auth.userId,
-      sessionId: auth.sessionId,
-      orgId: auth.orgId,
-    });
-  } else {
-    res.json({
-      message: "No session found",
-    });
-  }
-});
+app.use("/api/actions", actionsRouter);
+app.use("/api/notifications", notificationsRouter);
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
