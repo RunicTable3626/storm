@@ -207,8 +207,8 @@ const ActionCreationPage = () => {
         const data = await response.json();
         if (response.ok) {
           setMessage("Action created successfully");
+          setShareId(data.shareId);
           
-
           const notificationResponse = await fetch(`${API_URL}/api/notifications/create-action`, {
             method: "POST",
             headers: {
