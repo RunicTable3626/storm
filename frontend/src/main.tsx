@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { ClerkProvider } from '@clerk/clerk-react'
-import { registerServiceWorker } from "./utils/fcm"; // adjust path as needed
 
 
 // Import your Publishable Key
@@ -14,7 +13,6 @@ if (!PUBLISHABLE_KEY) {
 }
 
 
-registerServiceWorker(); // Register the Firebase service worker
 
 
 createRoot(document.getElementById('root')!).render(

@@ -24,7 +24,6 @@ export const generateContent = async (query: string, tone: string, token: string
 };
 
 
-
 export const rephraseContent = async (content: string, contentType: string) => {
     try {
         const response = await fetch(`${API_URL}/api/actions/rephrase-content`, {
