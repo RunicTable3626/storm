@@ -17,6 +17,13 @@ const NotificationButton = () => {
     if (!existingId) localStorage.setItem("stormUserId", userId);
 
     try {
+        if (Notification.permission === "denied") {
+          // If permission is denied, show an error message
+          setMessage("Notifications are either blocked or not allowed in your browser");
+          setTimeout(() => { setMessage(''); }, 5000); // Clear message after 5 seconds
+          return; // Exit early, no need to proceed with subscription
+        }
+
         const fcmToken = await requestFcmToken();
   
         if (fcmToken) {
@@ -32,11 +39,11 @@ const NotificationButton = () => {
                 const data = await response.json();
                 setSubscribed(true);
                 setMessage(data.message);
-                setTimeout(() => {setSubscribed(false); setMessage('');}, 1000); 
+                setTimeout(() => {setSubscribed(false); setMessage('');}, 5000); 
               } else {
                 const data = await response.json();
                 setMessage(data.message || "Subscription failed.")
-                setTimeout(() => {setMessage('Try Again later!');}, 1000); 
+                setTimeout(() => {setMessage('Try Again later!');}, 5000); 
                 console.error(data.message || "Subscription failed.");
               }
 
@@ -47,7 +54,7 @@ const NotificationButton = () => {
     } catch (err) {
       setMessage("Network error while subscribing.")  
       console.error("Network error while subscribing.");
-      setTimeout(() => {setMessage('');}, 1000); 
+      setTimeout(() => {setMessage('');}, 5000); 
     } finally {
       setSubscribing(false);
     }
