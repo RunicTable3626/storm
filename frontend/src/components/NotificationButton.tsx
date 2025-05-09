@@ -8,7 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 const NotificationButton = () => {
   const [subscribing, setSubscribing] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('Use to get notified about new actions!');
 
   const handleSubscribe = async () => {
     setSubscribing(true);
@@ -36,7 +36,7 @@ const NotificationButton = () => {
               } else {
                 const data = await response.json();
                 setMessage(data.message || "Subscription failed.")
-                setTimeout(() => {setMessage('');}, 1000); 
+                setTimeout(() => {setMessage('Try Again later!');}, 1000); 
                 console.error(data.message || "Subscription failed.");
               }
 
