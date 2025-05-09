@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useAuth} from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 
@@ -37,23 +37,27 @@ interface Action {
   callId?: Call;
   instaId?: Insta;
   shareId?: string;
+  createdBy: string;
 }
 
-const ActionDashboard = () => {
+const AdminDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-
-  const location = useLocation();
-  const shareIdFromUrl = location.state?.shareId;
+  const { getToken } = useAuth();
   
 
   // Fetch function
   const fetchActions = async () => {
     try {
-      const daysAgo = 7;
-      const response = await fetch(`${API_URL}/api/actions/lastNDays?daysAgo=${daysAgo}`);
+      const token = await getToken();
+      const response = await fetch(`${API_URL}/api/actions/created`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+      }
+      }); //change this to only get user actions
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
@@ -71,39 +75,12 @@ const ActionDashboard = () => {
     }
   };
 
-
-  function syncLocalActions() { 
-    //checks if any localStorage action ids are not in fetched actions
-    const stored = localStorage.getItem("actions");
-    if (!stored) return;
-  
-    try {
-      const storedActions = JSON.parse(stored);
-      if (!Array.isArray(storedActions)) return;
-  
-      const validIds = new Set(actions.map(a => a._id));
-  
-      const filteredActions = storedActions.filter(
-        (action: { id: string }) => validIds.has(action.id)
-      );
-  
-      localStorage.setItem("actions", JSON.stringify(filteredActions));
-    } catch (err) {
-      console.error("Failed to sync localStorage actions:", err);
-    }
-  }
-
   // Fetch data on component mount
   //Kept separate to prevent empty actions variable being accessed in syncLocalActions() due to delay.
   useEffect(() => {
     fetchActions();
   }, []);
 
-  useEffect(() => {
-    if (actions.length > 0) {
-      syncLocalActions();
-    }
-  }, [actions]);
 
 
 
@@ -147,43 +124,39 @@ const ActionDashboard = () => {
       return updatedActions;
     });
 
+
   }
 
-
-  const reversed = actions.slice().reverse(); // Descending order (latest first)
-
-  const highlighted = shareIdFromUrl
-  ? reversed.find((action) => action.shareId === shareIdFromUrl)
-  : null;
-
-  const rest = shareIdFromUrl
-  ? reversed.filter((action) => action.shareId !== shareIdFromUrl)
-  : reversed;
-
-  const finalList = highlighted ? [highlighted, ...rest] : rest;
-
   return (
-    <div>
-      <h2>Actions Dashboard</h2>
+<div>
+  <h2>Admin Dashboard</h2>
+  
+
+  <div className="flex flex-row gap-4 w-full">
+    <div className="w-1/2">
+    <p>Admin Email: {actions[0]?.createdBy || '' }</p>
+    <p>Use this dashboard to monitor, edit and delete actions that you have created!</p>
+    </div>
+
+    <div className="w-1/2">
       {loading && <p>Loading actions...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Render ActionCard for each action, ignore the error under _id it renders correctly */}
-      {shareIdFromUrl && !highlighted && !loading &&
-      <p style={{ color: "orange" }}>The shared action associated with your link doesn't exist, was deleted or has expired</p>
-      }
-
-      {finalList.map((action) => (
-        <ActionCard 
-        key={action._id} 
-        action={action} 
-        isLinked={action._id === highlighted?._id}
-        isAdminView={false}
-        onDelete={handleDeleteAction} 
-        onEdit={handleEditAction}/>
-      ))}
+      {Array.isArray(actions) &&
+        actions.slice().reverse().map((action) => (
+          <ActionCard 
+            key={action._id} 
+            action={action} 
+            isLinked={false}
+            isAdminView={true}
+            onDelete={handleDeleteAction} 
+            onEdit={handleEditAction}
+          />
+        ))}
     </div>
+  </div>
+</div>
   );
 };
 
-export default ActionDashboard;
+export default AdminDashboard;

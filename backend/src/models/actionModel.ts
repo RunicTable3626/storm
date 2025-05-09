@@ -14,6 +14,8 @@ export interface IAction extends Document {
   emailCount?: number;
   callCount?: number;
   instaCount?: number;
+  createdBy: string;
+  shareId: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -25,6 +27,8 @@ const actionSchema = new mongoose.Schema({
   callId:       { type: Schema.Types.ObjectId, ref: 'Call' },
   instaId:      { type: Schema.Types.ObjectId, ref: 'Insta' },
   //set default values as 0 for all these
+  createdBy:    {type: String, required: true},
+  shareId:      {type: String, unique: true, index: true},
   emailCount:   { type: Number},
   callCount:    { type: Number},
   instaCount:   { type: Number},

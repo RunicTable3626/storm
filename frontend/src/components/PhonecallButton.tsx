@@ -3,10 +3,11 @@ import PhonecallModal from "../modals/PhonecallModal"; // Import Modal component
 
 interface PhoneCallButtonProps {
   action : any;
+  isAdminView: boolean;
 }
 
 const PhonecallButton: React.FC<PhoneCallButtonProps> = ({
-  action
+  action, isAdminView
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -23,7 +24,7 @@ const PhonecallButton: React.FC<PhoneCallButtonProps> = ({
           openModal()}}>Show Phone Number</button>
 
       {/* Conditionally render the modal */}
-      <PhonecallModal isOpen = {isModalOpen} action = {action} closeModal={closeModal} />
+      <PhonecallModal isOpen = {isModalOpen} action = {action} isAdminView = {isAdminView} closeModal={closeModal} />
     </div>
   );
 };

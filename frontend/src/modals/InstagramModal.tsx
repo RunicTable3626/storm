@@ -8,9 +8,10 @@ interface InstagramModalProps {
   isOpen: boolean;
   closeModal: () => void;
   action: any;
+  isAdminView: boolean;
 }
 
-const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, action}) => {
+const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, isAdminView, action}) => {
   const [copied, setCopied] = useState(false);
   const [instaText, setInstaText] = useState(action.instaId.comment);
   const [instaUrl, setInstaUrl] = useState(action.instaId.instagramLink)
@@ -63,7 +64,10 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, act
         <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
       </div>
       <div className="button-container ">
-          <ActionCompleteButton actionId={action._id} actionType="instaCount" onClick={closeModal}/>
+          {
+          !isAdminView &&
+          <ActionCompleteButton action={action} actionType="instaCount" onClick={closeModal}/>
+          }
           <button
             onClick={(e) => {
                 (e.target as HTMLButtonElement).blur()

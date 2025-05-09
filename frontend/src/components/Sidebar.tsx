@@ -8,28 +8,28 @@ const Sidebar = () => {
   return (
     <nav>
       <NavLink to="/" end className="nav-link">
-      Home
+        Home
       </NavLink>
       <NavLink to="/action-dashboard" end className="nav-link">
-      Action Dashboard
+        Action Dashboard
       </NavLink>
-
       <SignedIn>
-        <NavLink to="/create-action" className="nav-link">
-        Create Action
+        <NavLink to="/admin-dashboard" end className="nav-link">
+        Admin Dashboard
         </NavLink>
-
+        <NavLink to="/create-action" className="nav-link">
+          Create Action
+        </NavLink>
         <UserButton />
       </SignedIn>
-
+      
       <SignedOut>
-      <SignInButton>
-        <button>Admin Login</button>
-      </SignInButton>
-      </SignedOut>
+        <SignInButton>
+          <button>Admin Login</button>
+        </SignInButton>
+      </SignedOut><GlobalAudio />
 
 
-      <GlobalAudio/>
 
       <NotificationButton/>
 

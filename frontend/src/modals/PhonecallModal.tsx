@@ -9,6 +9,7 @@ interface PhonecallModalProps {
     isOpen: boolean;
     closeModal: () => void;
     action: any;
+    isAdminView: boolean;
   }
   
 
@@ -21,7 +22,7 @@ function formatPhoneNumber(phoneNumber: string): string {
   return phoneNumber; // Return as is if it's not valid
 }
 
-const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, action}) => {
+const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, action, isAdminView}) => {
     const [callText, setCallText] = useState(action.callId.callScript);
     const [phoneNumber, setPhoneNumber] = useState(action.callId.phoneNumber);
     const contentType = "voicemail";
@@ -50,10 +51,15 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, acti
             <h3>Script:</h3>
             <p >{callText}</p>
 
+            
             <div className="button-container ">
-                <ActionCompleteButton actionId={action._id} actionType="callCount" onClick={closeModal}/>
+            {   
+                !isAdminView &&
+                <ActionCompleteButton action={action} actionType="callCount" onClick={closeModal}/>
+            }    
                 <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
             </div>
+            
 
             <div className = 'dark-style'>
                 <h3>Tips!</h3>

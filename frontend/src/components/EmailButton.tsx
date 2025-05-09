@@ -3,18 +3,25 @@ import EmailModal from "../modals/EmailModal"; // Import the modal component
 
 interface EmailButtonProps {
   action: any
+  isAdminView: boolean
 }
 
-const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
-  const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(action.emailId.emailAddress)}&su=${encodeURIComponent(action.emailId.subject)}&body=${encodeURIComponent(action.emailId.body)}`;
+const EmailButton: React.FC<EmailButtonProps> = ({ action, isAdminView}) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const sendEmail = () => {
-    window.open(gmailUrl, "_blank", "noopener,noreferrer");
+  const sendEmail = (subject: string, body: string) => {
+    const emailUrl = `mailto:${action.emailId.emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (navigator.userAgent.includes("Mobi")) {
+      // Mobile devices might not open a new tab properly, so use location.href instead
+      window.location.href = emailUrl;
+    } else {
+      // Desktop devices can open in a new tab
+      window.open(emailUrl, "_blank", "noopener,noreferrer");
+    }
   };
 
   return (
@@ -28,7 +35,7 @@ const EmailButton: React.FC<EmailButtonProps> = ({ action}) => {
         Send an Email
       </button>
 
-      <EmailModal isOpen={isModalOpen} action={action} onClose={closeModal} onSend={sendEmail} />
+      <EmailModal isOpen={isModalOpen} action={action} isAdminView={isAdminView} onClose={closeModal} onSend={sendEmail} />
     </div>
   );
 };

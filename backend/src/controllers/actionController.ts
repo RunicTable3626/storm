@@ -8,6 +8,8 @@ import Call from '../models/callModel';
 import Insta from '../models/instaModel'; 
 import Groq from "groq-sdk";
 import dayjs from "dayjs"; // Using dayjs for date manipulation
+import { getAuth, clerkClient } from '@clerk/express';
+import { nanoid } from 'nanoid';
 
 const POST_ID = process.env.POST_ID as string;
 const EMAIL = process.env.EMAIL as string;
@@ -190,8 +192,16 @@ export const rephraseContentInternal = async (content: String, contentType: Stri
 
 
 export const postAction = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
   try {
-    const formData = req.body;
+    const user = await clerkClient.users.getUser(userId);
+    const createdBy = user.emailAddresses[0]?.emailAddress;
+    
+    const formData = req.body; 
 
     let emailId = null, callId = null, instaId = null;
 
@@ -213,6 +223,8 @@ export const postAction = async (req: Request, res: Response) => {
       await instaDetails.save();
       instaId = instaDetails._id;  // Store _id if the instaInfo is valid
     }
+
+    const shareId = nanoid(10);
     
     // Create the action document, using the saved IDs or null if not valid
     const actionDetails = new Action({
@@ -220,12 +232,14 @@ export const postAction = async (req: Request, res: Response) => {
       emailId,      // Reference to Email collection, will be null if emailDetails is not created
       callId,       // Reference to Call collection, will be null if callDetails is not created
       instaId,      // Reference to Insta collection, will be null if instaDetails is not created
+      createdBy,
+      shareId,
     });
 
     await actionDetails.save()
-    console.log("Saved Action ID:", actionDetails._id);
+    console.log("Saved Action ID:", actionDetails.shareId);
 
-    res.status(201).json({ message: "Action created successfully!", actionDetails });
+    res.status(201).json({ shareId: actionDetails.shareId});
   } catch (error: unknown) {
     // Type assertion to make sure `error` is an `Error` object
     if (error instanceof Error) {
@@ -234,6 +248,7 @@ export const postAction = async (req: Request, res: Response) => {
       res.status(500).json({ error: "An unknown error occurred." });
     }
   }
+}
 };
 
 
@@ -273,6 +288,28 @@ export const getActionsFromLastNDays = async (req: Request, res: Response): Prom
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error fetching actions" });
+  }
+};
+
+
+export const getAllCreatedActions = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = getAuth(req);
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
+  try {
+    const user = await clerkClient.users.getUser(userId);
+    const createdBy = user.emailAddresses[0]?.emailAddress;
+    const actions = await Action.find({createdBy})
+      .populate("emailId") // Populate related email info
+      .populate("callId")  // Populate related call info
+      .populate("instaId"); // Populate related Instagram info  
+    res.status(200).json(actions);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Error fetching actions" });
+  }
   }
 };
 
@@ -343,40 +380,52 @@ export const getInstagramPostID = async (req: Request, res: Response): Promise<v
 
 export const deleteAction = async (req: Request, res: Response): Promise<void> => {
   //Deletes not just the action but all related types of actions in their respective collections.
+  //modify this with similar logic as post action.
   const { actionId } = req.params;
+  const { userId } = getAuth(req);
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  try {
-    // Find the Action document to get related IDs
-    const action = await Action.findById(actionId).session(session);
-    if (!action) {
-      throw new Error("Action not found");
-    }
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
+      try {
+        // Find the Action document to get related IDs
+        const user = await clerkClient.users.getUser(userId);
+        const createdBy = user.emailAddresses[0]?.emailAddress;
+        const action = await Action.findById(actionId).session(session);
+        if (!action) {
+          throw new Error("Action not found");
+        }
 
-    // Delete related entries in Call, Email, and Insta collections (only one per action)
-    await Promise.all([
-      action.callId && Call.findByIdAndDelete(action.callId).session(session),
-      action.emailId && Email.findByIdAndDelete(action.emailId).session(session),
-      action.instaId && Insta.findByIdAndDelete(action.instaId).session(session),
-    ]);
+        if (action.createdBy !== createdBy) {
+          throw new Error("Admins can only delete actions that they have created")
+        }
 
-    // Delete the Action document
-    await Action.findByIdAndDelete(actionId).session(session);
+        // Delete related entries in Call, Email, and Insta collections (only one per action)
+        await Promise.all([
+          action.callId && Call.findByIdAndDelete(action.callId).session(session),
+          action.emailId && Email.findByIdAndDelete(action.emailId).session(session),
+          action.instaId && Insta.findByIdAndDelete(action.instaId).session(session),
+        ]);
 
-    // Commit transaction
-    await session.commitTransaction();
-    session.endSession();
-    res.status(200).json({ message: `Action with id ${actionId} deleted successfully, along with related call, email or insta entries`});
-  } catch (error: unknown) {
-    await session.abortTransaction();
-    session.endSession();
-    if (error instanceof Error) {
-      console.error("Error deleting action and related entries:", error);
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: `An unknown error occurred while deleting action ${actionId}` });
-    }
+        // Delete the Action document
+        await Action.findByIdAndDelete(actionId).session(session);
+
+        // Commit transaction
+        await session.commitTransaction();
+        session.endSession();
+        res.status(200).json({ message: `Action with id ${actionId} deleted successfully, along with related call, email or insta entries`});
+      } catch (error: unknown) {
+        await session.abortTransaction();
+        session.endSession();
+        if (error instanceof Error) {
+          console.error("Error deleting action and related entries:", error);
+          res.status(500).json({ error: error.message });
+        } else {
+          res.status(500).json({ error: `An unknown error occurred while deleting action ${actionId}` });
+        }
+      }
   }
 };
 
@@ -384,12 +433,29 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
 
 export const editAction = async (req: Request, res: Response): Promise<void> => {
   //Deletes not just the action but all related types of actions in their respective collections.
+  //modify this with similar logic as postAction
   const { actionId } = req.params;
   const formData = req.body;
   const session = await mongoose.startSession();
   session.startTransaction();
+  const { userId } = getAuth(req);
+
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
   try {
     // Find the Action document to get related IDs
+    const user = await clerkClient.users.getUser(userId);
+    const createdBy = user.emailAddresses[0]?.emailAddress;
+
+    // Create a new action document
+    const action = await Action.findById(actionId).session(session);
+    //console.log(action);
+    if (!action) throw new Error("Action not found");
+
+    if (action.createdBy !== createdBy) {
+      throw new Error("Admins can only edit actions that they have created")
+    }
 
     if (formData.mainInfo) {
         await Action.findByIdAndUpdate(
@@ -398,11 +464,6 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
         { new: true, session} 
       );
     }
-      // Create a new action document
-      const action = await Action.findById(actionId).session(session);
-      //console.log(action);
-      if (!action) throw new Error("Action not found");
-    
 
     if (formData.emailInfo && action.emailId) {
       await Email.findByIdAndUpdate(
@@ -444,4 +505,5 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
       res.status(500).json({ error: `An unknown error occurred while updating action ${actionId}` });
     }
   }
+}
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import {generateContent} from "../utils/llm.ts"
 import { useAuth } from "@clerk/clerk-react";
 import TextareaAutosize from 'react-textarea-autosize';
+const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
 
 
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
@@ -93,6 +94,7 @@ const ActionCreationPage = () => {
 
 
     const [message, setMessage] = useState("");
+    const [shareId, setShareId] = useState("");
   
     // Handle main form change
     const handleMainChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -157,6 +159,7 @@ const ActionCreationPage = () => {
         setShowInstaSubForm(false);
 
     }
+      
       
     // Submit form data
     const handleSubmit = async (e: React.FormEvent) => {
@@ -233,8 +236,23 @@ const ActionCreationPage = () => {
   
     return (
       <div>
-        <h2>Create Action</h2>
         <form style={{ display: "flex", flexDirection: "column", gap: "10px" }} onSubmit={handleSubmit}>
+          <h2>Create Action</h2>
+
+        {message && shareId && ( 
+          <p>{message}</p>
+        )}
+     
+        {message && shareId && (
+            <button type="button"
+              onClick={(e) => {
+                (e.target as HTMLButtonElement).blur();
+                navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${shareId}`);
+              }}>
+              {"Copy Action Link"}
+            </button>
+        )}
+
           {/* Main Form */}
           <input type="text" name="title" placeholder="Title" value={mainInfo.title} onChange={handleMainChange} required />
           <TextareaAutosize name="description" placeholder="Description" value={mainInfo.description} onChange={handleMainChange} required ></TextareaAutosize>
@@ -299,10 +317,7 @@ const ActionCreationPage = () => {
         )}
           {/* Submit Button */}
         <button type="submit">Create Action</button>
-        
-        {message && 
-        <p>{message}</p>
-        }
+
 
         <button type="button" onClick={ (e) => {
                     (e.target as HTMLButtonElement).blur()

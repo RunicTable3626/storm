@@ -9,11 +9,12 @@ import ContentRephraseButton from "../components/ContentRephraseButton";
 interface EmailModalProps {
   isOpen:       boolean;
   action:           any;
+  isAdminView:      boolean;
   onClose:() =>  void;
-  onSend: () =>  void;
+  onSend: ( subjectText: string, genBody: string) =>  void;
 }
 
-const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSend }) => {
+const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action, isAdminView,  onClose, onSend }) => {
     const [genBody, setGenBody] = useState(action.emailId.body);
     const [subjectText, setSubjectText] = useState(action.emailId.subject);
     const [emailAddress, setEmailAddress] = useState(action.emailId.emailAddress);
@@ -92,21 +93,25 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action,  onClose, onSen
                 {bodyCopied && genBody && <span style={{ color: 'green', marginLeft: '10px' }}>Body copied!</span>}
             </div>
 
+
             <div className="button-container">
-                <ActionCompleteButton actionId={action._id} actionType="emailCount" onClick={onClose}/>
+                {
+                !isAdminView &&
+                <ActionCompleteButton action={action} actionType="emailCount" onClick={onClose}/>
+                }
                 <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
-                <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend()}}> 
+                <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend(subjectText, genBody)}}> 
                         Send Email
                 </button>
             </div>
 
             <div className = 'dark-style'>
                 <h3>Tips!</h3>
-                <p><strong>IMPORTANT: 'Send Email' will open up Gmail on whatever account you are logged into! So make sure it's one you want to send an email from.</strong></p>
+                <p><strong>IMPORTANT: 'Send Email' will open up your default email client on whatever account you are logged into! So make sure it's one you want to send an email from.</strong></p>
                 <ul>
                     <li>Use 'Rephrase' to generate a new email body or subject to avoid identical messages from  being sent.</li>
                     <li>You can even manually edit the email in the text box!</li>
-                    <li>Once you're ready, use 'Send Email' to use your email account to send the email. As of now, we only support Gmail accounts.</li>
+                    <li>Once you're ready, use 'Send Email' to use your email account to send the email. As of now, you need to have a default email app on your phone/computer for this to work.</li>
                     <li>If you prefer to use another type of email, you can click 'Copy Subject' and 'Copy Body' to manually copy content and paste it into your email app.</li>
                     <li>Don't forget to return here and use 'Complete Action' to confirm that you have finished this action</li>
                     <li>Lastly, thank you so much for helping grassroots campaigns, <strong>one action at a time!</strong></li>

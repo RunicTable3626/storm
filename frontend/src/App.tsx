@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-do
 import HomePage from "./pages/HomePage";
 import ActionCreationPage from "./pages/ActionCreationPage";
 import ActionDashboardPage from "./pages/ActionDashboardPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import ShareIdRedirect from "./pages/ShareIdRedirect";
 import NotFoundPage from "./pages/NotFoundPage";
 import Sidebar from "./components/Sidebar";
 import Modal from "react-modal";
@@ -42,12 +44,16 @@ const App = () => {
         <div className="flex-1 p-6">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/action-dashboard" element={<ActionDashboardPage />} />
+            <Route path="/action-dashboard" element={<ActionDashboardPage/>} />
+            <Route 
+              path="/admin-dashboard" 
+              element={<ProtectedRoute element={<AdminDashboardPage />} />}/> 
             <Route 
               path="/create-action" 
-              element={<ProtectedRoute element={<ActionCreationPage />} />} 
-            />
-            <Route path="*" element={<NotFoundPage />} /> {/* Catch-all route */}
+              element={<ProtectedRoute element={<ActionCreationPage />} />}/> 
+            <Route path="/action/:shareId" element={<ShareIdRedirect />} />
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </div>
       </div>

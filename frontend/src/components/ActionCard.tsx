@@ -6,14 +6,21 @@ import InstagramButton from "./InstagramButton";
 import DeleteActionButton from "./DeleteActionButton";
 import { SignedIn, useUser } from "@clerk/clerk-react";
 import EditActionButton from "./EditActionButton";
+const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
+
 
 interface ActionProps {
   action: any; // You can replace `any` with a more specific type
+  isLinked: boolean
+  isAdminView: boolean
   onDelete: (actionId: string) => void;
   onEdit: (actionId: string, formData: any) => void;
 }
 
-const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
+const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDelete, onEdit }) => {
+  const {user} = useUser();
+
+  const userEmail = user?.emailAddresses[0].emailAddress;
 
   type Action = {
     id: string;
@@ -32,32 +39,40 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
   const [isEmailActionCompleted, setIsEmailActionCompleted] = useState(false);
   const [isCallActionCompleted, setIsCallActionCompleted] = useState(false);
   const [isInstagramCommentActionCompleted, setIsInstagramCommentActionCompleted] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const checkActionCompletion = () => {
+  const checkAndSetActionCompletion = () => {
     setIsEmailActionCompleted(actionExists(action._id, "emailCount"));
     setIsCallActionCompleted(actionExists(action._id, "callCount"));
     setIsInstagramCommentActionCompleted(actionExists(action._id, "instaCount"));
+  };
+
+  const isAllActionsCompleted = () => {
+    return (
+      (isEmailActionCompleted || !action.emailId) &&
+      (isCallActionCompleted || !action.callId) &&
+      (isInstagramCommentActionCompleted || !action.instaId)
+    );
   };
 
   const { isSignedIn,  isLoaded } = useUser();
 
   useEffect(() => {
       // Listen for custom event in the same tab
-      checkActionCompletion(); //checking everytime an action card is rendered
-      window.addEventListener("action-added-to-local-storage", checkActionCompletion);
+      checkAndSetActionCompletion(); //checking everytime an action card is rendered
+      window.addEventListener("action-added-to-local-storage", checkAndSetActionCompletion);
   
       // Cleanup listener when component unmounts
       return () => {
-        window.removeEventListener("action-added-to-local-storage", checkActionCompletion);
+        window.removeEventListener("action-added-to-local-storage", checkAndSetActionCompletion);
       };
 
   }, []);
 
-
   useEffect(() => { //only checks after sign in, does not do anything until user is fully loaded in.
     if (!isLoaded) return;
   
-    if (isSignedIn) {
+    if (isSignedIn && isAdminView) {
       setIsCallActionCompleted(false);
       setIsEmailActionCompleted(false);
       setIsInstagramCommentActionCompleted(false);
@@ -66,13 +81,24 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
   
   return (
     <div style={{ 
-      border: "2px solid #ccc",
+      border: isLinked? "10px solid #ccc" : "2px solid #ccc",
       padding: "20px",
       marginBottom: "10px",          
       maxWidth: "800px",  // If you want some flexibility
       wordWrap: "break-word",  // Ensure long text wraps
       }}>
-      <h3>{action.title || ""}</h3>
+
+      {isLinked && (
+        <p style={{ color: '#747bff' }}>
+          { isAllActionsCompleted()
+            ? "You have already completed this shared action!"
+            : "Someone shared this action with you!"
+          }
+        </p>
+      )}
+
+
+      <h3>{action.title|| ""}</h3>
       <p><strong>Description:</strong> {action.description || ""}</p>
 
       {/* Display Email Info */}
@@ -80,10 +106,14 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         <div className="button-container">
           <EmailButton 
             action={action}
+            isAdminView={isAdminView}
           />
 
           <SignedIn>
+            {(user && (userEmail === action.createdBy || !action.createdBy)) && (
             <p>Email Actions: {action.emailCount || 'None'}</p>
+          )
+          }
           </SignedIn>
         </div>
       )}
@@ -93,10 +123,14 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         <div className="button-container">
           <PhonecallButton
             action = {action}
+            isAdminView = {isAdminView}
           />
 
           <SignedIn>
+            {(isAdminView) && (
             <p>Call Actions: {action.callCount || 'None'}</p>
+          )
+          }
           </SignedIn>
         </div>
       )}
@@ -106,15 +140,19 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         <div className="button-container">
           <InstagramButton 
           action = {action}
+          isAdminView = {isAdminView}
           />
         
         <SignedIn>
+          {(isAdminView) && (
             <p>Comment Actions: {action.instaCount || 'None'}</p>
+          )
+          }
         </SignedIn>
         </div>
       )}
 
-      { (isEmailActionCompleted || !action.emailId) && (isCallActionCompleted || !action.callId) && (isInstagramCommentActionCompleted || !action.instaId)
+      { isAllActionsCompleted()
         && (
           <p>All Actions Completed!</p>
         )
@@ -126,8 +164,9 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
           : "Unknown"}</p>
       )}
 
+
       <SignedIn>
-      {action && (
+      {action && isAdminView && (
         <div className="button-container">
           <DeleteActionButton
           actionId = {action._id}
@@ -140,7 +179,26 @@ const ActionCard: React.FC<ActionProps> = ({ action, onDelete, onEdit }) => {
         </div>
         ) }    
       </SignedIn>
-    </div>
+
+
+      {action.shareId &&  (
+        <div> 
+        <p><strong>Click to copy and share Action through the link below!</strong></p>
+        <button
+          onClick={(e) => {
+          (e.target as HTMLButtonElement).blur()
+            navigator.clipboard.writeText(`${ALLOWED_ORIGIN}/action/${action.shareId}`);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1000);
+          }}>
+          {"Copy Action Link"}
+        </button>
+        {copied && action.shareId && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
+      </div>
+      )}
+
+
+</div>
   );
 };
 

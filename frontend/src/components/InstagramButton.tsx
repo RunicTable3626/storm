@@ -3,9 +3,10 @@ import InstagramModal from "../modals/InstagramModal";
 
 interface InstagramButtonProps {
   action: any;
+  isAdminView: boolean;
 }
 
-const InstagramButton: React.FC<InstagramButtonProps> = ({action}) => {
+const InstagramButton: React.FC<InstagramButtonProps> = ({action, isAdminView}) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   return (
     <div>
@@ -20,7 +21,7 @@ const InstagramButton: React.FC<InstagramButtonProps> = ({action}) => {
       </button>
 
       {/* Instagram Modal */}
-      <InstagramModal isOpen={modalIsOpen} closeModal={() => setModalIsOpen(false)} action = {action} />
+      <InstagramModal isOpen={modalIsOpen} closeModal={() => setModalIsOpen(false)} action = {action} isAdminView = {isAdminView} />
     </div>
   );
 };
