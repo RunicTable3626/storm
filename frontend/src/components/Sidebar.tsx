@@ -27,10 +27,7 @@ const Sidebar = () => {
         <SignInButton>
           <button>Admin Login</button>
         </SignInButton>
-      </SignedOut><GlobalAudio />
-
-
-
+      </SignedOut>
       <NotificationButton/>
 
 
