@@ -1,5 +1,4 @@
 import { NavLink} from "react-router-dom";
-import GlobalAudio from "./GlobalAudio";
 import NotificationButton from "./NotificationButton";
 import { SignedIn, SignedOut, SignInButton, UserButton} from '@clerk/clerk-react'
 
