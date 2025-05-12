@@ -73,16 +73,20 @@ button:focus-visible {
 
 
 nav {
-  display: flex;       /* Arrange the nav items horizontally */
-  gap: 10px;           /* Optional: space between the nav items */
-  background-color: #f9f9f9;   
+  display: flex;
+  gap: 10px;
+  background-color: #f9f9f9;
   padding: 10px;
-  width: 100%;            /* Full width */
-  box-sizing: border-box; /* Includes padding in the total width */
-  position: fixed;        /* Keeps it fixed at the top of the screen */
-  top: 0;                 /* Align it at the top */
-  left: 0;                /* Align it to the left */
-  z-index: 1000;          /* Makes sure it's on top of other content */
+  width: 100%;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+
+  overflow-x: auto;     /* Enable horizontal scrolling */
+  white-space: nowrap;  /* Prevent nav items from wrapping */
+  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
 }
 
 .flex-1 {
