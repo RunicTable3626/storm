@@ -344,7 +344,10 @@ const ActionCreationPage = () => {
 
           <button
           type="button"
-          onClick={() => setShowSchedulePicker((prev) => !prev)}
+          onClick={ (e) => {
+            (e.target as HTMLButtonElement).blur()
+            setShowSchedulePicker((prev) => !prev)
+          }}
         >
           {showSchedulePicker ? "Cancel" : "Schedule Create"}
         </button>
