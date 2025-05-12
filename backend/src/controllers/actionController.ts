@@ -66,8 +66,6 @@ export const generateContent = async (req: Request, res: Response) => {
       });
 
       generatedText = chatCompletion.choices[0]?.message?.content || "";
-      console.log(`Attempt ${attempts + 1}:`);
-      console.log(generatedText);
 
       // Validation checks BEFORE using split or trim
       if (
