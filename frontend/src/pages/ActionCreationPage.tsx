@@ -2,6 +2,9 @@ import { useState } from "react";
 import {generateContent} from "../utils/llm.tsx"
 import { useAuth} from "@clerk/clerk-react";
 import TextareaAutosize from 'react-textarea-autosize';
+import "react-datetime/css/react-datetime.css";
+import Datetime from 'react-datetime';
+import moment, { Moment } from "moment";
 const ALLOWED_ORIGIN = import.meta.env.VITE_ALLOWED_ORIGIN; // from .env
 
 
@@ -35,9 +38,29 @@ const ActionCreationPage = () => {
     const [tone, setTone] = useState("");
     const { getToken } = useAuth();
     const [showGuide, setShowGuide] = useState(false);
+    const [showSchedulePicker, setShowSchedulePicker] = useState(false);
+    // defaults it to next morning 8 am. 
+    const [scheduleDate, setScheduleDate] = useState<Date>(() => {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      d.setHours(8, 0, 0, 0); 
+      return d;
+    });
+    const [submitType, setSubmitType] = useState<"regular"| "schedule">("regular");
 
-    // Inside an async function
+
+    const isValidDate = (current: Moment) => {
+      // Disables all dates and times before right now
+      return current.isSameOrAfter(moment());
+    };
+
     
+    const [showEmailSubForm, setShowEmailSubForm] = useState(false);
+    const [showCallSubForm, setShowCallSubForm] = useState(false);
+    const [showInstaSubForm, setShowInstaSubForm] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const [shareId, setShareId] = useState("");
 
     const handleGenerate = async () => {
 
@@ -83,22 +106,8 @@ const ActionCreationPage = () => {
       } catch (error) {
         console.error("Error generating content:", error);
       }
-  
-      
-
-      
-
+     
   };
-
-
-
-    const [showEmailSubForm, setShowEmailSubForm] = useState(false);
-    const [showCallSubForm, setShowCallSubForm] = useState(false);
-    const [showInstaSubForm, setShowInstaSubForm] = useState(false);
-
-
-    const [message, setMessage] = useState("");
-    const [shareId, setShareId] = useState("");
   
     // Handle main form change
     const handleMainChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -161,11 +170,21 @@ const ActionCreationPage = () => {
         setShowEmailSubForm(false);
         setShowCallSubForm(false);
         setShowInstaSubForm(false);
+        setShowGuide(false);
+        setShowSchedulePicker(false);
+        // defaults it to next morning 8 am. 
+        setScheduleDate(() => {
+          const d = new Date();
+          d.setDate(d.getDate() + 1);
+          d.setHours(8, 0, 0, 0); 
+          return d;
+        });
+        setSubmitType("regular");
 
     }
       
     // Submit form data
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       let isValidEmail: boolean = false;
       let isValidCall: boolean = false;
@@ -190,13 +209,24 @@ const ActionCreationPage = () => {
         return;
       }
 
-      try {
-        const formData: Record<string, any> = { mainInfo };
 
-        // Add each field only if it's valid
-        if (isValidEmail) formData.emailInfo = emailInfo;
-        if (isValidCall) formData.callInfo = callInfo;
-        if (isValidInsta) formData.instaInfo = instaInfo;
+      const formData: Record<string, any> = { mainInfo };
+
+      // Add each field only if it's valid
+      if (isValidEmail) formData.emailInfo = emailInfo;
+      if (isValidCall) formData.callInfo = callInfo;
+      if (isValidInsta) formData.instaInfo = instaInfo;
+
+
+      if (submitType === "schedule") {
+        if (!scheduleDate) {
+          alert("Please pick a future date and time.");
+          return;
+        }
+        formData.startDate = scheduleDate.toISOString();
+      }
+
+      try {
         const token = await getToken();
         const response = await fetch(`${API_URL}/api/actions`, {
           method: "POST",
@@ -304,8 +334,41 @@ const ActionCreationPage = () => {
           </div>
         )}
           {/* Submit Button */}
-        <button type="submit">Create Action</button>
+        
+          <button
+          type="submit"
+          onClick={() => {setSubmitType("regular"); setShowSchedulePicker(false)}}
+        >
+          Create Action
+          </button>
 
+          <button
+          type="button"
+          onClick={() => setShowSchedulePicker((prev) => !prev)}
+        >
+          {showSchedulePicker ? "Cancel" : "Schedule Create"}
+        </button>
+
+        {showSchedulePicker && (
+        <div style={{ marginTop: "1rem" }}>
+          <label>Select date and time:</label>
+          <Datetime
+            value={scheduleDate}
+            onChange={(date) => {
+              if (typeof date !== "string") setScheduleDate(date.toDate());
+            }}
+            isValidDate={isValidDate}
+            inputProps={{ placeholder: "Pick a future date/time" }}
+          />
+
+          <button
+            type="submit"
+            onClick={() => setSubmitType("schedule")}
+          >
+            Schedule
+          </button>
+        </div>
+      )}
 
         <button type="button" onClick={ (e) => {
                     (e.target as HTMLButtonElement).blur()

@@ -122,3 +122,22 @@ button.nav-link:hover {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.rdtPicker {
+  color: black !important;
+  background-color: white !important;
+}
+
+.rdtPicker th,
+.rdtPicker td,
+.rdtPicker .rdtTimeToggle,
+.rdtPicker .rdtCounter {
+  color: black !important;
+}
+
+.rdtPicker .rdtActive,
+.rdtPicker .rdtDay:hover {
+  background-color: #646cff !important; /* light gray on hover/active */
+  color: black !important;
+}

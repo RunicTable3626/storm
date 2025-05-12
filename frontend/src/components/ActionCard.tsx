@@ -78,15 +78,19 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
       setIsInstagramCommentActionCompleted(false);
     }
   }, [isLoaded, isSignedIn]);
+
+  const isFutureScheduledAction = isAdminView && action?.startDate && new Date(action.startDate) > new Date();
   
   return (
-    <div style={{ 
-      border: isLinked? "10px solid #ccc" : "2px solid #ccc",
+    <div   style={{
+      border: isLinked ? "10px solid #ccc" : "2px solid #ccc",
       padding: "20px",
-      marginBottom: "10px",          
-      maxWidth: "800px",  // If you want some flexibility
-      wordWrap: "break-word",  // Ensure long text wraps
-      }}>
+      marginBottom: "10px",
+      maxWidth: "800px", // If you want some flexibility
+      wordWrap: "break-word", // Ensure long text wraps
+      backgroundColor: isFutureScheduledAction ? "#646cff" : "transparent", // Greys out the div if isAdminView is true or startDate is ahead
+      opacity: 1
+    }}>
 
       {isLinked && (
         <p style={{ color: '#747bff' }}>
@@ -96,6 +100,11 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
           }
         </p>
       )}
+
+      {isFutureScheduledAction && (
+        <h3>NOT ACTIVE YET: This action is scheduled to start at {moment(action.startDate).format("MMMM Do YYYY, h:mm A")}</h3>
+      )
+      }
 
 
       <h3>{action.title|| ""}</h3>
@@ -159,10 +168,13 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
       }
       
       {action && (
-        <p>Created At: {action.createdAt
-          ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A")
-          : "Unknown"}</p>
-      )}
+      <p> {isFutureScheduledAction?  "Starts At : ": "Started At : "} 
+        {action.startDate 
+          ? moment(action.startDate).format("MMMM Do YYYY, h:mm A") 
+          : (action.createdAt ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A") : "Unknown")
+        }
+      </p>
+    )}
 
 
       <SignedIn>

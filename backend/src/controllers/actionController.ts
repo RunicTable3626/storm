@@ -203,6 +203,9 @@ export const postAction = async (req: Request, res: Response) => {
     
     const formData = req.body; 
 
+    const startDate = formData.startDate ? new Date(formData.startDate) : null;
+
+
     let emailId = null, callId = null, instaId = null;
 
     // Create a new action document
@@ -233,6 +236,7 @@ export const postAction = async (req: Request, res: Response) => {
       callId,       // Reference to Call collection, will be null if callDetails is not created
       instaId,      // Reference to Insta collection, will be null if instaDetails is not created
       createdBy,
+      startDate,
       shareId,
     });
 
@@ -268,25 +272,31 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
 
 export const getActionsFromLastNDays = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Get the number of days from the query parameter (or use 7 as a default)
     const daysAgo = parseInt(req.query.daysAgo as string) || 7;
 
-    // Calculate the timestamp for the given number of days ago
-    const targetDate = dayjs().subtract(daysAgo, "day").toDate();
+    const start = dayjs().subtract(daysAgo, "day").toDate();
+    const end = dayjs().toDate();
 
+    // Construct the query
+    const dateQuery = {
+      $gte: start,
+      $lt: end,
+    };
+
+    // Find actions where either startDate or createdAt is within range
     const actions = await Action.find({
-      createdAt: {
-        $gte: targetDate, // Retrieve actions from the given number of days ago or later
-        $lt: dayjs().toDate(), // Less than the current timestamp
-      },
+      $or: [
+        { startDate: dateQuery },
+        { startDate: { $exists: false }, createdAt: dateQuery },
+      ],
     })
-      .populate("emailId") // Populate related email info
-      .populate("callId")  // Populate related call info
-      .populate("instaId"); // Populate related Instagram info  
+      .populate("emailId")
+      .populate("callId")
+      .populate("instaId");
 
     res.status(200).json(actions);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "Error fetching actions" });
   }
 };

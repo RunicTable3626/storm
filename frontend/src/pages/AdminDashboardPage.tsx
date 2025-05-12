@@ -38,6 +38,8 @@ interface Action {
   instaId?: Insta;
   shareId?: string;
   createdBy: string;
+  startDate: Date;
+  createdAt: Date;
 }
 
 const AdminDashboard = () => {
@@ -127,6 +129,17 @@ const AdminDashboard = () => {
 
   }
 
+  const sortedActions = actions.sort((a, b) => {
+    // Determine which date to use (startDate or createdAt)
+    const aDate = a.startDate ?? a.createdAt;
+    const bDate = b.startDate ?? b.createdAt;
+  
+    // Compare dates and return sorting order
+    return new Date(bDate).getTime() - new Date(aDate).getTime();
+  });
+
+
+
   return (
 <div>
   <h2>Admin Dashboard</h2>
@@ -143,7 +156,7 @@ const AdminDashboard = () => {
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {Array.isArray(actions) &&
-        actions.slice().reverse().map((action) => (
+        sortedActions.map((action) => (
           <ActionCard 
             key={action._id} 
             action={action} 

@@ -37,6 +37,8 @@ interface Action {
   callId?: Call;
   instaId?: Insta;
   shareId?: string;
+  startDate?: Date;
+  createdAt: Date;
 }
 
 const ActionDashboard = () => {
@@ -150,17 +152,27 @@ const ActionDashboard = () => {
   }
 
 
-  const reversed = actions.slice().reverse(); // Descending order (latest first)
+  const sortedActions = actions.sort((a, b) => {
+    // Determine which date to use (startDate or createdAt)
+    const aDate = a.startDate ?? a.createdAt;
+    const bDate = b.startDate ?? b.createdAt;
+  
+    // Compare dates and return sorting order
+    return new Date(bDate).getTime() - new Date(aDate).getTime();
+  });
 
   const highlighted = shareIdFromUrl
-  ? reversed.find((action) => action.shareId === shareIdFromUrl)
+  ? sortedActions.find((action) => action.shareId === shareIdFromUrl)
   : null;
 
   const rest = shareIdFromUrl
-  ? reversed.filter((action) => action.shareId !== shareIdFromUrl)
-  : reversed;
+  ? sortedActions.filter((action) => action.shareId !== shareIdFromUrl)
+  : sortedActions;
 
   const finalList = highlighted ? [highlighted, ...rest] : rest;
+
+
+
 
   return (
     <div>
