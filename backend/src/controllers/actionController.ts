@@ -287,7 +287,7 @@ export const getActionsFromLastNDays = async (req: Request, res: Response): Prom
     const actions = await Action.find({
       $or: [
         { startDate: dateQuery },
-        { startDate: { $exists: false }, createdAt: dateQuery },
+        { startDate: null, createdAt: dateQuery }
       ],
     })
       .populate("emailId")
