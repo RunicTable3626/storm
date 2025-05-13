@@ -18,9 +18,6 @@ interface ActionProps {
 }
 
 const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDelete, onEdit }) => {
-  const {user} = useUser();
-
-  const userEmail = user?.emailAddresses[0].emailAddress;
 
   type Action = {
     id: string;
