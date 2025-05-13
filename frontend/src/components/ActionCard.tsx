@@ -119,7 +119,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
           />
 
           <SignedIn>
-            {(user && (userEmail === action.createdBy || !action.createdBy)) && (
+            {(isAdminView) && (
             <p>Email Actions: {action.emailCount || 'None'}</p>
           )
           }
