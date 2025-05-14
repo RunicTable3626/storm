@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth} from "@clerk/clerk-react";
+import { useAuth, useUser} from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 
@@ -47,19 +47,27 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const { getToken } = useAuth();
+  const { user } = useUser();
+  const role = user?.publicMetadata?.role;
   
 
   // Fetch function
   const fetchActions = async () => {
+    let response;
     try {
-      const token = await getToken();
-      const response = await fetch(`${API_URL}/api/actions/created`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      if (role === 'superadmin') {
+        response = await fetch(`${API_URL}/api/actions`); //gets all actions from all users
+      } else {
+        const token = await getToken();
+        response = await fetch(`${API_URL}/api/actions/created`, { //only gets actions from that specific user
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        }
+        }); 
       }
-      }); //change this to only get user actions
+
       const data = await response.json();
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
@@ -142,12 +150,17 @@ const AdminDashboard = () => {
 
   return (
 <div>
-  <h2>Admin Dashboard</h2>
-  
+  {role === 'superadmin' && (
+      <h2>Superadmin Dashboard</h2>
+    )}
 
+  {role !== 'superadmin' && (
+      <h2>Admin Dashboard</h2>
+    )}
+  
   <div className="flex flex-row gap-4 w-full">
     <div className="w-1/2">
-    <p>Admin Email: {actions[0]?.createdBy || '' }</p>
+
     <p>Use this dashboard to monitor, edit and delete actions that you have created!</p>
     </div>
 

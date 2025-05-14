@@ -186,8 +186,16 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
             onEdit = {onEdit}
           />
         </div>
-        ) }    
+        ) }
+
+      {action && isAdminView && (
+        <div>
+          <p>created by: {action.createdBy || "Unknown"}</p>
+        </div>
+      )}    
+      
       </SignedIn>
+
 
 
       {action.shareId &&  (
