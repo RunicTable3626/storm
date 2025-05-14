@@ -186,72 +186,74 @@ export const rephraseContentInternal = async (content: String, contentType: Stri
   }
 }
 
-
-
-
 export const postAction = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
 
   if (!userId) {
-    res.status(401).json({ message: 'Unauthorized' });
-  } else {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const user = await clerkClient.users.getUser(userId);
     const createdBy = user.emailAddresses[0]?.emailAddress;
-    
-    const formData = req.body; 
+    const formData = req.body;
 
     const startDate = formData.startDate ? new Date(formData.startDate) : null;
 
-
     let emailId = null, callId = null, instaId = null;
 
-    // Create a new action document
     if (formData.emailInfo) {
       const emailDetails = new Email(formData.emailInfo);
-      await emailDetails.save();
-      emailId = emailDetails._id;  // Store _id if the emailInfo is valid
+      await emailDetails.save({ session });
+      emailId = emailDetails._id;
     }
-    
+
     if (formData.callInfo) {
       const callDetails = new Call(formData.callInfo);
-      await callDetails.save();
-      callId = callDetails._id;  // Store _id if the callInfo is valid
+      await callDetails.save({ session });
+      callId = callDetails._id;
     }
-    
+
     if (formData.instaInfo) {
       const instaDetails = new Insta(formData.instaInfo);
-      await instaDetails.save();
-      instaId = instaDetails._id;  // Store _id if the instaInfo is valid
+      await instaDetails.save({ session });
+      instaId = instaDetails._id;
     }
 
     const shareId = nanoid(10);
-    
-    // Create the action document, using the saved IDs or null if not valid
+
     const actionDetails = new Action({
-      ...formData.mainInfo,  // Spread the mainInfo object (title, description)
-      emailId,      // Reference to Email collection, will be null if emailDetails is not created
-      callId,       // Reference to Call collection, will be null if callDetails is not created
-      instaId,      // Reference to Insta collection, will be null if instaDetails is not created
+      ...formData.mainInfo,
+      emailId,
+      callId,
+      instaId,
       createdBy,
       startDate,
       shareId,
     });
 
-    await actionDetails.save()
-    console.log("Saved Action ID:", actionDetails.shareId);
+    await actionDetails.save({ session });
 
-    res.status(201).json({ shareId: actionDetails.shareId});
+    await session.commitTransaction();
+    session.endSession();
+
+    console.log("Saved Action ID:", actionDetails.shareId);
+    res.status(201).json({ shareId: actionDetails.shareId });
   } catch (error: unknown) {
-    // Type assertion to make sure `error` is an `Error` object
+    await session.abortTransaction();
+    session.endSession();
+
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
     } else {
       res.status(500).json({ error: "An unknown error occurred." });
     }
   }
-}
 };
+
 
 
 export const getAllActions = async (req: Request, res: Response): Promise<void> => {
