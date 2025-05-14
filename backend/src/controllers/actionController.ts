@@ -97,9 +97,11 @@ export const generateContent = async (req: Request, res: Response) => {
 
     if (!parsedSuccessfully) {
       res.status(500).json({ error: "Failed to parse Groq response after multiple retries." });
+    } else {
+      res.status(200).json({ subject, body, callScript, comment });
     }
 
-    res.status(200).json({ subject, body, callScript, comment });
+
 
   } catch (error) {
     res.status(500).json({ error: "Unexpected server error." });
