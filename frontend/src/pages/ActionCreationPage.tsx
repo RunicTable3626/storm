@@ -61,6 +61,7 @@ const ActionCreationPage = () => {
 
     const [message, setMessage] = useState("");
     const [shareId, setShareId] = useState("");
+    const [genError, setGenError] = useState("");
 
     const handleGenerate = async () => {
 
@@ -75,7 +76,10 @@ const ActionCreationPage = () => {
           // Proceed only if token is available
           if (!tone) setTone("polite");
           const generatedData = await generateContent(mainInfo.description, tone, token);
-          if (generatedData) {
+          if (generatedData === "Error generating content. Please try again.") {
+            setGenError(generatedData);
+          } else {
+            setGenError("");
             // Assuming API returns these fields
             setEmailInfo((prev) => ({
                 ...prev,
@@ -282,6 +286,9 @@ const ActionCreationPage = () => {
                     handleGenerate();
                   }
           }>Generate Content</button>
+
+          {genError && <span style={{ color: "red", marginLeft: "10px" }}>{genError}</span>}
+
   
           {/* Email subform */}
           <button type="button" onClick={ (e) => {
@@ -399,6 +406,8 @@ const ActionCreationPage = () => {
             <li>If you click the 'Generate Content' button, it will generate content based on the description and the tone</li>
             <li>Feel free to fill out the rest of the content like names, email addresses, links, phone numbers</li>
             <li>Upon clicking 'Create Action', you will receive an alert informing you about what actions will be created</li>
+            <li>If you want to schedule the action to be active later, please use the 'Schedule Create' feature instead.</li>
+            <li>Scheduled actions will be visible in your admin dashboard but not in the action dashboard until they are active.</li>
             <li>Only actions with all fields filled out will be in that alert.</li>
             <li>Once confirmed, your action will be created and visible in the Action Dashboard!</li>
           </ul>

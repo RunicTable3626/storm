@@ -25,83 +25,49 @@ export const generateContent = async (req: Request, res: Response) => {
     const query: string = req.body.query;
     const tone: string = req.body.tone;
 
-    const queryContent = `You are a helpful assistant.\n\n
-
-    Generate the following 3 outputs based on the description below:\n
-    - An Email\n
-    - A Voicemail message\n
-    - A Social Media Comment\n\n
-    
-    Description:\n
-    ${query}\n\n
-    
-    Use a consistent ${tone} tone for all outputs.\n\n
-    
-    Return your response in the exact format below, with no extra commentary, headers, or blank lines:\n\n
-    Email:\n
-    Subject: <subject line here>\n                         
-    Body: <email body here>\n\n
-    
-    Voicemail:\n
-    <voicemail message here>\n\n
-    
-    Comment:\n
-    <comment here>
-    `;
-
-    let generatedText = "";
-    let subject = "";
-    let body = "";
-    let callScript = "";
-    let comment = "";
-
     const MAX_RETRIES = 3;
-    let attempts = 0;
-    let parsedSuccessfully = false;
 
-    while (attempts < MAX_RETRIES && !parsedSuccessfully) {
-      const chatCompletion = await groq.chat.completions.create({
-        messages: [{ role: "user", content: queryContent }],
-        model: MODEL_NAME,
-      });
+    const promptTemplates = {
+      email: `You are a helpful assistant.\n\nGenerate an email with a "${tone}" tone based on the following description:\n\n${query}\n\nReturn only the subject line and body in this format:\n\nSubject: <subject line here>\nBody: <email body here>`,
+      voicemail: `You are a helpful assistant.\n\nGenerate a voicemail script with a "${tone}" tone based on the following description:\n\n${query}\n\nReturn only the voicemail message.`,
+      comment: `You are a helpful assistant.\n\nGenerate a social media comment with a "${tone}" tone based on the following description:\n\n${query}\n\nReturn only the comment.`,
+    };
 
-      generatedText = chatCompletion.choices[0]?.message?.content || "";
+    const fetchGroqOutput = async (prompt: string): Promise<string> => {
+      let attempts = 0;
+      while (attempts < MAX_RETRIES) {
+        const chatCompletion = await groq.chat.completions.create({
+          messages: [{ role: "user", content: prompt }],
+          model: MODEL_NAME,
+        });
 
-      // Validation checks BEFORE using split or trim
-      if (
-        generatedText.includes("Subject:") &&
-        generatedText.includes("Body:") &&
-        generatedText.includes("Voicemail:") &&
-        generatedText.includes("Comment:")
-      ) {
-        const emailSection = generatedText.split("Voicemail:")[0];
-        const voicemailSection = generatedText.split("Comment:")[0].split("Voicemail:")[1];
-        const commentSection = generatedText.split("Comment:")[1];
-
-        const emailParts = emailSection.replace(/\n+/g, "\n").split("\n");
-        const subjectLine = emailParts.find((line) => line.startsWith("Subject: "));
-        const bodyLine = emailParts.find((line) => line.includes("Body: "));
-
-        subject = subjectLine?.split("Subject: ")[1]?.trim() || "";
-        body = bodyLine?.split("Body: ")[1]?.trim() || "";
-        callScript = voicemailSection?.replace(/^"|"$/g, "").trim() || "";
-        comment = commentSection?.replace(/^"|"$/g, "").trim() || "";
-
-        if (subject && body && callScript && comment) {
-          parsedSuccessfully = true;
-        }
+        const content = chatCompletion.choices[0]?.message?.content?.trim();
+        if (content) return content;
+        console.log(attempts);
+        attempts++;
       }
+      throw new Error("Failed to get valid Groq response");
+    };
 
-      attempts++;
-    }
+    const [emailOutput, voicemailOutput, commentOutput] = await Promise.all([
+      fetchGroqOutput(promptTemplates.email),
+      fetchGroqOutput(promptTemplates.voicemail),
+      fetchGroqOutput(promptTemplates.comment),
+    ]);
 
-    if (!parsedSuccessfully) {
-      res.status(500).json({ error: "Failed to parse Groq response after multiple retries." });
+    const subjectMatch = emailOutput.match(/Subject:\s*(.*)/);
+    const bodyMatch = emailOutput.match(/Body:\s*([\s\S]*)/);
+
+    const subject = subjectMatch?.[1]?.trim() || "";
+    const body = bodyMatch?.[1]?.trim() || "";
+    const callScript = normalizeQuotes(voicemailOutput.trim());
+    const comment = normalizeQuotes(commentOutput.trim());
+
+    if (!subject || !body || !callScript || !comment) {
+      res.status(500).json({ error: "Failed to parse one or more Groq responses." });
     } else {
       res.status(200).json({ subject, body, callScript, comment });
     }
-
-
 
   } catch (error) {
     res.status(500).json({ error: "Unexpected server error." });

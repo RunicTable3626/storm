@@ -19,7 +19,7 @@ export const generateContent = async (query: string, tone: string, token: string
         return data; // Assuming the response contains email & call script data
     } catch (error) {
         console.error("Error generating content:", error);
-        return null;
+        return "Error generating content. Please try again.";
     }
 };
 
