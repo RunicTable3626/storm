@@ -410,7 +410,7 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
           throw new Error("Action not found");
         }
 
-        if (action.createdBy !== createdBy || user.publicMetadata?.role == 'superadmin') {
+        if ((action.createdBy && action.createdBy !== createdBy) || user.publicMetadata?.role !== "superadmin") {
           throw new Error("Must be Superadmin or Action Creator to edit this action");
         }
 
@@ -465,7 +465,7 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
     //console.log(action);
     if (!action) throw new Error("Action not found");
 
-    if (action.createdBy !== createdBy || user.publicMetadata?.role == 'superadmin') {
+    if ((action.createdBy && action.createdBy !== createdBy) || user.publicMetadata?.role !== "superadmin") {
       throw new Error("Must be Superadmin or Action Creator to edit this action");
     }
 
@@ -511,7 +511,7 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
     session.endSession();
 
     if (error instanceof Error) {
-      console.error("Error deleting action and related entries:", error);
+      console.error("Error editing action and related entries:", error);
       res.status(500).json({ error: error.message });
     } else {
       res.status(500).json({ error: `An unknown error occurred while updating action ${actionId}` });
