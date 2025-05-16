@@ -410,7 +410,10 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
           throw new Error("Action not found");
         }
 
-        if ((action.createdBy && action.createdBy !== createdBy) || user.publicMetadata?.role !== "superadmin") {
+        const isCreator = String(action.createdBy) === String(createdBy);
+        const isSuperadmin = user.publicMetadata?.role === "superadmin";
+        
+        if (!isCreator && !isSuperadmin) {
           throw new Error("Must be Superadmin or Action Creator to edit this action");
         }
 
@@ -465,7 +468,10 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
     //console.log(action);
     if (!action) throw new Error("Action not found");
 
-    if ((action.createdBy && action.createdBy !== createdBy) || user.publicMetadata?.role !== "superadmin") {
+    const isCreator = String(action.createdBy) === String(createdBy);
+    const isSuperadmin = user.publicMetadata?.role === "superadmin";
+
+    if (!isCreator && !isSuperadmin) {
       throw new Error("Must be Superadmin or Action Creator to edit this action");
     }
 
