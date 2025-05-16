@@ -410,8 +410,8 @@ export const deleteAction = async (req: Request, res: Response): Promise<void> =
           throw new Error("Action not found");
         }
 
-        if (action.createdBy !== createdBy) {
-          throw new Error("Admins can only delete actions that they have created")
+        if (action.createdBy !== createdBy || user.publicMetadata?.role == 'superadmin') {
+          throw new Error("Must be Superadmin or Action Creator to edit this action");
         }
 
         // Delete related entries in Call, Email, and Insta collections (only one per action)
@@ -465,8 +465,8 @@ export const editAction = async (req: Request, res: Response): Promise<void> => 
     //console.log(action);
     if (!action) throw new Error("Action not found");
 
-    if (action.createdBy !== createdBy) {
-      throw new Error("Admins can only edit actions that they have created")
+    if (action.createdBy !== createdBy || user.publicMetadata?.role == 'superadmin') {
+      throw new Error("Must be Superadmin or Action Creator to edit this action");
     }
 
     if (formData.mainInfo) {
