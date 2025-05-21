@@ -61,7 +61,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action, isAdminView,  o
                 </div>
                 <div className="border">
                     <div><strong>Subject:</strong> {subjectText}</div>
-                    <div><ContentRephraseButton text={subjectText} contentType="email subject" onResult={setSubjectText}/></div>
+                    <div><ContentRephraseButton text={action.emailId.subject} contentType="email subject" onResult={setSubjectText}/></div>
                 </div>
                 <div className="border">
                 <textarea 
@@ -99,7 +99,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, action, isAdminView,  o
                 !isAdminView &&
                 <ActionCompleteButton action={action} actionType="emailCount" onClick={onClose}/>
                 }
-                <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
+                <ContentRephraseButton text={action.emailId.body} contentType="email body" onResult={setGenBody}/>
                 <button className="sendButton" onClick={(e) => {(e.target as HTMLButtonElement).blur();onSend(subjectText, genBody)}}> 
                         Send Email
                 </button>

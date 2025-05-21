@@ -61,7 +61,7 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, isA
         >Copy Text</button>}
         {copied && instaText && <span style={{ color: 'green', marginLeft: '10px' }}>Text copied!</span>}
 
-        <ContentRephraseButton text={instaText} contentType={contentType} onResult={setInstaText}/>
+        <ContentRephraseButton text={action.instaId.comment} contentType={contentType} onResult={setInstaText}/>
       </div>
       <div className="button-container ">
           {
