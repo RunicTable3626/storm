@@ -4,4 +4,4 @@
 **/.env.prod
 **/.env.test
 **/.env.aac.prod
-
+**/migrate-mongo.ps1
