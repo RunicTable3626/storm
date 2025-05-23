@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 import { useAuth, useUser} from "@clerk/clerk-react";
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
-
 // pages/ActionsComponent.tsx
 import ActionCard from "../components/ActionCard"; // Import the ActionCard component
-
-
-
-
 
 interface Email {
   name: string;
@@ -18,14 +13,13 @@ interface Email {
 }
 
 interface Call {
-  name: string
+  name: string;
   phoneNumber: string;
-  callScript: string;
+  script: string;
 }
 
 interface Insta {
-  name: string,
-  instagramLink: string;
+  postId: string;
   comment: string;
 }
 
@@ -50,7 +44,6 @@ const AdminDashboard = () => {
   const { user } = useUser();
   const role = user?.publicMetadata?.role;
   
-
   // Fetch function
   const fetchActions = async () => {
     let response;
@@ -86,20 +79,15 @@ const AdminDashboard = () => {
   };
 
   // Fetch data on component mount
-  //Kept separate to prevent empty actions variable being accessed in syncLocalActions() due to delay.
   useEffect(() => {
     fetchActions();
   }, []);
-
-
-
 
   const handleDeleteAction = async (deletedId: string) => {
     setActions((prevActions) => prevActions.filter((action) => action._id !== deletedId));
   }
 
   const handleEditAction = async (actionId: string, formData: any) => {
-
     const actionIndex = actions.findIndex((action) => action._id === actionId);
 
     if (actionIndex === -1) {
@@ -133,8 +121,6 @@ const AdminDashboard = () => {
       updatedActions[actionIndex] = updatedAction;
       return updatedActions;
     });
-
-
   }
 
   const sortedActions = actions.sort((a, b) => {
@@ -146,42 +132,52 @@ const AdminDashboard = () => {
     return new Date(bDate).getTime() - new Date(aDate).getTime();
   });
 
-
-
   return (
-<div>
-  {role === 'superadmin' && (
-      <h2>Superadmin Dashboard</h2>
-    )}
+    <div>
+      <div className="relative w-full h-[70vh]">
+        <div 
+          className="absolute inset-0 bg-cover bg-top bg-no-repeat"
+          style={{
+            backgroundImage: "url('./src/assets/storm-2.jpeg')",
+            backgroundPosition: "center 25%" 
+          }}
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="relative flex p-0 flex-col items-center justify-center h-full text-white">
+          <h1 className="text-5xl md:text-6xl text-4xl font-bold mb-4 tracking-wider flex flex-wrap justify-center gap-x-3 gap-y-0 px-2">
+            <span className="opacity-0 animate-[fadeIn_0.3s_ease-out_.25s_forwards]">{role === 'superadmin' ? 'SUPERADMIN' : 'ADMIN'}</span>
+            <span className="text-violet-500 opacity-0 animate-[fadeIn_0.3s_ease-out_0.45s_forwards]">DASHBOARD</span>
+          </h1>
+          
+          <div className="opacity-0 animate-[fadeIn_0.3s_ease-out_0.85s_forwards] flex flex-col items-center">
+            <p className="text-2xl md:text-3xl text-gray-200 max-w-2xl text-center mb-10">
+              {role === 'superadmin' ? 'Monitor and manage all actions across the platform.' : 'Monitor and manage your created actions.'}
+            </p>
+          </div>
+        </div>
+      </div>
 
-  {role !== 'superadmin' && (
-      <h2>Admin Dashboard</h2>
-    )}
-  
-  <div className="flex flex-row gap-4 w-full">
-    <div className="w-1/2">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-4xl mx-auto px-4">
+          {loading && <p className="text-center text-lg">Loading actions...</p>}
+          {error && <p className="text-center text-red-500">{error}</p>}
 
-    <p>Use this dashboard to monitor, edit and delete actions that you have created!</p>
+          <div className="space-y-6">
+            {Array.isArray(actions) &&
+              sortedActions.map((action) => (
+                <ActionCard 
+                  key={action._id} 
+                  action={action} 
+                  isLinked={false}
+                  isAdminView={true}
+                  onDelete={handleDeleteAction} 
+                  onEdit={handleEditAction}
+                />
+              ))}
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div className="w-1/2">
-      {loading && <p>Loading actions...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {Array.isArray(actions) &&
-        sortedActions.map((action) => (
-          <ActionCard 
-            key={action._id} 
-            action={action} 
-            isLinked={false}
-            isAdminView={true}
-            onDelete={handleDeleteAction} 
-            onEdit={handleEditAction}
-          />
-        ))}
-    </div>
-  </div>
-</div>
   );
 };
 

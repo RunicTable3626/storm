@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation} from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ActionCreationPage from "./pages/ActionCreationPage";
 import ActionDashboardPage from "./pages/ActionDashboardPage";
@@ -16,27 +16,27 @@ Modal.setAppElement("#root");
 
 const App = () => {
   interface ProtectedRouteProps {
-    element: any; // Using 'any' type for the 'element' prop
+    element: any;
   }
   
   const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
-    const { isSignedIn } = useUser(); // Clerk hook to check if the user is signed in
+    const { isSignedIn } = useUser();
   
     if (!isSignedIn) {
-      
-      return <Navigate to="/" replace />; // Redirect to sign-in page if not authenticated
+      return <Navigate to="/" replace />;
     }
   
     return element;
   };
 
-  return (
-    <Router>
-      <div className="flex">
-        {/* Sidebar or Navbar with navigation links */}
-        <Sidebar />
-        {/* Define Routes */}
-        <div className="flex-1 p-6">
+  const AppContent = () => {
+    const location = useLocation();
+    const showSidebar = location.pathname !== '/create-action';
+
+    return (
+      <>
+        {showSidebar && <Sidebar />}
+        <div>
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/action-dashboard" element={<ActionDashboardPage/>} />
@@ -51,7 +51,13 @@ const App = () => {
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </div>
-      </div>
+      </>
+    );
+  };
+
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };

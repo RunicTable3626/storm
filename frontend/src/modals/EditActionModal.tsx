@@ -3,8 +3,7 @@ import Modal from "react-modal";
 import isEqual from 'lodash.isequal';
 import "./modalStyles.css";
 import TextareaAutosize from 'react-textarea-autosize';
-
-
+import Swal from 'sweetalert2';
 
 interface EditActionModalProps {
     isOpen: boolean;
@@ -157,35 +156,50 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
 
           const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault();
- 
+          
             if (!isMainChanged && !isEmailChanged && !isCallChanged && !isInstaChanged) {
               setMessage("No changes have been made");
               setTimeout(() => setMessage(""), 2000);
-              return;  // Prevent form submission if all are null
-            }
-      
-            const isConfirmed = window.confirm(`Are you sure you want to confirm changes? Action types to be modified:\n
-              ${isMainChanged ? "- Action Title/Description\n": ""}  
-              ${isEmailChanged ? "- Email\n": ""}
-              ${isCallChanged ? "- Call\n": ""}
-              ${isInstaChanged ? "- Instagram Comment": ""}`);
-      
-            if (!isConfirmed) {
               return;
             }
+          
+            const result = await Swal.fire({
+              title: 'Are you sure you want to confirm changes?',
+              html: `
+                <div class="text-left">
+                  ${isMainChanged ? '<div>- Action Title/Description</div>' : ''}
+                  ${isEmailChanged ? '<div>- Email</div>' : ''}
+                  ${isCallChanged ? '<div>- Call</div>' : ''}
+                  ${isInstaChanged ? '<div>- Instagram Comment</div>' : ''}
+                </div>
+              `,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes, submit',
+              cancelButtonText: 'Cancel',
+              customClass: {
+                confirmButton: 'font-semibold cursor-pointer bg-[#8D51FF] hover:bg-[#7F22FE] text-white px-4 py-2 rounded duration-200 ease',
+                cancelButton: 'ml-3 font-semibold cursor-pointer bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded duration-200 ease'
+              },
+              buttonsStyling: false
+            });
+          
+            if (!result.isConfirmed) {
+              return;
+            }
+          
             setIsConfirmed(true);
-            const formData: Record<string, any> = {}; 
-      
-              // Add each field only if it's valid
+            const formData: Record<string, any> = {};
+          
             if (isMainChanged) formData.mainInfo = mainInfo;
             if (isEmailChanged) formData.emailInfo = emailInfo;
             if (isCallChanged) formData.callInfo = callInfo;
             if (isInstaChanged) formData.instaInfo = instaInfo;
-            
-            handleClick(formData); //try to get this to return something to the modal for a confirmation message.
+          
+            handleClick(formData);
             clearAndCloseModal();
-      
           };
+          
 
           const clearAndCloseModal = () => {
             setMessage("");

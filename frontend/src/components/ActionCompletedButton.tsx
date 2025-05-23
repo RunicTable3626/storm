@@ -1,41 +1,35 @@
 import React, { useState } from "react";
-import ActionCompleteModal from "../modals/ActionCompleteModal";
-import { useAuth, useUser } from '@clerk/clerk-react';
+import { useAuth } from '@clerk/clerk-react';
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {
   actionType: string;
-  action: any;
+  actionId: string;
   onClick: () => void;
-  
 }
 
-
-
-
-const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, action, onClick }) => {
+const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
   const [completed, setCompleted] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-  const {isLoaded, isSignedIn} = useAuth();
-  const {user} = useUser();
-  const userEmail = user?.emailAddresses[0].emailAddress;
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const { getToken } = useAuth();
 
   const saveAction = (actionId: string, actionType: string) => {
     const stored = JSON.parse(localStorage.getItem('actions') || '[]');
 
     const exists = stored.some(
-      (localStorageAction: { id: string; type: string }) => localStorageAction.id === actionId && localStorageAction.type === actionType
+      (action: { id: string; type: string }) => action.id === actionId && action.type === actionType
     );
   
     if (!exists) {
       stored.push({ id: actionId, type: actionType});
       localStorage.setItem('actions', JSON.stringify(stored));
-      window.dispatchEvent(new Event("action-added-to-local-storage"));
+      
+      const event = new CustomEvent("action-added-to-local-storage");
+      window.dispatchEvent(event);
+      
+      console.log(`Action ${actionId} of type ${actionType} marked as completed and event dispatched`);
     }
   };
-
 
   const handleClick = async () => {
     try {
@@ -44,8 +38,8 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             actionType: actionType,
-            actionId: action._id 
-        }), // Please pass the action id too in order to index
+            actionId: actionId 
+        }),
       });
 
       if (!response.ok) throw new Error("Failed to update counter");
@@ -53,26 +47,55 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       const data = await response.json();
       console.log(`${actionType} response: ${data.message}`);
       setCompleted(true);
+      setShowConfirmation(false);
+      
+      saveAction(actionId, actionType);
+      
       setTimeout(() => {
-        onClick(); 
-        if(!(isSignedIn && isLoaded && (userEmail === action.createdBy || !action.createdBy))) { 
-          //if user is not signed in or if user is not the creator or if action has no creator info
-          saveAction(action._id, actionType);
-        } 
+        onClick();
       }, 1000);
+      
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   return (
-        <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <button onClick={openModal}>Complete Action</button>
-        {completed && <span style={{ color: "green", marginLeft: "10px" }}>Action Completed!</span>}
-
-        <ActionCompleteModal isOpen = {isModalOpen} closeModal={closeModal} handleClick={handleClick}/>
+    <div style={{ display: "inline-flex", alignItems: "center" }}>
+      {completed ? (
+        <span className="text-green-500 font-bold mt-2">
+          Action Completed! <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="inline-block size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </span>
+      ) : !showConfirmation ? (
+        <button 
+          className="text-green-500 hover:text-green-600 font-bold mt-2 cursor-pointer rounded-lg transition duration-200" 
+          onClick={() => setShowConfirmation(true)}
+        >
+          Complete Action <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="inline-block size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+        </button>
+      ) : (
+        <div className="flex items-center mt-1 gap-2">
+          <div className="text-gray-700 font-semibold">Are you sure? This cannot be undone.</div>
+          <button 
+            className="bg-green-500 font-semibold duration-200 ease cursor-pointer hover:bg-green-600 text-white px-3 py-1 rounded-lg" 
+            onClick={handleClick}
+          >
+            Yes
+          </button>
+          <button 
+            className="bg-red-500 font-semibold duration-200 ease cursor-pointer hover:bg-red-600 text-white px-3 py-1 rounded-lg" 
+            onClick={() => setShowConfirmation(false)}
+          >
+            No
+          </button>
         </div>
-  )
+      )}
+    </div>
+  );
 };
 
 export default ActionCompleteButton;

@@ -1,5 +1,9 @@
+@tailwind base;
+@tailwind components;
+@import "tailwindcss";
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Montserrat", sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -20,20 +24,12 @@ a {
 }
 
 html, body {
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
 
-button {
+
+/*button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -50,18 +46,18 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+}*/
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
+    background-color: #f7f7f7;
   }
   a:hover {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+   /* background-color: #f9f9f9;*/
   }
 }
 
@@ -71,26 +67,31 @@ button:focus-visible {
   }
 }
 
-
 nav {
   display: flex;
-  gap: 10px;
-  background-color: #f9f9f9;
+  gap: 10px;          
+  background-color: #f9f9f9;   
   padding: 10px;
   width: 100%;
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-
-  overflow-x: auto;     /* Enable horizontal scrolling */
-  white-space: nowrap;  /* Prevent nav items from wrapping */
-  -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+  box-sizing: border-box; 
+  position: fixed;       
+  top: 0;                
+  left: 0;               
+  z-index: 1000;          
 }
 
 .flex-1 {
-  padding-top: 100px; /* Push content below the nav (adjust this based on your nav height) */
+  padding-top: 100px;
+}
+
+.col-centered {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-pad-copy {
+  padding-right: 25px;
 }
 
 .nav-link {
@@ -123,25 +124,9 @@ button.nav-link:hover {
   color: #747bff;
 }
 
-@tailwind base;
-@tailwind components;
 @tailwind utilities;
 
-
-.rdtPicker {
-  color: black !important;
-  background-color: white !important;
-}
-
-.rdtPicker th,
-.rdtPicker td,
-.rdtPicker .rdtTimeToggle,
-.rdtPicker .rdtCounter {
-  color: black !important;
-}
-
-.rdtPicker .rdtActive,
-.rdtPicker .rdtDay:hover {
-  background-color: #646cff !important; /* light gray on hover/active */
-  color: black !important;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
