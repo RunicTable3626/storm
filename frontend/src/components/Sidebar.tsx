@@ -1,4 +1,4 @@
-import { SignedIn, SignedOut, SignInButton, UserButton, SignOutButton } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, SignInButton, SignOutButton } from '@clerk/clerk-react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 

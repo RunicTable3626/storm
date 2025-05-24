@@ -32,30 +32,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
     );
   };
 
-  // Function to manually mark an action as completed - for testing
-  const markActionCompleted = (actionType: string) => {
-    const stored: Action[] = JSON.parse(localStorage.getItem('actions') || '[]');
-    
-    // Check if this action is already marked as completed
-    const alreadyExists = stored.some(
-      (storedAction) => storedAction.id === action._id && storedAction.type === actionType
-    );
-    
-    // If not already marked, add it
-    if (!alreadyExists) {
-      const newStoredActions = [
-        ...stored,
-        { id: action._id, type: actionType }
-      ];
-      
-      localStorage.setItem('actions', JSON.stringify(newStoredActions));
-      
-      // Dispatch the event to update UI
-      const event = new CustomEvent('action-added-to-local-storage');
-      window.dispatchEvent(event);
-    }
-  };
-
   const [isEmailActionCompleted, setIsEmailActionCompleted] = useState(false);
   const [isCallActionCompleted, setIsCallActionCompleted] = useState(false);
   const [isInstagramCommentActionCompleted, setIsInstagramCommentActionCompleted] = useState(false);

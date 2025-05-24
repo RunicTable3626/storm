@@ -54,7 +54,6 @@ const ActionCreationPage = () => {
     const [isInstaModalOpen, setIsInstaModalOpen] = useState(false);
     const [shareId, setShareId] = useState("");
 
-    const [showSchedulePicker, setShowSchedulePicker] = useState(false);
     // defaults it to next morning 8 am. 
     const [scheduleDate, setScheduleDate] = useState<Date>(() => {
       const d = new Date();
@@ -175,8 +174,6 @@ const ActionCreationPage = () => {
     const [showCallSubForm, setShowCallSubForm] = useState(false);
     const [showInstaSubForm, setShowInstaSubForm] = useState(false);
 
-    const [message, setMessage] = useState("");
-  
     const handleMainChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setMainInfo({ ...mainInfo, [e.target.name]: e.target.value });
     };
@@ -202,41 +199,7 @@ const ActionCreationPage = () => {
         
         return obj;
       };
-
-    
-    const clearForm = async () => {
-        setMainInfo({
-          title: "", 
-          description: "", 
-        });
-
-        setTone("polite");
-
-        setEmailInfo({ 
-          name: "", 
-          emailAddress: "",
-          subject: "",
-          body: ""
-        });
-
-        setCallInfo({ 
-            phoneNumber: "", 
-            name: "" ,
-            callScript: "",
-        })
-
-        setInstaInfo({
-            name: "", 
-            comment: "",
-            instagramLink: "", 
-        })
-
-        setShowEmailSubForm(false);
-        setShowCallSubForm(false);
-        setShowInstaSubForm(false);
-
-    }
-  
+      
     const navigate = useNavigate();
 
     // Submit form data
@@ -623,7 +586,6 @@ const ActionCreationPage = () => {
                       checked={submitType === "regular"}
                       onChange={() => {
                         setSubmitType("regular");
-                        setShowSchedulePicker(false);
                       }} 
                     />
                     <label htmlFor="publishNow" className="font-semibold cursor-pointer text-xl">Publish now</label>
@@ -639,7 +601,6 @@ const ActionCreationPage = () => {
                       checked={submitType === "schedule"}
                       onChange={() => {
                         setSubmitType("schedule");
-                        setShowSchedulePicker(true);
                       }} 
                     />
                     <label htmlFor="scheduleSend" className="font-semibold cursor-pointer text-xl">Schedule send</label>
@@ -675,11 +636,6 @@ const ActionCreationPage = () => {
               </svg>
             </button>
             
-            {message && 
-            <p>{message}</p>
-            }
-
-           
             </form>
           </div>
           

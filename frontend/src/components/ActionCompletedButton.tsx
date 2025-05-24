@@ -11,7 +11,6 @@ interface ActionCompleteButtonProps {
 const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType, actionId, onClick }) => {
   const [completed, setCompleted] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const { getToken } = useAuth();
 
   const saveAction = (actionId: string, actionType: string) => {
     const stored = JSON.parse(localStorage.getItem('actions') || '[]');

@@ -13,17 +13,6 @@ const EmailButton: React.FC<EmailButtonProps> = ({ action, isAdminView}) => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const sendEmail = (subject: string, body: string) => {
-    const emailUrl = `mailto:${action.emailId.emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    if (navigator.userAgent.includes("Mobi")) {
-      // Mobile devices might not open a new tab properly, so use location.href instead
-      window.location.href = emailUrl;
-    } else {
-      // Desktop devices can open in a new tab
-      window.open(emailUrl, "_blank", "noopener,noreferrer");
-    }
-  };
-
   return (
     <div className="w-full md:w-auto">
       <button
