@@ -10,6 +10,8 @@ import Groq from "groq-sdk";
 import dayjs from "dayjs"; // Using dayjs for date manipulation
 import { getAuth, clerkClient } from '@clerk/express';
 import { nanoid } from 'nanoid';
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 
 const POST_ID = process.env.POST_ID as string;
 const EMAIL = process.env.EMAIL as string;
@@ -160,66 +162,67 @@ export const postAction = async (req: Request, res: Response) => {
   const { userId } = getAuth(req);
 
   if (!userId) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+    res.status(401).json({ message: 'Unauthorized' });
+  } else {
 
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
-  try {
-    const user = await clerkClient.users.getUser(userId);
-    const createdBy = user.emailAddresses[0]?.emailAddress;
-    const formData = req.body;
-
-    const startDate = formData.startDate ? new Date(formData.startDate) : null;
-
-    let emailId = null, callId = null, instaId = null;
-
-    if (formData.emailInfo) {
-      const emailDetails = new Email(formData.emailInfo);
-      await emailDetails.save({ session });
-      emailId = emailDetails._id;
-    }
-
-    if (formData.callInfo) {
-      const callDetails = new Call(formData.callInfo);
-      await callDetails.save({ session });
-      callId = callDetails._id;
-    }
-
-    if (formData.instaInfo) {
-      const instaDetails = new Insta(formData.instaInfo);
-      await instaDetails.save({ session });
-      instaId = instaDetails._id;
-    }
-
-    const shareId = nanoid(10);
-
-    const actionDetails = new Action({
-      ...formData.mainInfo,
-      emailId,
-      callId,
-      instaId,
-      createdBy,
-      startDate,
-      shareId,
-    });
-
-    await actionDetails.save({ session });
-
-    await session.commitTransaction();
-    session.endSession();
-
-    console.log("Saved Action ID:", actionDetails.shareId);
-    res.status(201).json({ shareId: actionDetails.shareId });
-  } catch (error: unknown) {
-    await session.abortTransaction();
-    session.endSession();
-
-    if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
-    } else {
-      res.status(500).json({ error: "An unknown error occurred." });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+  
+    try {
+      const user = await clerkClient.users.getUser(userId);
+      const createdBy = user.emailAddresses[0]?.emailAddress;
+      const formData = req.body;
+  
+      const startDate = formData.startDate ? new Date(formData.startDate) : null;
+  
+      let emailId = null, callId = null, instaId = null;
+  
+      if (formData.emailInfo) {
+        const emailDetails = new Email(formData.emailInfo);
+        await emailDetails.save({ session });
+        emailId = emailDetails._id;
+      }
+  
+      if (formData.callInfo) {
+        const callDetails = new Call(formData.callInfo);
+        await callDetails.save({ session });
+        callId = callDetails._id;
+      }
+  
+      if (formData.instaInfo) {
+        const instaDetails = new Insta(formData.instaInfo);
+        await instaDetails.save({ session });
+        instaId = instaDetails._id;
+      }
+  
+      const shareId = nanoid(10);
+  
+      const actionDetails = new Action({
+        ...formData.mainInfo,
+        emailId,
+        callId,
+        instaId,
+        createdBy,
+        startDate,
+        shareId,
+      });
+  
+      await actionDetails.save({ session });
+  
+      await session.commitTransaction();
+      session.endSession();
+  
+      console.log("Saved Action ID:", actionDetails.shareId);
+      res.status(201).json({ shareId: actionDetails.shareId });
+    } catch (error: unknown) {
+      await session.abortTransaction();
+      session.endSession();
+  
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "An unknown error occurred." });
+      }
     }
   }
 };
@@ -243,9 +246,8 @@ export const getAllActions = async (req: Request, res: Response): Promise<void> 
 export const getActionsFromLastNDays = async (req: Request, res: Response): Promise<void> => {
   try {
     const daysAgo = parseInt(req.query.daysAgo as string) || 7;
-
-    const start = dayjs().subtract(daysAgo, "day").toDate();
-    const end = dayjs().toDate();
+    const start = dayjs.utc().subtract(daysAgo, "day").toDate();
+    const end = dayjs.utc().toDate();  // exact current time in UTC
 
     // Construct the query
     const dateQuery = {
