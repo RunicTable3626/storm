@@ -254,11 +254,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
       </div>
       )}
 
-{action && (
-        <p className = "text-lg italic mt-2">Created At: {action.createdAt
-          ? moment(action.createdAt).format("MMMM Do YYYY, h:mm A")
-          : "Unknown"}</p>
-      )}
       <p className = "text-lg mt-2 italic"> {isFutureScheduledAction?  "Starts At : ": "Started At : "} 
         {action.startDate 
           ? moment(action.startDate).format("MMMM Do YYYY, h:mm A") 
@@ -271,8 +266,6 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
           <p className = "text-lg font-semibold mt-2">created by: {action.createdBy || "Unknown"}</p>
         </div>
       )}  
-
-
 </div>
   );
 };
