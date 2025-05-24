@@ -63,7 +63,7 @@ const PhonecallModal: React.FC<PhonecallModalProps> = ({isOpen, closeModal, acti
                 </div>
 
                 <div className="button-container">
-                    <ContentRephraseButton text={callText} contentType={contentType} onResult={setCallText}/>
+                    <ContentRephraseButton text={action.callId.callScript} contentType={contentType} onResult={setCallText}/>
                     <button
                         onClick={() => window.open(`tel:${phoneNumber.replace(/\D/g, '')}`)}
                         className="bg-violet-500 hover:bg-violet-600 cursor-pointer text-white text-lg text-center font-bold py-4 px-4 rounded-lg transition duration-300"

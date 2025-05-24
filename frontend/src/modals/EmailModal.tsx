@@ -140,7 +140,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
                 </div>
               </div>
             </div>
-            <div><ContentRephraseButton text={subjectText} contentType="email subject" onResult={setSubjectText}/></div>
+            <div><ContentRephraseButton text={action.emailId?.subject} contentType="email subject" onResult={setSubjectText}/></div>
           </div>
 
           <div className="copy-wrapper" style={{marginBottom: '30px'}}>
@@ -166,7 +166,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
         </div>
 
         <div className="button-container">
-          <ContentRephraseButton text={genBody} contentType="email body" onResult={setGenBody}/>
+          <ContentRephraseButton text={action.emailId?.body} contentType="email body" onResult={setGenBody}/>
           <button
             className="cursor-pointer bg-violet-500 hover:bg-violet-600 text-white font-bold px-4 py-3 text-lg rounded-lg transition duration-200 ease" 
             onClick={(e) => {
