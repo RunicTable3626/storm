@@ -95,8 +95,8 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
 
   const onSend = () => {
     // Open Gmail with pre-filled content
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddress)}&su=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(genBody)}`;
-    window.open(gmailUrl, '_blank');
+    const emailUrl = `mailto:${emailAddress}?subject=${encodeURIComponent(subjectText)}&body=${encodeURIComponent(genBody)}`;
+    window.open(emailUrl, '_blank');
   };
 
   return (
