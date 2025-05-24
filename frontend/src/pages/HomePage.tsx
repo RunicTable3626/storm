@@ -8,10 +8,10 @@ const HomePage = () => {
     <div>
       <div className="relative w-full h-[90vh]">
         <div 
-          className="absolute inset-0 bg-cover bg-top bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('./src/assets/storm.jpeg')",
-            backgroundPosition: "center 25%" 
+            backgroundImage: "url('./src/assets/WAM43011.jpg')",
+            backgroundPosition: "center center" 
           }}
         />
         <div className="absolute inset-0 bg-black/65" />

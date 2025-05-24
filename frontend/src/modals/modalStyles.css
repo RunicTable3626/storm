@@ -102,17 +102,6 @@ textarea {
     border: 1px solid #e2e8f0;
 }
 
-@media (prefers-color-scheme: dark) {
-    .dark-style {
-        color: #000;
-    }
-
-    textarea {
-        line-height: 1.5;
-        color: #ffffff;
-    }
-}
-
 /* Add container class for content centering */
 .modal-container {
     max-width: 850px;

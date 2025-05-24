@@ -205,7 +205,7 @@ const ActionDashboard = () => {
        <div 
           className="absolute inset-0 bg-cover bg-top bg-no-repeat"
           style={{
-            backgroundImage: "url('./src/assets/storm-2.jpeg')",
+            backgroundImage: "url('./src/assets/WAM15728.jpg')",
             backgroundPosition: "center 25%" 
           }}
         />
