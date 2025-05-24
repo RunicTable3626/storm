@@ -44,7 +44,7 @@ const EditActionButton: React.FC<EditActionButtonProps> = ({ action, onEdit}) =>
 
   return (
         <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <button onClick={(e) => {
+        <button className = "text-green-500 bg-green-200 p-3 rounded-full cursor-pointer hover:bg-green-300 duration-200 ease font-semibold text-xl mt-2 px-5" onClick={(e) => {
                         (e.target as HTMLButtonElement).blur()
                         openModal()}}>Edit Action</button>
         {completed && <span style={{ color: "green", marginLeft: "10px" }}>Action Edited!</span>}
