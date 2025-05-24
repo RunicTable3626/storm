@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth, useUser} from "@clerk/clerk-react";
+import WAM29363 from "../assets/WAM29363.jpg"
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 // pages/ActionsComponent.tsx
@@ -138,7 +139,7 @@ const AdminDashboard = () => {
         <div 
           className="absolute inset-0 bg-cover bg-top bg-no-repeat"
           style={{
-            backgroundImage: "url('./src/assets/WAM29363.jpg')",
+            backgroundImage: `url(${WAM29363})`,
             backgroundPosition: "center 25%" 
           }}
         />

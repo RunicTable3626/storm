@@ -1,5 +1,7 @@
 import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
 import { useNavigate } from 'react-router-dom';
+import WAM43011 from '../assets/WAM43011.jpg';
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const HomePage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('./src/assets/WAM43011.jpg')",
+            backgroundImage: `url(${WAM43011})`,
             backgroundPosition: "center center" 
           }}
         />

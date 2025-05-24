@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SignedIn, SignedOut, SignInButton } from '@clerk/clerk-react';
+import WAM15728 from "../assets/WAM15728.jpg"
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 // pages/ActionsComponent.tsx
@@ -205,7 +206,7 @@ const ActionDashboard = () => {
        <div 
           className="absolute inset-0 bg-cover bg-top bg-no-repeat"
           style={{
-            backgroundImage: "url('./src/assets/WAM15728.jpg')",
+            backgroundImage: `url(${WAM15728})`,
             backgroundPosition: "center 25%" 
           }}
         />
