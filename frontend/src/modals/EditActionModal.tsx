@@ -53,7 +53,6 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
           const [isEmailChanged, setIsEmailChanged] = useState(false);
           const [isCallChanged, setIsCallChanged] = useState(false);
           const [isInstaChanged, setIsInstaChanged] = useState(false);
-          const [message, setMessage] = useState("");
           const [isConfirmed, setIsConfirmed] = useState(false);
 
 
@@ -365,10 +364,6 @@ const EditActionModal: React.FC<EditActionModalProps> = ({isOpen, action, closeM
               Confirm Edits
             </button>
           </div>
-
-          {message && 
-            <p className="text-red-500 text-center mt-2">{message}</p>
-          }
         </form>
         </div>
         </div>
