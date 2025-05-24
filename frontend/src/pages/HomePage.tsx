@@ -51,7 +51,9 @@ const HomePage = () => {
               </div>
             </SignedIn>
 
+          
             <SignedOut>
+            <SignInButton mode="modal">
               <button 
                 onClick={() => {
                   const signInButton = document.querySelector('[data-clerk-sign-in]');
@@ -66,7 +68,8 @@ const HomePage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
                 </svg>
               </button>
-              <SignInButton mode="modal" />
+              </SignInButton>
+              
             </SignedOut>
 
 
@@ -140,16 +143,27 @@ const HomePage = () => {
                   <span className="text-white">REQUEST ORGANIZER ACCESS</span>
                 </a>
                 
-                <div><div 
-              onClick={() => navigate('/create-action')}
-              className="text-gray-200 inline-block cursor-pointer border-b-2 border-transparent hover:border-white duration-200 ease font-semibold text-xl mt-4"
-            >
-              Or, log into your existing organizer account here  
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="inline-block size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-              </svg>
-            </div>
-            </div>
+                <SignedOut>
+            <SignInButton mode="modal">
+              <div>
+              <button 
+                onClick={() => {
+                  const signInButton = document.querySelector('[data-clerk-sign-in]');
+                  if (signInButton) {
+                    (signInButton as HTMLElement).click();
+                  }
+                }}
+                className="text-gray-200 cursor-pointer border-b-2 border-transparent hover:border-white duration-200 ease font-semibold text-xl mt-4"
+              >
+                Or, sign in to your existing organizer account here
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="inline-block size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
+                </svg>
+              </button>
+              </div>
+              </SignInButton>
+              
+            </SignedOut>
               </div>
             </div>
           </div>

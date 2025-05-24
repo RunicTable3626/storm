@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useAuth } from '@clerk/clerk-react';
 const API_URL = import.meta.env.VITE_API_URL; // VITE_API_URL from .env
 
 interface ActionCompleteButtonProps {

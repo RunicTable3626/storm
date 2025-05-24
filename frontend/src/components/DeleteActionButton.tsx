@@ -41,7 +41,7 @@ const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDel
 
   return (
         <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <button onClick={(e) => {
+        <button className = "text-red-500 bg-red-200 p-3 rounded-full cursor-pointer hover:bg-red-300 duration-200 ease font-semibold text-xl mt-2 px-5" onClick={(e) => {
                         (e.target as HTMLButtonElement).blur()
                         openModal()}}>Delete Action</button>
         {completed && <span style={{ color: "red", marginLeft: "10px" }}>Action Deleted</span>}

@@ -129,7 +129,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
             <EmailButton action={action} isAdminView={isAdminView} />
             <SignedIn>
             {(isAdminView) && (
-            <p>Email Actions: {action.emailCount || 'None'}</p>
+            <p className = "text-italic text-center text-lg italic mt-2">Email Actions: {action.emailCount || 'None'}</p>
           )
           }
           </SignedIn>
@@ -143,7 +143,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
             <PhonecallButton action={action} isAdminView={isAdminView} />
             <SignedIn>
             {(isAdminView) && (
-            <p>Call Actions: {action.callCount || 'None'}</p>
+            <p className = "text-italic text-center text-lg italic mt-2">Call Actions: {action.callCount || 'None'}</p>
           )
           }
           </SignedIn>
@@ -156,7 +156,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
             <InstagramButton action={action} isAdminView={isAdminView} />
             <SignedIn>
           {(isAdminView) && (
-            <p>Comment Actions: {action.instaCount || 'None'}</p>
+            <p className = "text-italic text-center text-lg italic mt-2">Comment Actions: {action.instaCount || 'None'}</p>
           )
           }
         </SignedIn>
@@ -268,7 +268,7 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
 
       {action && isAdminView && (
         <div>
-          <p>created by: {action.createdBy || "Unknown"}</p>
+          <p className = "text-lg font-semibold mt-2">created by: {action.createdBy || "Unknown"}</p>
         </div>
       )}  
 

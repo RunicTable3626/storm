@@ -104,7 +104,7 @@ const Sidebar = () => {
             </SignedIn>
 
             <SignedOut>
-              <SignInButton>
+            <SignInButton mode="modal">
                 <div 
                   className={`block text-left text-xl font-semibold cursor-pointer py-2 transition duration-200 ${
                     location.pathname === '/create-action' ? 'text-violet-500' : 'hover:text-violet-500'
@@ -180,7 +180,7 @@ const Sidebar = () => {
             </SignedIn>
 
             <SignedOut>
-              <SignInButton>
+            <SignInButton mode="modal">
                 <span 
                   onClick={() => navigate('/create-action')} 
                   className={`text-xl font-semibold cursor-pointer duration-200 ease mt-1 border-b-2 ${
