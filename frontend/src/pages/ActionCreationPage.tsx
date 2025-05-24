@@ -291,7 +291,7 @@ const ActionCreationPage = () => {
             },
             buttonsStyling: false
           });
-          navigate('/action-dashboard');
+          navigate('/admin-dashboard');
 
         } else {
           Swal.fire({
