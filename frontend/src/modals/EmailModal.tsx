@@ -17,6 +17,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
   const [emailAddress, setEmailAddress] = useState(action.emailId?.emailAddress || "");
   const [subjectTooltipState, setSubjectTooltipState] = useState({ visible: false, copied: false });
   const [bodyTooltipState, setBodyTooltipState] = useState({ visible: false, copied: false });
+  const [recipientTooltipState, setRecipientTooltipState] = useState({ visible: false, copied: false});
 
   useEffect(() => {
     if (action.emailId) {
@@ -26,7 +27,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
     }
   }, [action.emailId]);
 
-  const handleCopy = async (text: string, isCopyingSubject: boolean) => {
+  const handleCopy = async (text: string, copyingTarget: "recipient" | "subject" | "body" ) => {
     if (!text) {
       return console.error('Nothing to copy');
     }
@@ -34,7 +35,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
     try {
       await navigator.clipboard.writeText(text);
       
-      if (isCopyingSubject) {
+      if (copyingTarget === "subject") {
         // Show "Text copied!" tooltip
         setSubjectTooltipState({ visible: true, copied: true });
         
@@ -48,7 +49,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
             setSubjectTooltipState({ visible: false, copied: false });
           }, 300);
         }, 3000);
-      } else {
+      } else if (copyingTarget === "body") {
         // Show "Text copied!" tooltip
         setBodyTooltipState({ visible: true, copied: true });
         
@@ -62,13 +63,40 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
             setBodyTooltipState({ visible: false, copied: false });
           }, 300);
         }, 3000);
-      }
+      } else if (copyingTarget === "recipient") {
+        setRecipientTooltipState({ visible: true, copied: true });
+        // After 3 seconds, begin hiding
+        setTimeout(() => {
+
+        // First make the tooltip invisible
+        setRecipientTooltipState(prevState => ({ ...prevState, visible: false }));
+          
+        // After animation completes, reset the copied state
+        setTimeout(() => {
+        setRecipientTooltipState({ visible: false, copied: false });
+          }, 300);
+        }, 3000);
+
+      } 
+
     } catch (err) {
       console.error('Text copy failed:', err);
     }
   };
   
   // Mouse enter/leave handlers
+  const handleRecipientMouseEnter = () => {
+    if (!recipientTooltipState.copied) {
+      setRecipientTooltipState(prevState => ({ ...prevState, visible: true }));
+    }
+  };
+  
+  const handleRecipientMouseLeave = () => {
+    if (!recipientTooltipState.copied) {
+      setRecipientTooltipState(prevState => ({ ...prevState, visible: false }));
+    }
+  };
+
   const handleSubjectMouseEnter = () => {
     if (!subjectTooltipState.copied) {
       setSubjectTooltipState(prevState => ({ ...prevState, visible: true }));
@@ -120,15 +148,28 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
         <h2 className="text-3xl font-bold mb-6">Send an Email</h2>
 
         <div className="emailContent">
-          <div className="border">
+          <div className="border copy-wrapper">
             <strong>To:</strong> {emailAddress}
+            <div 
+                className="copy-icon"
+                onClick={() => handleCopy(emailAddress, "recipient")}
+                onMouseEnter={handleRecipientMouseEnter}
+                onMouseLeave={handleRecipientMouseLeave}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" />
+                </svg>
+                <div className={`tooltip font-semibold ${recipientTooltipState.visible ? 'visible' : ''}`}>
+                  {recipientTooltipState.copied ? "Text copied!" : "Copy email address"}
+                </div>
+              </div>
           </div>
           <div className="border copy-wrapper">
             <div className="subject-container mb-2">
               <strong>Subject:</strong> {subjectText}
               <div 
                 className="copy-icon"
-                onClick={() => handleCopy(subjectText, true)}
+                onClick={() => handleCopy(subjectText, "subject")}
                 onMouseEnter={handleSubjectMouseEnter}
                 onMouseLeave={handleSubjectMouseLeave}
               >
@@ -151,7 +192,7 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
             />
             <div 
               className="copy-icon"
-              onClick={() => handleCopy(genBody, false)}
+              onClick={() => handleCopy(genBody, "body")}
               onMouseEnter={handleBodyMouseEnter}
               onMouseLeave={handleBodyMouseLeave}
             >
