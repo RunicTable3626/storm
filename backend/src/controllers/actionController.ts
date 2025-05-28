@@ -132,8 +132,14 @@ export const rephraseContent = async (req: Request, res: Response) => {
 export const rephraseContentInternal = async (content: String, contentType: String) => {
   try {
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
-    const rephrasePrompt = `Rephrase the following ${contentType} exactly once, retaining the same tone and word count as the original:\n 
-                          ${content}
+    const rephrasePrompt = `Rephrase the following ${contentType} using completely different wording and sentence structure.
+                            Keep the original tone and the exact same word count.
+                            
+                            If the content is a social media comment, make the language sound more natural, conversational, and human—avoid sounding stiff or robotic.
+                            
+                            Respond with only the rephrased text. Do not include any labels, explanations, or extra formatting.
+                            
+                            ${content}
     `;
       const chatCompletion = await groq.chat.completions.create({
         messages: [

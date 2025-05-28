@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import "./modalStyles.css"; // Import the CSS file
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from '../components/ContentRephraseButton';
+import { rephraseContent } from '../utils/llm';
 
 interface InstagramModalProps {
   isOpen: boolean;
@@ -22,6 +23,27 @@ const InstagramModal: React.FC<InstagramModalProps> = ({ isOpen, closeModal, act
     setInstaText(action.instaId.comment);
     setInstaUrl(action.instaId.instagramLink);
   }, [action.instaId.comment, action.instaId.instagramLink]); 
+
+    useEffect(() => {
+      if (!isOpen) return; // Only run when modal opens
+      if (!action.instaId) return;
+      if (isAdminView) return;
+    
+      setInstaText("Generating...");
+    
+      const rephrase = async () => {
+        try {
+          const instaTextResult = await rephraseContent(action.instaId.comment || "", contentType)
+          if (instaTextResult?.rephrasedResult) {
+            setInstaText(instaTextResult.rephrasedResult);
+          }
+        } catch (err) {
+          console.error("Error rephrasing comment content:", err);
+        }
+      };
+    
+      rephrase();
+    }, [isOpen]);
 
 
   const handleCopy = async (text: string) => {

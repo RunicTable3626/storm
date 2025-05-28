@@ -3,6 +3,7 @@ import Modal from "react-modal";
 import "./modalStyles.css";
 import ActionCompleteButton from "../components/ActionCompletedButton";
 import ContentRephraseButton from "../components/ContentRephraseButton";
+import { rephraseContent } from "../utils/llm";
 
 interface EmailModalProps {
   isOpen: boolean;
@@ -11,9 +12,12 @@ interface EmailModalProps {
   isAdminView: boolean;
 }
 
+
 const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isAdminView }) => {
   const [genBody, setGenBody] = useState(action.emailId?.body || "");
   const [subjectText, setSubjectText] = useState(action.emailId?.subject || "");
+
+
   const [emailAddress, setEmailAddress] = useState(action.emailId?.emailAddress || "");
   const [subjectTooltipState, setSubjectTooltipState] = useState({ visible: false, copied: false });
   const [bodyTooltipState, setBodyTooltipState] = useState({ visible: false, copied: false });
@@ -26,6 +30,37 @@ const EmailModal: React.FC<EmailModalProps> = ({ isOpen, closeModal, action, isA
       setSubjectText(action.emailId.subject || "");
     }
   }, [action.emailId]);
+
+  useEffect(() => {
+    if (!isOpen) return; // Only run when modal opens
+    if (!action.emailId) return;
+    if (isAdminView) return;
+  
+    setEmailAddress(action.emailId.emailAddress || "");
+    setGenBody("Generating...");
+    setSubjectText("Generating...");
+  
+    const rephrase = async () => {
+      try {
+        const [bodyResult, subjectResult] = await Promise.all([
+          rephraseContent(action.emailId.body || "", "email body"),
+          rephraseContent(action.emailId.subject || "", "email subject"),
+        ]);
+  
+        if (bodyResult?.rephrasedResult) {
+          setGenBody(bodyResult.rephrasedResult);
+        }
+  
+        if (subjectResult?.rephrasedResult) {
+          setSubjectText(subjectResult.rephrasedResult);
+        }
+      } catch (err) {
+        console.error("Error rephrasing email content:", err);
+      }
+    };
+  
+    rephrase();
+  }, [isOpen]);
 
   const handleCopy = async (text: string, copyingTarget: "recipient" | "subject" | "body" ) => {
     if (!text) {
