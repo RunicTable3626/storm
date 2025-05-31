@@ -24,8 +24,6 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
       
       const event = new CustomEvent("action-added-to-local-storage");
       window.dispatchEvent(event);
-      
-      console.log(`Action ${actionId} of type ${actionType} marked as completed and event dispatched`);
     }
   };
 
@@ -42,8 +40,6 @@ const ActionCompleteButton: React.FC<ActionCompleteButtonProps> = ({ actionType,
 
       if (!response.ok) throw new Error("Failed to update counter");
 
-      const data = await response.json();
-      console.log(`${actionType} response: ${data.message}`);
       setCompleted(true);
       setShowConfirmation(false);
       

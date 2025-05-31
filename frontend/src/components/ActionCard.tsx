@@ -40,16 +40,9 @@ const ActionCard: React.FC<ActionProps> = ({ action, isLinked, isAdminView, onDe
   const [isFlipping, setIsFlipping] = useState(false);
 
   const checkAndSetActionCompletion = () => {
-    console.log("Checking completion for action:", action._id);
     const emailCompleted = actionExists(action._id, "emailCount");
     const callCompleted = actionExists(action._id, "callCount");
     const instaCompleted = actionExists(action._id, "instaCount");
-    
-    console.log("Completion status:", {
-      emailCompleted,
-      callCompleted,
-      instaCompleted
-    });
     
     setIsEmailActionCompleted(emailCompleted);
     setIsCallActionCompleted(callCompleted);

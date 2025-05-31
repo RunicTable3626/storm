@@ -236,12 +236,39 @@ export const postAction = async (req: Request, res: Response) => {
 
 
 export const getAllActions = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = getAuth(req);
+  if (!userId) {
+    res.status(401).json({ message: 'Unauthorized' });
+    return;
+  }
+
   try {
-    const actions = await Action.find()
-      .populate("emailId") // Populate related email info
-      .populate("callId")  // Populate related call info
-      .populate("instaId"); // Populate related Instagram info  
-    res.status(200).json(actions);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const [rawActions, total] = await Promise.all([
+      Action.aggregate([
+        { $addFields: { effectiveDate: { $ifNull: ["$startDate", "$createdAt"] } } },
+        { $sort: { effectiveDate: -1 } },
+        { $skip: skip },
+        { $limit: limit }
+      ]),
+      Action.countDocuments()
+    ]);
+    
+    const actions = await Action.populate(rawActions, [
+      { path: "emailId" },
+      { path: "callId" },
+      { path: "instaId" }
+    ]);
+
+    res.status(200).json({
+      actions,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
 
   } catch (error) {
     console.log(error);
@@ -284,20 +311,44 @@ export const getAllCreatedActions = async (req: Request, res: Response): Promise
   const { userId } = getAuth(req);
   if (!userId) {
     res.status(401).json({ message: 'Unauthorized' });
-  } else {
+    return;
+  }
+
   try {
     const user = await clerkClient.users.getUser(userId);
     const createdBy = user.emailAddresses[0]?.emailAddress;
-    const actions = await Action.find({createdBy})
-      .populate("emailId") // Populate related email info
-      .populate("callId")  // Populate related call info
-      .populate("instaId"); // Populate related Instagram info  
-    res.status(200).json(actions);
+
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const [rawActions, total] = await Promise.all([
+      Action.aggregate([
+        { $match: { createdBy } },
+        { $addFields: { effectiveDate: { $ifNull: ["$startDate", "$createdAt"] } } },
+        { $sort: { effectiveDate: -1 } },
+        { $skip: skip },
+        { $limit: limit }
+      ]),
+      Action.countDocuments({ createdBy })
+    ]);
+    
+    const actions = await Action.populate(rawActions, [
+      { path: "emailId" },
+      { path: "callId" },
+      { path: "instaId" }
+    ]);
+
+    res.status(200).json({
+      actions,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
 
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Error fetching actions" });
-  }
   }
 };
 

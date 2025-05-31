@@ -81,7 +81,7 @@ const HomePage = () => {
         <div className="w-full px-4 md:px-10 py-16">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <div className="text-4xl md:text-5xl font-bold">HOW WE <span className="text-violet-500">DISRUPT</span> BUSINESS AS USUAL</div>
+              <div className="text-4xl md:text-5xl font-bold">HOW WE <span className="text-violet-500">STORM</span> FOR CHANGE</div>
               <div className="text-xl md:text-2xl max-w-4xl mx-auto mt-5">Storm makes it easy to take effective action for animals, quickly, with no account registration needed. Here's how you can get started now:</div>
             </div>
 
@@ -175,7 +175,7 @@ const HomePage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold">SHARE THIS TOOL</div>
-              <div className="text-xl md:text-2xl max-w-4xl mx-auto mt-5">With more activists comes more pressure and faster victories. You can share Storm with your friends and help us grow the movement!</div>
+              <div className="text-xl md:text-2xl max-w-4xl mx-auto mt-5">With more activists comes more voices and faster victories. You can share Storm with your friends and help us grow the movement!</div>
 
               <div className="flex justify-center gap-6 md:gap-12 mt-12">
               <a

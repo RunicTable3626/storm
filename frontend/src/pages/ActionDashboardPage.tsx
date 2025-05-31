@@ -269,7 +269,7 @@ const ActionDashboard = () => {
         </div>
 
       <div className="actions-section text-center w-full px-4 md:px-10 py-16">
-        <div className="text-4xl md:text-5xl mb-10 font-bold">THE LATEST</div>
+        <div className="text-4xl md:text-5xl mb-10 font-bold">THE LATEST THIS WEEK</div>
         {loading && <p className = "text-2xl col-centered mt-20 animate-pulse text-center">Loading actions...</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
         <div className="w-full max-w-3xl mx-auto">

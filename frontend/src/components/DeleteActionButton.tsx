@@ -29,9 +29,6 @@ const DeleteActionButton: React.FC<DeleteActionButtonProps> = ({ actionId, onDel
       });
 
       if (!response.ok) throw new Error("Failed to delete action");
-
-      const data: { message: string } = await response.json(); // Parse response JSON
-      console.log(`action with id = ${actionId} successfully deleted with response: ${data.message}`);
       setCompleted(true); 
       setTimeout(() => {onDelete(actionId);}, 1000); 
     } catch (error) {

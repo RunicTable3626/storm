@@ -41,6 +41,9 @@ const AdminDashboard = () => {
   const [actions, setActions] = useState<Action[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pageNum, setPageNum] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit, setLimit] = useState(10);
   const { getToken } = useAuth();
   const { user } = useUser();
   const role = user?.publicMetadata?.role;
@@ -49,11 +52,17 @@ const AdminDashboard = () => {
   const fetchActions = async () => {
     let response;
     try {
+      const token = await getToken();
       if (role === 'superadmin') {
-        response = await fetch(`${API_URL}/api/actions`); //gets all actions from all users
+        response = await fetch(`${API_URL}/api/actions?page=${pageNum}&limit=${limit}`, { //only gets actions from that specific user
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        }
+        }); //gets all actions from all users
       } else {
-        const token = await getToken();
-        response = await fetch(`${API_URL}/api/actions/created`, { //only gets actions from that specific user
+        response = await fetch(`${API_URL}/api/actions/created?page=${pageNum}&limit=${limit}`, { //only gets actions from that specific user
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -66,7 +75,10 @@ const AdminDashboard = () => {
 
       if (!response.ok) throw new Error(data.error || "Failed to fetch actions");
 
-      setActions(data); // Store the fetched actions
+      setActions(data.actions); // Store the fetched actions
+      setTotalPages(data.pages);
+      setPageNum(data.page);
+      setLimit(data.limit);
 
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -83,6 +95,12 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchActions();
   }, []);
+
+  useEffect(() => {
+    fetchActions();
+  }, [pageNum]);
+
+
 
   const handleDeleteAction = async (deletedId: string) => {
     setActions((prevActions) => prevActions.filter((action) => action._id !== deletedId));
@@ -163,6 +181,24 @@ const AdminDashboard = () => {
           {loading && <p className="text-center text-lg">Loading actions...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
 
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setPageNum((prev) => Math.max(prev - 1, 1))}
+              disabled={pageNum === 1}
+              className="text-gray-700 bg-gray-100 border border-gray-300 p-3 rounded-full cursor-pointer hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400 hover:shadow-md duration-200 ease-in-out font-semibold text-xl mt-2 px-5 disabled:opacity-50 shadow"
+              >
+              Previous
+            </button>
+            <span className="text-sm text-gray-600">Page {pageNum} of {totalPages}</span>
+            <button
+              onClick={() => setPageNum((prev) => Math.min(prev + 1, totalPages))}
+              disabled={pageNum === totalPages}
+              className="text-gray-700 bg-gray-100 border border-gray-300 p-3 rounded-full cursor-pointer hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400 hover:shadow-md duration-200 ease-in-out font-semibold text-xl mt-2 px-5 disabled:opacity-50 shadow"
+              >
+              Next
+            </button>
+          </div>
+
           <div className="space-y-6">
             {Array.isArray(actions) &&
               sortedActions.map((action) => (
@@ -175,6 +211,24 @@ const AdminDashboard = () => {
                   onEdit={handleEditAction}
                 />
               ))}
+          </div>
+
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => setPageNum((prev) => Math.max(prev - 1, 1))}
+              disabled={pageNum === 1}
+              className="text-gray-700 bg-gray-100 border border-gray-300 p-3 rounded-full cursor-pointer hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400 hover:shadow-md duration-200 ease-in-out font-semibold text-xl mt-2 px-5 disabled:opacity-50 shadow"
+              >
+              Previous
+            </button>
+            <span className="text-sm text-gray-600">Page {pageNum} of {totalPages}</span>
+            <button
+              onClick={() => setPageNum((prev) => Math.min(prev + 1, totalPages))}
+              disabled={pageNum === totalPages}
+              className="text-gray-700 bg-gray-100 border border-gray-300 p-3 rounded-full cursor-pointer hover:bg-gray-200 hover:text-gray-900 hover:border-gray-400 hover:shadow-md duration-200 ease-in-out font-semibold text-xl mt-2 px-5 disabled:opacity-50 shadow"
+              >
+              Next
+            </button>
           </div>
         </div>
       </div>

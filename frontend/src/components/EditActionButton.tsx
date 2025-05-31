@@ -31,9 +31,6 @@ const EditActionButton: React.FC<EditActionButtonProps> = ({ action, onEdit}) =>
       });
 
       if (!response.ok) throw new Error("Failed to Edit action");
-
-      const data: { message: string } = await response.json(); // Parse response JSON
-      console.log(`action with id = ${action._id} successfully edited with response: ${data.message}`);
       setCompleted(true); 
       onEdit(action._id, formData);
       setTimeout(() => {setCompleted(false)}, 2000); 

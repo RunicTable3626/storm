@@ -698,7 +698,7 @@ const ActionCreationPage = () => {
                       )}
                     </>
                   ) : (
-                    <div className="w-full text-left text-gray-500 italic">When you full out completed actions, they will appear here.</div>
+                    <div className="w-full text-left text-gray-500 italic">When you fill out completed actions, they will appear here.</div>
                   )}
                 </div>
 
