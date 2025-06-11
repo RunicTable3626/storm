@@ -21,7 +21,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-All digital action platforms that I saw were proprietary to large non-profits, leveraging their network effect and resources in order to supplement their digital campaigns. I made this to offer a similar opportunity to organize grassroots campaigns!
+This is made to offer a digital platform to organize grassroots campaigns, spearheaded by AAC (Animal Activism Collective)!
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
